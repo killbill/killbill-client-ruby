@@ -84,9 +84,8 @@ module KillBillClient
     end
   end
 
+  require 'killbill_client/api/api'
   require 'killbill_client/models/models'
-  require 'killbill_client/api'
-  require 'killbill_client/resource'
   require 'killbill_client/utils'
   require 'killbill_client/version'
 end

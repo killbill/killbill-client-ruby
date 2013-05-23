@@ -32,11 +32,13 @@ module KillBillClient
             :delete => ::Net::HTTP::Delete
         }
 
-        def request(method, uri, options = {})
+        def request(method, relative_uri, options = {})
           head = headers.dup
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
-          uri = base_uri + URI.escape(uri)
+
+          uri = base_uri + URI.escape(relative_uri)
+
           if options[:params] && !options[:params].empty?
             pairs = options[:params].map { |key, value|
               "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
@@ -60,6 +62,18 @@ module KillBillClient
           if options[:locale]
             request['Accept-Language'] = options[:locale]
           end
+
+          # Add auditing headers, if needed
+          if options[:user]
+            request['X-Killbill-CreatedBy'] = options[:user]
+          end
+          if options[:reason]
+            request['X-Killbill-Reason'] = options[:reason]
+          end
+          if options[:comment]
+            request['X-Killbill-Comment'] = options[:comment]
+          end
+
           http = ::Net::HTTP.new uri.host, uri.port
           http.use_ssl = uri.scheme == 'https'
           net_http.each_pair { |key, value| http.send "#{key}=", value }

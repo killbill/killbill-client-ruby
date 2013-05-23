@@ -45,25 +45,25 @@ module KillBillClient
 
       # @return [Net::HTTPCreated, Net::HTTPResponse]
       # @raise [ResponseError] With a non-2xx status code.
-      def post(uri, body = nil, options = {})
-        request :post, uri, {:body => body.to_s}.merge(options)
+      def post(uri, body = nil, params = {}, options = {})
+        request :post, uri, {:body => body.to_s}.merge({:params => params}).merge(options)
       end
 
       # @return [Net::HTTPOK, Net::HTTPResponse]
       # @raise [ResponseError] With a non-2xx status code.
-      def put(uri, body = nil, options = {})
-        request :put, uri, {:body => body.to_s}.merge(options)
+      def put(uri, body = nil, params = {}, options = {})
+        request :put, uri, {:body => body.to_s}.merge({:params => params}).merge(options)
       end
 
       # @return [Net::HTTPNoContent, Net::HTTPResponse]
       # @raise [ResponseError] With a non-2xx status code.
-      def delete(uri, options = {})
-        request :delete, uri, options
+      def delete(uri, params = {}, options = {})
+        request :delete, uri, {:params => params}.merge(options)
       end
 
       # @return [URI::Generic]
       def base_uri
-        URI.parse(KillBillClient.url) + '/1.0/kb/'
+        URI.parse(KillBillClient.url)
       end
 
       # @return [String]
