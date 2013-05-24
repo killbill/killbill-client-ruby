@@ -61,19 +61,31 @@ module KillBillClient
       end
 
       def plugin_info=(info)
-        info ||= {}
-        properties = []
-        (info['properties'] || {}).each do |property_json|
-          property = PaymentMethodProperty.new
-          property.key = property_json['key']
-          property.value = property_json['value']
-          property.is_updatable = property_json['isUpdatable']
-          properties << property
-        end
-
         @plugin_info = PaymentMethodProperty.new
-        @plugin_info.properties = properties
+        @plugin_info.properties = []
+        return if info.nil?
+
         @plugin_info.external_payment_id = info['externalPaymentId']
+
+        if info['properties'].nil?
+          # Convenience method to create properties to add a payment method
+          info.each do |key, value|
+            property = PaymentMethodProperty.new
+            property.key = key
+            property.value = value
+            property.is_updatable = false
+            @plugin_info.properties << property
+          end
+        else
+          # De-serialization from JSON payload
+          info['properties'].each do |property_json|
+            property = PaymentMethodProperty.new
+            property.key = property_json['key']
+            property.value = property_json['value']
+            property.is_updatable = property_json['isUpdatable']
+            @plugin_info.properties << property
+          end
+        end
       end
     end
   end
