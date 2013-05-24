@@ -24,6 +24,13 @@ module KillBillClient
                                           }
         created_account.refresh
       end
+
+      def payments
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
+                       {},
+                       {},
+                       Payment
+      end
     end
   end
 end

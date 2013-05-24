@@ -23,6 +23,8 @@ module KillBillClient
       attribute :phone
       attribute :is_migrated
       attribute :is_notified_for_invoices
+
+      attribute :account_balance
     end
   end
 end

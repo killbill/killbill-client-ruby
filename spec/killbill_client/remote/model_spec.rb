@@ -52,6 +52,22 @@ describe KillBillClient::Model do
     pms.size.should == 1
     pms[0].payment_method_id.should == pm.payment_method_id
 
+    # Check there is no payment associated with that account
+    account.payments.size.should == 0
+
+    # Add an external charge
+    invoice_item = KillBillClient::Model::InvoiceItem.new
+    invoice_item.account_id = account.account_id
+    invoice_item.currency = account.currency
+    invoice_item.amount = 123.98
+    invoice_item = invoice_item.create 'KillBill Spec test'
+
+    invoice_item.balance.should == 123.98
+
+    # Check the account balance
+    account = KillBillClient::Model::Account.find_by_id account.account_id, true
+    account.account_balance.should == 123.98
+
     pm.destroy(true, 'KillBill Spec test')
 
     account = KillBillClient::Model::Account.find_by_id account.account_id
