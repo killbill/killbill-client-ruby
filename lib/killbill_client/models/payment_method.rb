@@ -20,6 +20,7 @@ module KillBillClient
 
         def set_default(payment_method_id, account_id, user = nil, reason = nil, comment = nil)
           put "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/#{payment_method_id}/setDefault",
+              nil,
               {},
               {
                   :user => user,
