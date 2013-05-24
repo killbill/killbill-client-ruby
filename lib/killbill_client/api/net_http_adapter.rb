@@ -84,7 +84,7 @@ module KillBillClient
             headers['authorization'] &&= ['Basic [FILTERED]']
             KillBillClient.log :debug, headers.inspect
             if request.body && !request.body.empty?
-              KillBillClient.log :debug, XML.filter(request.body)
+              KillBillClient.log :debug, request.body
             end
             start_time = Time.now
           end
