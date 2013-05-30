@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Payment < PaymentAttributes
+    class Payment < PaymentAttributesSimple
     end
   end
 end

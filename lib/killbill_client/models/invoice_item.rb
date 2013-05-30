@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class InvoiceItem < InvoiceItemAttributes
+    class InvoiceItem < InvoiceItemAttributesSimple
       def create(user = nil, reason = nil, comment = nil)
         created_invoice_item = self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/charges",
                                                to_json,
@@ -10,7 +10,7 @@ module KillBillClient
                                                    :reason => reason,
                                                    :comment => comment,
                                                }
-        created_invoice_item.refresh
+        created_invoice_item.refresh(Invoice)
       end
     end
   end

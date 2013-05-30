@@ -113,9 +113,9 @@ module KillBillClient
         to_hash.to_json
       end
 
-      def refresh
+      def refresh(clazz=self.class)
         if @uri
-          self.class.get @uri
+          self.class.get @uri, {}, {}, clazz
         else
           self
         end
