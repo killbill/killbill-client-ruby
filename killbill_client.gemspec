@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Kill Bill client library.'
   s.description = 'An API client library for Kill Bill.'
 
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 1.8.6'
 
   s.license = 'Apache License (2.0)'
 
