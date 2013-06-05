@@ -27,6 +27,19 @@ module KillBillClient
   module Model
     class PaymentMethodPluginDetailAttributes < Resource
       attribute :external_payment_id
+      attribute :is_default_payment_method
+      attribute :type
+      attribute :cc_name
+      attribute :cc_type
+      attribute :cc_expiration_month
+      attribute :cc_expiration_year
+      attribute :cc_last4
+      attribute :address1
+      attribute :address2
+      attribute :city
+      attribute :state
+      attribute :zip
+      attribute :country
       attribute :properties
     end
   end
