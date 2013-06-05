@@ -61,7 +61,7 @@ module KillBillClient
       end
 
       def plugin_info=(info)
-        @plugin_info = PaymentMethodProperty.new
+        @plugin_info = PaymentMethodPluginDetailAttributes.new
         @plugin_info.properties = []
         return if info.nil?
 
@@ -70,7 +70,7 @@ module KillBillClient
         if info['properties'].nil?
           # Convenience method to create properties to add a payment method
           info.each do |key, value|
-            property = PaymentMethodProperty.new
+            property = PaymentMethodProperties.new
             property.key = key
             property.value = value
             property.is_updatable = false

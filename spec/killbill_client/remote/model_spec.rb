@@ -60,9 +60,10 @@ describe KillBillClient::Model do
     invoice_item.account_id = account.account_id
     invoice_item.currency = account.currency
     invoice_item.amount = 123.98
-    invoice_item = invoice_item.create 'KillBill Spec test'
 
-    invoice_item.balance.should == 123.98
+    invoice = invoice_item.create 'KillBill Spec test'
+
+    invoice.balance.should == 123.98
 
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true

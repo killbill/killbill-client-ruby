@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Account < AccountAttributes
+    class Account < AccountAttributesWithBalance
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
 
       class << self
