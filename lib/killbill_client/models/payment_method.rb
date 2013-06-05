@@ -65,7 +65,7 @@ module KillBillClient
         @plugin_info.properties = []
         return if info.nil?
 
-        @plugin_info.external_payment_id = info['externalPaymentId']
+        info.each { |k, v| @plugin_info.send("#{Utils.underscore k}=", v) unless k == 'properties' }
 
         if info['properties'].nil?
           # Convenience method to create properties to add a payment method
@@ -79,7 +79,7 @@ module KillBillClient
         else
           # De-serialization from JSON payload
           info['properties'].each do |property_json|
-            property = PaymentMethodProperty.new
+            property = PaymentMethodProperties.new
             property.key = property_json['key']
             property.value = property_json['value']
             property.is_updatable = property_json['isUpdatable']
