@@ -25,17 +25,29 @@
 
 module KillBillClient
   module Model
-    class BusinessAccountAttributes < Resource
-      attribute :external_key
+    class AccountAttributesWithBalanceAndCBA < Resource
+      attribute :account_id
       attribute :name
+      attribute :first_name_length
+      attribute :external_key
+      attribute :email
+      attribute :bill_cycle_day_local
       attribute :currency
-      attribute :balance
-      attribute :last_invoice_date
-      attribute :total_invoice_balance
-      attribute :last_payment_status
-      attribute :default_payment_method_type
-      attribute :default_credit_card_type
-      attribute :default_billing_address_country
+      attribute :payment_method_id
+      attribute :time_zone
+      attribute :address1
+      attribute :address2
+      attribute :postal_code
+      attribute :company
+      attribute :city
+      attribute :state
+      attribute :country
+      attribute :locale
+      attribute :phone
+      attribute :is_migrated
+      attribute :is_notified_for_invoices
+      attribute :account_balance
+      attribute :account_cba
     end
   end
 end
