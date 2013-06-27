@@ -31,6 +31,15 @@ describe KillBillClient::Model do
     account.external_key.should == external_key
     account.payment_method_id.should be_nil
 
+    # Add/Remove a tag
+    account.tags.size.should == 0
+    account.add_tag('TEST', 'KillBill Spec test')
+    tags = account.tags
+    tags.size.should == 1
+    tags.first.tag_definition_name.should == 'TEST'
+    account.remove_tag('TEST', 'KillBill Spec test')
+    account.tags.size.should == 0
+
     # Add a payment method
     pm = KillBillClient::Model::PaymentMethod.new
     pm.account_id = account.account_id
@@ -73,5 +82,23 @@ describe KillBillClient::Model do
 
     account = KillBillClient::Model::Account.find_by_id account.account_id
     account.payment_method_id.should be_nil
+  end
+
+  it 'should manipulate tag definitions' do
+    KillBillClient::Model::TagDefinition.all.size.should > 0
+    KillBillClient::Model::TagDefinition.find_by_name('TEST').is_control_tag.should be_true
+
+    tag_definition_name = Time.now.to_i.to_s
+    KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name).should be_nil
+
+    tag_definition = KillBillClient::Model::TagDefinition.new
+    tag_definition.name = tag_definition_name
+    tag_definition.description = 'Tag for unit test'
+    tag_definition.create('KillBill Spec test').id.should_not be_nil
+
+    found_tag_definition = KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)
+    found_tag_definition.name.should == tag_definition_name
+    found_tag_definition.description.should == tag_definition.description
+    found_tag_definition.is_control_tag.should be_false
   end
 end
