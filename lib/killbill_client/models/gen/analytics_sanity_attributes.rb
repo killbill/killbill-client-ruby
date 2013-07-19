@@ -26,7 +26,7 @@
 module KillBillClient
   module Model
     class AnalyticsSanityAttributes < Resource
-      attribute :check_entitlement
+      attribute :check_subscription
       attribute :check_invoice
       attribute :check_payment
       attribute :check_tag
