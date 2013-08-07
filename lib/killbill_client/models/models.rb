@@ -6,8 +6,10 @@ require 'killbill_client/models/audit_log'
 require 'killbill_client/models/event'
 require 'killbill_client/models/credit'
 require 'killbill_client/models/invoice_item'
+require 'killbill_client/models/subscription_deleted_event'
+require 'killbill_client/models/subscription_new_event'
 require 'killbill_client/models/chargeback'
-require 'killbill_client/models/subscription'
+require 'killbill_client/models/subscription_event'
 require 'killbill_client/models/bundle'
 require 'killbill_client/models/refund'
 require 'killbill_client/models/account'
@@ -17,7 +19,6 @@ require 'killbill_client/models/payment_method'
 require 'killbill_client/models/tag'
 require 'killbill_client/models/tag_definition'
 require 'killbill_client/models/account_timeline'
-
 
 module KillBillClient
   module Model

@@ -31,15 +31,6 @@ module KillBillClient
       attribute :new_events
       attribute :deleted_events
       attribute :audit_logs
-      attribute :bundle_id
-      attribute :product_category
-      attribute :product_name
-      attribute :billing_period
-      attribute :charged_through_date
-      attribute :price_list
-      attribute :start_date
-      attribute :canceled_date
-
     end
   end
 end

@@ -9,7 +9,7 @@ module KillBillClient
 
       class << self
 
-        def get_timeline account_id, audit = "MINIMAL"
+        def find_by_account_id account_id, audit = "MINIMAL"
           get "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/timeline",
           {
             :audit => audit

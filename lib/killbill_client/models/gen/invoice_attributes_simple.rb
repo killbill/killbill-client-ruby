@@ -37,8 +37,6 @@ module KillBillClient
       attribute :balance
       attribute :account_id
       attribute :audit_logs
-      attribute :bundle_keys
-      attribute :cba
     end
   end
 end

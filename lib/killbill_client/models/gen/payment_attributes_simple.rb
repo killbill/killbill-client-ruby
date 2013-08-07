@@ -42,7 +42,6 @@ module KillBillClient
       attribute :ext_first_payment_id_ref
       attribute :ext_second_payment_id_ref
       attribute :audit_logs
-      attribute :bundle_keys
     end
   end
 end

@@ -63,7 +63,15 @@ module KillBillClient
           return nil if json.nil? or json.size == 0
           data = JSON.parse json
 
-          instantiate_record_from_json(self, data)
+          if data.is_a? Array
+            records = []
+            data.each do |data_element|
+              records << instantiate_record_from_json(resource_class, data_element)
+            end
+            records
+          else
+            instantiate_record_from_json(resource_class, data)
+          end
         end
 
         def instantiate_record_from_json(resource_class, data)
@@ -126,6 +134,12 @@ module KillBillClient
            #add it to attribute_names
            @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
            @@attribute_names[self.name][attr_name.to_sym] = { :type => type, :cardinality => :one }
+         end
+
+         #hack to cater the api return attributes and javax attributes without editing gen scripts
+         #call only after its declared as a instance_method using attr_accessor
+         def create_alias(new_name, old_name)
+           alias_attribute new_name.to_sym, old_name.to_sym
          end
 
        end #end self methods

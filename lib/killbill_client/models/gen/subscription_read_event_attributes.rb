@@ -28,8 +28,8 @@ module KillBillClient
     class SubscriptionReadEventAttributes < Resource
       attribute :event_id
       attribute :billing_period
-      attribute :requested_date
-      attribute :effective_date
+      attribute :requested_dt
+      attribute :effective_dt
       attribute :product
       attribute :price_list
       attribute :event_type
