@@ -50,6 +50,8 @@ module KillBillClient
           # Configure auth, if enabled
           if KillBillClient.api_key and KillBillClient.api_secret
             request.basic_auth(*[KillBillClient.api_key, KillBillClient.api_secret].flatten[0, 2])
+            request['X-Killbill-ApiKey'] = KillBillClient.api_key
+            request['X-Killbill-ApiSecret'] = KillBillClient.api_secret
           end
 
           if options[:body]
