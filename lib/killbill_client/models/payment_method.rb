@@ -18,6 +18,13 @@ module KillBillClient
               }
         end
 
+        def find_all_by_search_key(search_key, with_plugin_info = false)
+          get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/search/#{search_key}",
+              {
+                  :withPluginInfo => with_plugin_info
+              }
+        end
+
         def set_default(payment_method_id, account_id, user = nil, reason = nil, comment = nil)
           put "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/#{payment_method_id}/setDefault",
               nil,
