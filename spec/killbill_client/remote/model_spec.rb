@@ -82,6 +82,29 @@ describe KillBillClient::Model do
 
     account = KillBillClient::Model::Account.find_by_id account.account_id
     account.payment_method_id.should be_nil
+    
+    #get its timeline
+    timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
+    
+    timeline.account.external_key.should == external_key
+    timeline.account.account_id.should_not be_nil
+    
+    timeline.invoices.should be_a_kind_of Array
+    timeline.invoices.should_not be_empty #assuming there is invoices created before
+    timeline.payments.should be_a_kind_of Array
+    timeline.bundles.should be_a_kind_of Array
+
+    #lets find the invoice by two methods
+    invoice = timeline.invoices.first
+    invoice_id = invoice.invoice_id
+    invoice_number = invoice.invoice_number
+    
+    invoice_with_id = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
+    invoice_with_number = KillBillClient::Model::Invoice.find_by_id_or_number invoice_number
+
+    invoice_with_id.invoice_id.should == invoice_with_number.invoice_id
+    invoice_with_id.invoice_number.should == invoice_with_number.invoice_number
+    
   end
 
   it 'should manipulate tag definitions' do

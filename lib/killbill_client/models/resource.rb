@@ -87,7 +87,7 @@ module KillBillClient
                 newValue = []
                 value.each do |val|
                   if val.is_a?(Hash)
-                    newValue << instantiate_record_from_json(type.to_s.constantize, val)
+                    newValue << instantiate_record_from_json(type, val)
                   else
                     newValue << val
                   end
@@ -139,7 +139,8 @@ module KillBillClient
          #hack to cater the api return attributes and javax attributes without editing gen scripts
          #call only after its declared as a instance_method using attr_accessor
          def create_alias(new_name, old_name)
-           alias_attribute new_name.to_sym, old_name.to_sym
+           alias_method new_name.to_sym, old_name.to_sym #getter
+           alias_method "#{new_name}=".to_sym, "#{old_name}=".to_sym #setter
          end
 
        end #end self methods
