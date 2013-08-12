@@ -9,7 +9,7 @@ describe KillBillClient::Model::Resource do
     #expected "KillBillClient::Model::AccountTimeline"=>{:account=>{:type=>KillBillClient::Model::Account, :cardinality=>:one}, :payments=>{:type=>KillBillClient::Model::Payment, :cardinality=>:many}, :bundles=>{:type=>KillBillClient::Model::Bundle, :cardinality=>:many}, :invoices=>{:type=>KillBillClient::Model::Invoice, :cardinality=>:many}}
     test_var = KillBillClient::Model::AccountTimeline.class_variable_defined? class_var_name
     test_var.should_not be_false
-    
+
     var = KillBillClient::Model::AccountTimeline.class_variable_get class_var_name
     var.size.should > 0
     var.should have_key "KillBillClient::Model::AccountTimeline"
@@ -22,15 +22,13 @@ describe KillBillClient::Model::Resource do
 
     attr[:type].should == KillBillClient::Model::Account
     attr[:cardinality].should == :one #has one
-    
+
     #should also be accessible by attr_accessors
 
     methods = KillBillClient::Model::AccountTimeline.instance_methods
     methods.should include :account     # attr_reader
     methods.should include :account= #attr_writer
-
   end
-
 
   it 'should test has_many property' do
     #test event has many audit_logs
@@ -39,7 +37,7 @@ describe KillBillClient::Model::Resource do
 
     test_var = KillBillClient::Model::Event.class_variable_defined? class_var_name
     test_var.should_not be_false
-    
+
     var = KillBillClient::Model::Event.class_variable_get class_var_name
     var.size.should > 0
     var.should have_key "KillBillClient::Model::Event"
@@ -52,27 +50,25 @@ describe KillBillClient::Model::Resource do
 
     attr[:type].should == KillBillClient::Model::AuditLog
     attr[:cardinality].should == :many #has many
-    
+
     #should also be accessible by attr_accessors
 
     methods = KillBillClient::Model::Event.instance_methods
     methods.should include :audit_logs     # attr_reader
     methods.should include :audit_logs= #attr_writer
-      
   end
 
   it 'should create alias attr accessors' do
     KillBillClient::Model::Event.create_alias :alias_date, :requested_dt
-    
+
     methods = KillBillClient::Model::Event.instance_methods
     methods.should include :alias_date
     methods.should include :alias_date=
-    
+
     evt = KillBillClient::Model::Event.new
     evt.alias_date = "devaroop"
     evt.requested_dt.should == "devaroop"
     evt.alias_date.should == "devaroop"
   end
-
 end
  

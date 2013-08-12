@@ -8,17 +8,13 @@ module KillBillClient
       has_many :invoices, KillBillClient::Model::Invoice
 
       class << self
-
-        def find_by_account_id account_id, audit = "MINIMAL"
+        def find_by_account_id(account_id, audit = 'MINIMAL')
           get "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/timeline",
-          {
-            :audit => audit
-          }
+              {
+                :audit => audit
+              }
         end
-
-      end #end static methods
-
-
-    end #end AccountTimeline
-  end#end Model
-end#end KillBillClient
+      end
+    end
+  end
+end

@@ -6,7 +6,6 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       create_alias :bundle_keys, :external_bundle_keys
-
     end
   end
 end

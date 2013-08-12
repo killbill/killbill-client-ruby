@@ -170,7 +170,6 @@ module KillBillClient
            self
          end
        end
-
      end
    end
  end
