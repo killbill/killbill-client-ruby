@@ -123,4 +123,10 @@ describe KillBillClient::Model do
     found_tag_definition.description.should == tag_definition.description
     found_tag_definition.is_control_tag.should be_false
   end
+
+  #it 'should retrieve users permissions' do
+  #  # Tough to verify as it depends on the Kill Bill configuration
+  #  puts KillBillClient::Model::Security.find_permissions
+  #  puts KillBillClient::Model::Security.find_permissions(:username => 'admin', :password => 'password')
+  #end
 end

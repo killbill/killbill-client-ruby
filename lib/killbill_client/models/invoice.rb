@@ -10,11 +10,12 @@ module KillBillClient
       create_alias :bundle_keys, :external_bundle_keys
 
       class << self
-        def find_by_id_or_number(id_or_number, with_items = true)
+        def find_by_id_or_number(id_or_number, with_items = true, options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{id_or_number}",
               {
                 :withItems => with_items
-              }
+              },
+              options
         end
       end
     end

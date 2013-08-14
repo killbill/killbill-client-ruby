@@ -66,7 +66,12 @@ module KillBillClient
           if data.is_a? Array
             records = []
             data.each do |data_element|
-              records << instantiate_record_from_json(resource_class, data_element)
+              if data_element.is_a? Enumerable
+                records << instantiate_record_from_json(resource_class, data_element)
+              else
+                # Value (e.g. String)
+                records << data_element
+              end
             end
             records
           else

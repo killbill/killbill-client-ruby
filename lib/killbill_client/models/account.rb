@@ -4,16 +4,17 @@ module KillBillClient
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
 
       class << self
-        def find_by_id(account_id, with_balance = false, with_balance_and_cba = false)
+        def find_by_id(account_id, with_balance = false, with_balance_and_cba = false, options = {})
           get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}",
               {
                   :accountWithBalance => with_balance,
                   :accountWithBalanceAndCBA => with_balance_and_cba
-              }
+              },
+              options
         end
       end
 
-      def create(user = nil, reason = nil, comment = nil)
+      def create(user = nil, reason = nil, comment = nil, options = {})
         created_account = self.class.post KILLBILL_API_ACCOUNTS_PREFIX,
                                           to_json,
                                           {},
@@ -21,27 +22,27 @@ module KillBillClient
                                               :user => user,
                                               :reason => reason,
                                               :comment => comment,
-                                          }
+                                          }.merge(options)
         created_account.refresh
       end
 
-      def payments
+      def payments(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                        {},
-                       {},
+                       options,
                        Payment
       end
 
-      def tags(audit = 'NONE')
+      def tags(audit = 'NONE', options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
                        {
                            :audit => audit
                        },
-                       {},
+                       options,
                        Tag
       end
 
-      def add_tag(tag_name, user = nil, reason = nil, comment = nil)
+      def add_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
         tag_definition = TagDefinition.find_by_name(tag_name)
         if tag_definition.nil?
           tag_definition = TagDefinition.new
@@ -59,12 +60,12 @@ module KillBillClient
                                           :user => user,
                                           :reason => reason,
                                           :comment => comment,
-                                      },
+                                      }.merge(options),
                                       Tag
         created_tag.refresh
       end
 
-      def remove_tag(tag_name, user = nil, reason = nil, comment = nil)
+      def remove_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
         tag_definition = TagDefinition.find_by_name(tag_name)
         return nil if tag_definition.nil?
 
@@ -76,7 +77,7 @@ module KillBillClient
                               :user => user,
                               :reason => reason,
                               :comment => comment,
-                          }
+                          }.merge(options)
       end
     end
   end

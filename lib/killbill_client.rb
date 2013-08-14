@@ -41,9 +41,14 @@ module KillBillClient
 
     attr_writer :url
 
-    # Tenant key/password. Optional.
+    # Tenant key/secret. Optional.
     attr_accessor :api_key
     attr_accessor :api_secret
+
+    # RBAC username/password. Optional.
+    # These can also be configured on a per request basis
+    attr_accessor :username
+    attr_accessor :password
 
     # @return [String, nil] A default currency.
     def default_currency

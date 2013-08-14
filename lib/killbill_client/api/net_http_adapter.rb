@@ -47,13 +47,18 @@ module KillBillClient
           end
           request = METHODS[method].new uri.request_uri, head
 
-          # Configure auth, if enabled
+          # Configure multi-tenancy headers, if enabled
           if KillBillClient.api_key and KillBillClient.api_secret
-            request.basic_auth(*[KillBillClient.api_key, KillBillClient.api_secret].flatten[0, 2])
             request['X-Killbill-ApiKey'] = KillBillClient.api_key
             request['X-Killbill-ApiSecret'] = KillBillClient.api_secret
           end
 
+          # Configure RBAC, if enabled
+          username = options[:username] || KillBillClient.username
+          password = options[:password] || KillBillClient.password
+          if username and password
+            request.basic_auth(*[username, password].flatten[0, 2])
+          end
           if options[:body]
             request['Content-Type'] = content_type
             request.body = options[:body]
