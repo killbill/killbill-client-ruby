@@ -124,6 +124,28 @@ describe KillBillClient::Model do
     found_tag_definition.is_control_tag.should be_false
   end
 
+  it 'should manipulate tenants' do
+    api_key = Time.now.to_i.to_s
+    api_secret = 'S4cr3333333t!!!!!!lolz'
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = api_key
+    tenant.api_secret = api_secret
+
+    # Create and verify the tenant
+    tenant = tenant.create('KillBill Spec test')
+    tenant.api_key.should == api_key
+    tenant.tenant_id.should_not be_nil
+
+    # Try to retrieve it by id
+    tenant = KillBillClient::Model::Tenant.find_by_id tenant.tenant_id
+    tenant.api_key.should == api_key
+
+    # Try to retrieve it by api key
+    tenant = KillBillClient::Model::Tenant.find_by_api_key tenant.api_key
+    tenant.api_key.should == api_key
+  end
+
   #it 'should retrieve users permissions' do
   #  # Tough to verify as it depends on the Kill Bill configuration
   #  puts KillBillClient::Model::Security.find_permissions
