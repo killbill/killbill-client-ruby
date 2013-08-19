@@ -49,8 +49,8 @@ module KillBillClient
 
           # Configure multi-tenancy headers, if enabled
           if KillBillClient.api_key and KillBillClient.api_secret
-            request['X-Killbill-ApiKey'] = KillBillClient.api_key
-            request['X-Killbill-ApiSecret'] = KillBillClient.api_secret
+            request['X-Killbill-ApiKey'] = options[:api_key] || KillBillClient.api_key
+            request['X-Killbill-ApiSecret'] = options[:api_secret] || KillBillClient.api_secret
           end
 
           # Configure RBAC, if enabled
