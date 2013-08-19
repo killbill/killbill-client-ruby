@@ -1,4 +1,5 @@
 require 'killbill_client/models/resource'
+require 'killbill_client/models/resources'
 
 require 'killbill_client/models/gen/require_gen'
 

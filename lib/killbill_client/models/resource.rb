@@ -4,6 +4,10 @@ module KillBillClient
   module Model
     class Resource
 
+      attr_reader :etag,
+                  :session_id,
+                  :response
+
       KILLBILL_API_PREFIX = '/1.0/kb/'
       @@attribute_names = {}
 
@@ -45,7 +49,8 @@ module KillBillClient
             response.body
           when %r{application/json}
             record = from_json resource_class, response.body
-            record.instance_eval { @etag, @response = response['ETag'], response }
+            session_id = extract_session_id(response)
+            record.instance_eval { @etag, @session_id, @response = response['ETag'], session_id, response }
             record
           else
             raise ArgumentError, "#{response['Content-Type']} is not supported by the library"
@@ -64,7 +69,7 @@ module KillBillClient
           data = JSON.parse json
 
           if data.is_a? Array
-            records = []
+            records = Resources.new
             data.each do |data_element|
               if data_element.is_a? Enumerable
                 records << instantiate_record_from_json(resource_class, data_element)
@@ -108,7 +113,7 @@ module KillBillClient
 
           record
         end
-        
+
         def attribute(name)
           self.send('attr_accessor', name.to_sym)
 
@@ -135,7 +140,7 @@ module KillBillClient
 
          def has_one(attr_name, type = nil)
            send("attr_accessor", attr_name.to_sym)
-           
+
            #add it to attribute_names
            @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
            @@attribute_names[self.name][attr_name.to_sym] = { :type => type, :cardinality => :one }
@@ -148,6 +153,20 @@ module KillBillClient
            alias_method "#{new_name}=".to_sym, "#{old_name}=".to_sym #setter
          end
 
+         # Extract the session id from a response
+         def extract_session_id(response)
+           # The Set-Cookie header looks like
+           # "set-cookie"=>["JSESSIONID=16; Path=/; HttpOnly", "rememberMe=deleteMe; Path=/; Max-Age=0; Expires=Sat, 17-Aug-2013 23:39:37 GMT"],
+           session_cookie = response['set-cookie']
+           unless session_cookie.nil?
+             session_cookie.split(';').each do |chunk|
+               chunk.strip!
+               key, value = chunk.split('=')
+               return value if key == 'JSESSIONID'
+             end
+           end
+           nil
+         end
        end #end self methods
 
        # Set on create call

@@ -59,6 +59,11 @@ module KillBillClient
           if username and password
             request.basic_auth(*[username, password].flatten[0, 2])
           end
+          session_id = options[:session_id]
+          if session_id
+            request['Cookie'] = "JSESSIONID=#{session_id}"
+          end
+
           if options[:body]
             request['Content-Type'] = content_type
             request.body = options[:body]
