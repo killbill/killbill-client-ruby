@@ -24,7 +24,7 @@ module KillBillClient
                                                      :reason => reason,
                                                      :comment => comment,
                                                  }.merge(options)
-        created_tag_definition.refresh
+        created_tag_definition.refresh(options)
       end
     end
   end

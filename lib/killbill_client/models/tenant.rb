@@ -26,7 +26,7 @@ module KillBillClient
                                              :reason => reason,
                                              :comment => comment,
                                          }.merge(options)
-        created_tenant.refresh
+        created_tenant.refresh(options)
       end
     end
   end

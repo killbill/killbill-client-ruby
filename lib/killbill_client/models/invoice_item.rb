@@ -10,7 +10,7 @@ module KillBillClient
                                                    :reason => reason,
                                                    :comment => comment,
                                                }.merge(options)
-        created_invoice_item.refresh(Invoice)
+        created_invoice_item.refresh(options, Invoice)
       end
     end
   end

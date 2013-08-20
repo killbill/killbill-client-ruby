@@ -23,7 +23,7 @@ module KillBillClient
                                               :reason => reason,
                                               :comment => comment,
                                           }.merge(options)
-        created_account.refresh
+        created_account.refresh(options)
       end
 
       def payments(options = {})
@@ -62,7 +62,7 @@ module KillBillClient
                                           :comment => comment,
                                       }.merge(options),
                                       Tag
-        created_tag.refresh
+        created_tag.refresh(options)
       end
 
       def remove_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})

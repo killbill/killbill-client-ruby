@@ -20,7 +20,7 @@ module KillBillClient
               options
         end
 
-        def find_all_by_search_key(search_key, with_plugin_info = false, options)
+        def find_all_by_search_key(search_key, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/search/#{search_key}",
               {
                   :withPluginInfo => with_plugin_info
@@ -63,7 +63,7 @@ module KillBillClient
                                          :reason => reason,
                                          :comment => comment,
                                      }.merge(options)
-        created_pm.refresh
+        created_pm.refresh(options)
       end
 
       def destroy(set_auto_pay_off = false, user = nil, reason = nil, comment = nil, options = {})
