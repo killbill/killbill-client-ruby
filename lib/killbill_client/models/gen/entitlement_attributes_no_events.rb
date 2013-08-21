@@ -25,7 +25,7 @@
 
 module KillBillClient
   module Model
-    class SubscriptionAttributesNoEvents < Resource
+    class EntitlementAttributesNoEvents < Resource
       attribute :account_id
       attribute :bundle_id
       attribute :entitlement_id
@@ -37,10 +37,6 @@ module KillBillClient
       attribute :price_list
       attribute :cancelled_date
       attribute :audit_logs
-      attribute :charged_through_date
-      attribute :billing_start_date
-      attribute :billing_end_date
-      attribute :bcd
     end
   end
 end

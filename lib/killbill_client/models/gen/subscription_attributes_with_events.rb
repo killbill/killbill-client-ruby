@@ -26,7 +26,10 @@
 module KillBillClient
   module Model
     class SubscriptionAttributesWithEvents < Resource
-      attribute :subscription_id
+      attribute :account_id
+      attribute :bundle_id
+      attribute :entitlement_id
+      attribute :external_key
       attribute :events
       attribute :new_events
       attribute :deleted_events

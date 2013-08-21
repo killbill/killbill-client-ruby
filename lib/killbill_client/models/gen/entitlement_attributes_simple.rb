@@ -25,8 +25,11 @@
 
 module KillBillClient
   module Model
-    class SubscriptionAttributesSimple < Resource
-      attribute :subscription_id
+    class EntitlementAttributesSimple < Resource
+      attribute :account_id
+      attribute :bundle_id
+      attribute :entitlement_id
+      attribute :external_key
       attribute :audit_logs
     end
   end
