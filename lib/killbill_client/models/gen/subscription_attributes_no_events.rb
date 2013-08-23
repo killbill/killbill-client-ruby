@@ -28,7 +28,7 @@ module KillBillClient
     class SubscriptionAttributesNoEvents < Resource
       attribute :account_id
       attribute :bundle_id
-      attribute :entitlement_id
+      attribute :subscription_id
       attribute :external_key
       attribute :start_date
       attribute :product_name
@@ -40,7 +40,6 @@ module KillBillClient
       attribute :charged_through_date
       attribute :billing_start_date
       attribute :billing_end_date
-      attribute :bcd
     end
   end
 end

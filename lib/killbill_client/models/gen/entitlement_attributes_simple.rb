@@ -28,7 +28,7 @@ module KillBillClient
     class EntitlementAttributesSimple < Resource
       attribute :account_id
       attribute :bundle_id
-      attribute :entitlement_id
+      attribute :subscription_id
       attribute :external_key
       attribute :audit_logs
     end
