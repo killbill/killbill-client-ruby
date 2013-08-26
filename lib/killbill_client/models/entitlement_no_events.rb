@@ -35,8 +35,8 @@ module KillBillClient
       # @billing_policy : the override for the billing policy {END_OF_TERM, IMMEDIATE}
       # @ call_completion : whether the call should wait for invoice/payment to be completed before calls return
       #
-      def change_plan(input, requested_date = nil, billing_policy = nil, call_completion = false,
-          user = nil, reason = nil, comment = nil, options = {})
+      def change_plan(input, user = nil, reason = nil, comment = nil,
+           requested_date = nil, billing_policy = nil, call_completion = false,options = {})
 
         params = {}
         params[:callCompletion] = call_completion
@@ -59,8 +59,7 @@ module KillBillClient
       # @requested_date : the date when that change should occur
       # @billing_policy : the override for the billing policy {END_OF_TERM, IMMEDIATE}
       #
-      def cancel(requested_date, billing_policy = nil,
-          user = nil, reason = nil, comment = nil, options = {})
+      def cancel(user = nil, reason = nil, comment = nil, requested_date = nil, billing_policy = nil, options = {})
 
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
