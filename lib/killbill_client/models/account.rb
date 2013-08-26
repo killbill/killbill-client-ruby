@@ -48,7 +48,7 @@ module KillBillClient
           tag_definition = TagDefinition.new
           tag_definition.name = tag_name
           tag_definition.description = "Tag created for account #{@account_id}"
-          tag_definition = TagDefinition.create(user)
+          tag_definition = TagDefinition.create(user, options)
         end
 
         created_tag = self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
