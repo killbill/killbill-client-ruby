@@ -26,6 +26,12 @@ module KillBillClient
                                              :reason => reason,
                                              :comment => comment,
                                          }.merge(options)
+        #
+        # Specify api_key and api_secret before making the call to retrieve the tenant object
+        # otherwise that would fail with a 401
+        #
+        options[:api_key] = @api_key
+        options[:api_secret] = @api_secret
         created_tenant.refresh(options)
       end
     end

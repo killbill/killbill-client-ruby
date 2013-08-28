@@ -48,7 +48,7 @@ module KillBillClient
           request = METHODS[method].new uri.request_uri, head
 
           # Configure multi-tenancy headers, if enabled
-          if KillBillClient.api_key and KillBillClient.api_secret
+          if (options[:api_key] || KillBillClient.api_key) && (options[:api_secret] || KillBillClient.api_secret)
             request['X-Killbill-ApiKey'] = options[:api_key] || KillBillClient.api_key
             request['X-Killbill-ApiSecret'] = options[:api_secret] || KillBillClient.api_secret
           end
