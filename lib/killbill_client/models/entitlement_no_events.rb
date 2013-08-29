@@ -59,11 +59,12 @@ module KillBillClient
       # @requested_date : the date when that change should occur
       # @billing_policy : the override for the billing policy {END_OF_TERM, IMMEDIATE}
       #
-      def cancel(user = nil, reason = nil, comment = nil, requested_date = nil, billing_policy = nil, options = {})
+      def cancel(user = nil, reason = nil, comment = nil, requested_date = nil, entitlementPolicy = nil, billing_policy = nil, options = {})
 
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
-        params[:policy] = billing_policy unless billing_policy.nil?
+        params[:billingPolicy] = billing_policy unless billing_policy.nil?
+        params[:entitlementPolicy] = entitlementPolicy unless entitlementPolicy.nil?
 
         return self.class.delete "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
                               params,
