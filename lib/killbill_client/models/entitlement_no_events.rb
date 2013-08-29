@@ -41,7 +41,7 @@ module KillBillClient
         params = {}
         params[:callCompletion] = call_completion
         params[:requestedDate] = requested_date unless requested_date.nil?
-        params[:policy] = billing_policy unless billing_policy.nil?
+        params[:billingPolicy] = billing_policy unless billing_policy.nil?
 
         return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
                               input.to_json,
