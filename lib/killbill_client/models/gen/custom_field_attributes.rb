@@ -28,6 +28,7 @@ module KillBillClient
     class CustomFieldAttributes < Resource
       attribute :name
       attribute :value
+      attribute :audit_logs
     end
   end
 end
