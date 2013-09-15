@@ -35,37 +35,37 @@ describe KillBillClient::Model::Resource do
     #has_many :audit_logs, KillBillClient::Model::AuditLog
     #expected {"KillBillClient::Model::SubscriptionEvent"=>{:audit_logs=>{:type=>KillBillClient::Model::AuditLog, :cardinality=>:many}}}
 
-    test_var = KillBillClient::Model::SubscriptionEvent.class_variable_defined? class_var_name
+    test_var = KillBillClient::Model::EventSubscription.class_variable_defined? class_var_name
     test_var.should_not be_false
 
-    var = KillBillClient::Model::SubscriptionEvent.class_variable_get class_var_name
+    var = KillBillClient::Model::EventSubscription.class_variable_get class_var_name
     var.size.should > 0
-    var.should have_key "KillBillClient::Model::SubscriptionEvent"
-    var["KillBillClient::Model::SubscriptionEvent"].should have_key :audit_logs
+    var.should have_key "KillBillClient::Model::Subscription"
+    var["KillBillClient::Model::Subscription"].should have_key :events
 
-    attr = var["KillBillClient::Model::SubscriptionEvent"][:audit_logs]
+    attr = var["KillBillClient::Model::Subscription"][:events]
 
     attr.should have_key :type
     attr.should have_key :cardinality
 
-    attr[:type].should == KillBillClient::Model::AuditLog
+    attr[:type].should == KillBillClient::Model::EventSubscription
     attr[:cardinality].should == :many #has many
 
     #should also be accessible by attr_accessors
 
-    methods = KillBillClient::Model::SubscriptionEvent.instance_methods
+    methods = KillBillClient::Model::EventSubscription.instance_methods
     methods.should include :audit_logs     # attr_reader
     methods.should include :audit_logs= #attr_writer
   end
 
   it 'should create alias attr accessors' do
-    KillBillClient::Model::SubscriptionEvent.create_alias :alias_date, :requested_dt
+    KillBillClient::Model::EventSubscription.create_alias :alias_date, :requested_dt
 
-    methods = KillBillClient::Model::SubscriptionEvent.instance_methods
+    methods = KillBillClient::Model::EventSubscription.instance_methods
     methods.should include :alias_date
     methods.should include :alias_date=
 
-    evt = KillBillClient::Model::SubscriptionEvent.new
+    evt = KillBillClient::Model::EventSubscription.new
     evt.alias_date = "devaroop"
     evt.requested_dt.should == "devaroop"
     evt.alias_date.should == "devaroop"

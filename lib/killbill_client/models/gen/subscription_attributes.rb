@@ -28,7 +28,7 @@ module KillBillClient
     class SubscriptionAttributes < Resource
       attribute :account_id
       attribute :bundle_id
-      attribute :entitlement_id
+      attribute :subscription_id
       attribute :external_key
       attribute :start_date
       attribute :product_name

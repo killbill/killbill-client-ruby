@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class SubscriptionEvent < EventSubscriptionAttributes
+    class EventSubscription < EventSubscriptionAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       create_alias :requested_date, :requested_dt

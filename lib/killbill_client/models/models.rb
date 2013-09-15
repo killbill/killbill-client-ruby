@@ -4,7 +4,7 @@ require 'killbill_client/models/resources'
 require 'killbill_client/models/gen/require_gen'
 
 require 'killbill_client/models/audit_log'
-require 'killbill_client/models/subscription_event'
+require 'killbill_client/models/event_subscription'
 require 'killbill_client/models/credit'
 require 'killbill_client/models/invoice_item'
 require 'killbill_client/models/chargeback'

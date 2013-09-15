@@ -1,6 +1,9 @@
 module KillBillClient
   module Model
     class Account < AccountAttributes
+
+      has_many :audit_logs, KillBillClient::Model::AuditLog
+
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
 
       class << self

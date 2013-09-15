@@ -1,8 +1,8 @@
 module KillBillClient
   module Model
-    class SubscriptionNoEvents < SubscriptionAttributes
+    class Subscription < SubscriptionAttributes
 
-      has_many :events, KillBillClient::Model::SubscriptionEvent
+      has_many :events, KillBillClient::Model::EventSubscription
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/entitlements"
 
@@ -11,8 +11,8 @@ module KillBillClient
       class << self
 
 
-        def find_by_id(entitlement_id,  options = {})
-          get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{entitlement_id}",
+        def find_by_id(subscription_id,  options = {})
+          get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
               {},
               options
         end
