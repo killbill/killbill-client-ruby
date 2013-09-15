@@ -29,9 +29,7 @@ module KillBillClient
       attribute :credit_amount
       attribute :invoice_id
       attribute :invoice_number
-      attribute :requested_date
       attribute :effective_date
-      attribute :reason
       attribute :account_id
       attribute :audit_logs
     end

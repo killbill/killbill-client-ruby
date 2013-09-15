@@ -25,21 +25,16 @@
 
 module KillBillClient
   module Model
-    class SubscriptionAttributesNoEvents < Resource
-      attribute :account_id
-      attribute :bundle_id
-      attribute :subscription_id
-      attribute :external_key
-      attribute :start_date
-      attribute :product_name
-      attribute :product_category
+    class EventSubscriptionAttributes < Resource
+      attribute :event_id
       attribute :billing_period
+      attribute :requested_dt
+      attribute :effective_dt
+      attribute :product
       attribute :price_list
-      attribute :cancelled_date
+      attribute :event_type
+      attribute :phase
       attribute :audit_logs
-      attribute :charged_through_date
-      attribute :billing_start_date
-      attribute :billing_end_date
     end
   end
 end

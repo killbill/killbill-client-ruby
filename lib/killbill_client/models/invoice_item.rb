@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class InvoiceItem < InvoiceItemAttributesSimple
+    class InvoiceItem < InvoiceItemAttributes
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 

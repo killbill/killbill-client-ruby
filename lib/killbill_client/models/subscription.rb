@@ -1,12 +1,24 @@
 module KillBillClient
   module Model
-    class EntitlementNoEvents < EntitlementAttributesNoEvents
+    class SubscriptionNoEvents < SubscriptionAttributes
+
+      has_many :events, KillBillClient::Model::SubscriptionEvent
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/entitlements"
 
+      KILLBILL_API_BUNDLE_PREFIX = "#{KILLBILL_API_PREFIX}/bundles"
+
       class << self
+
+
         def find_by_id(entitlement_id,  options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{entitlement_id}",
+              {},
+              options
+        end
+
+        def find_by_bundle_id(bundle_id, options = {})
+          get "#{KILLBILL_API_BUNDLE_PREFIX}/#{bundle_id}/subscriptions",
               {},
               options
         end
@@ -36,7 +48,7 @@ module KillBillClient
       # @ call_completion : whether the call should wait for invoice/payment to be completed before calls return
       #
       def change_plan(input, user = nil, reason = nil, comment = nil,
-           requested_date = nil, billing_policy = nil,  call_completion = false,options = {})
+          requested_date = nil, billing_policy = nil,  call_completion = false,options = {})
 
         params = {}
         params[:callCompletion] = call_completion
@@ -68,13 +80,14 @@ module KillBillClient
         params[:useRequestedDateForBilling] = use_requested_date_for_billing unless use_requested_date_for_billing.nil?
 
         return self.class.delete "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
-                              params,
-                              {
-                                  :user => user,
-                                  :reason => reason,
-                                  :comment => comment,
-                              }.merge(options)
+                                 params,
+                                 {
+                                     :user => user,
+                                     :reason => reason,
+                                     :comment => comment,
+                                 }.merge(options)
       end
+
     end
   end
 end

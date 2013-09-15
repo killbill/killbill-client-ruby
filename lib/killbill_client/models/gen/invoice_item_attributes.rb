@@ -25,9 +25,21 @@
 
 module KillBillClient
   module Model
-    class ChargebackCollectionAttributes < Resource
+    class InvoiceItemAttributes < Resource
+      attribute :invoice_item_id
+      attribute :invoice_id
+      attribute :linked_invoice_item_id
       attribute :account_id
-      attribute :chargebacks
+      attribute :bundle_id
+      attribute :subscription_id
+      attribute :plan_name
+      attribute :phase_name
+      attribute :description
+      attribute :start_date
+      attribute :end_date
+      attribute :amount
+      attribute :currency
+      attribute :audit_logs
     end
   end
 end

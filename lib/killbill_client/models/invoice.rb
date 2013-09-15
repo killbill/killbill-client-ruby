@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Invoice < InvoiceAttributesWithBundleKeys
+    class Invoice < InvoiceAttributes
       KILLBILL_API_INVOICES_PREFIX = "#{KILLBILL_API_PREFIX}/invoices"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog

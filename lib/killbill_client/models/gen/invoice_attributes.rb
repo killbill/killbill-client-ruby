@@ -25,9 +25,20 @@
 
 module KillBillClient
   module Model
-    class BundleAttributesSimple < Resource
-      attribute :bundle_id
-      attribute :external_key
+    class InvoiceAttributes < Resource
+      attribute :amount
+      attribute :currency
+      attribute :credit_adj
+      attribute :refund_adj
+      attribute :invoice_id
+      attribute :invoice_date
+      attribute :target_date
+      attribute :invoice_number
+      attribute :balance
+      attribute :account_id
+      attribute :external_bundle_keys
+      attribute :credits
+      attribute :items
       attribute :audit_logs
     end
   end

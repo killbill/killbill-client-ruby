@@ -26,11 +26,12 @@
 module KillBillClient
   module Model
     class ChargebackAttributes < Resource
+      attribute :account_id
       attribute :requested_date
       attribute :effective_date
-      attribute :chargeback_amount
+      attribute :amount
       attribute :payment_id
-      attribute :reason
+      attribute :currency
       attribute :audit_logs
     end
   end

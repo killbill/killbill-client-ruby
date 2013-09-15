@@ -25,10 +25,13 @@
 
 module KillBillClient
   module Model
-    class BundleAttributesWithSubscriptions < Resource
-      attribute :bundle_id
-      attribute :external_key
-      attribute :subscriptions
+    class NewEventSubscriptionAttributes < Resource
+      attribute :billing_period
+      attribute :requested_date
+      attribute :product
+      attribute :price_list
+      attribute :event_type
+      attribute :phase
       attribute :audit_logs
     end
   end
