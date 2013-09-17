@@ -34,6 +34,7 @@ module KillBillClient
       attribute :subscription_id
       attribute :plan_name
       attribute :phase_name
+      attribute :item_type
       attribute :description
       attribute :start_date
       attribute :end_date

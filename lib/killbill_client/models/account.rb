@@ -29,6 +29,15 @@ module KillBillClient
         created_account.refresh(options)
       end
 
+      def invoices(with_items=false, options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
+                       {
+                           :withItems => with_items
+                       },
+                       options,
+                       Invoice
+      end
+
       def payments(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                        {},
