@@ -176,7 +176,7 @@ module KillBillClient
          json_hash = {}
          self.class.json_attributes.each do |name|
            value = self.send(name)
-           if value
+           unless value.nil?
              json_hash[Utils.camelize name, :lower] = value.is_a?(Resource) ? value.to_hash : value
            end
          end
