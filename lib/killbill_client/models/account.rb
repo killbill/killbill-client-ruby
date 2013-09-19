@@ -45,6 +45,13 @@ module KillBillClient
                        Payment
       end
 
+      def overdue(options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/overdue",
+                       {},
+                       options,
+                       OverdueStateAttributes
+      end
+
       def tags(audit = 'NONE', options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
                        {

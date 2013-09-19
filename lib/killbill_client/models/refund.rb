@@ -22,8 +22,8 @@ module KillBillClient
 
       end #end class methods
 
-      def create(payment_id, refunds, user = nil, reason = nil, comment = nil, options = {})
-        created_refund = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}/refunds",
+      def create(user = nil, reason = nil, comment = nil, options = {})
+        created_refund = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{@payment_id}/refunds",
         to_json,
         {},
         {
