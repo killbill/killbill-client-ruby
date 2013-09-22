@@ -177,10 +177,20 @@ module KillBillClient
          self.class.json_attributes.each do |name|
            value = self.send(name)
            unless value.nil?
-             json_hash[Utils.camelize name, :lower] = value.is_a?(Resource) ? value.to_hash : value
+             json_hash[Utils.camelize name, :lower] = _to_hash(value)
            end
          end
          json_hash
+       end
+
+       def _to_hash(value)
+         if value.is_a?(Resource)
+           value.to_hash
+         elsif value.is_a?(Array)
+           value.map { |v| _to_hash(v) }
+         else
+           value
+         end
        end
 
        def to_json

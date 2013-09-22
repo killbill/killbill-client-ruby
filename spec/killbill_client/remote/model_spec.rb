@@ -88,7 +88,7 @@ describe KillBillClient::Model do
 
     timeline.account.external_key.should == external_key
     timeline.account.account_id.should_not be_nil
-    
+
     timeline.invoices.should be_a_kind_of Array
     timeline.invoices.should_not be_empty
     timeline.payments.should be_a_kind_of Array
@@ -104,6 +104,40 @@ describe KillBillClient::Model do
 
     invoice_with_id.invoice_id.should == invoice_with_number.invoice_id
     invoice_with_id.invoice_number.should == invoice_with_number.invoice_number
+
+    # Create an external payment
+    payment = KillBillClient::Model::Payment.new
+    payment.account_id = account.account_id
+    payment.create true, 'KillBill Spec test'
+
+    # Check the account balance
+    account = KillBillClient::Model::Account.find_by_id account.account_id, true
+    account.account_balance.should == 0
+
+    # Verify the timeline
+    timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
+    timeline.payments.should_not be_empty
+    payment = timeline.payments.first
+    payment.refunds.should be_empty
+
+    # Refund the payment (with item adjustment)
+    invoice_item = KillBillClient::Model::Invoice.find_by_id_or_number(invoice_number, true).items.first
+    refund = KillBillClient::Model::Refund.new
+    refund.payment_id = payment.payment_id
+    refund.amount = payment.amount
+    refund.adjusted = true
+    item = KillBillClient::Model::InvoiceItem.new
+    item.invoice_item_id = invoice_item.invoice_item_id
+    item.amount = invoice_item.amount
+    refund.adjustments = [item]
+    refund.create 'KillBill Spec test'
+
+    # Verify the refund
+    timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
+    timeline.payments.should_not be_empty
+    payment = timeline.payments.first
+    payment.refunds.should_not be_empty
+    payment.refunds.first.amount.should == invoice_item.amount
   end
 
   it 'should manipulate tag definitions' do

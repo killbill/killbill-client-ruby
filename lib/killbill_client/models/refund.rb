@@ -7,7 +7,6 @@ module KillBillClient
       has_many :adjustments, KillBillClient::Model::InvoiceItem
 
       class << self
-        
         def find_by_id refund_id, options = {}
           get "#{KILLBILL_API_REFUNDS_PREFIX}/#{refund_id}",
           {},
@@ -24,17 +23,16 @@ module KillBillClient
 
       def create(user = nil, reason = nil, comment = nil, options = {})
         created_refund = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{@payment_id}/refunds",
-        to_json,
-        {},
-        {
-          :user => user,
-          :reason => reason,
-          :comment => comment,
-        }.merge(options)
+                                         to_json,
+                                         {},
+                                         {
+                                           :user => user,
+                                           :reason => reason,
+                                           :comment => comment,
+                                         }.merge(options)
 
         created_refund.refresh(options)
       end
-
     end
   end
 end

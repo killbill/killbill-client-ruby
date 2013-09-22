@@ -8,6 +8,20 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       create_alias :bundle_keys, :external_bundle_keys
+
+      def create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
+        # Nothing to return (nil)
+        self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/payments",
+                        to_json,
+                        {
+                            :externalPayment => external_payment
+                        },
+                        {
+                            :user => user,
+                            :reason => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
     end
   end
 end
