@@ -26,6 +26,7 @@
 module KillBillClient
   module Model
     class ChargebackAttributes < Resource
+      attribute :chargeback_id
       attribute :account_id
       attribute :requested_date
       attribute :effective_date

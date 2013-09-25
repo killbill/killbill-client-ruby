@@ -4,7 +4,7 @@ module KillBillClient
 
       has_many :events, KillBillClient::Model::EventSubscription
 
-      KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/entitlements"
+      KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
 
       KILLBILL_API_BUNDLE_PREFIX = "#{KILLBILL_API_PREFIX}/bundles"
 
