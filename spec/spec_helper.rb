@@ -8,6 +8,8 @@ require 'logger'
 require 'rspec'
 
 KillBillClient.url = 'http://127.0.0.1:8080'
+KillBillClient.username = "__YOUR_SERVER_USERNAME__"
+KillBillClient.password = "__YOUR_SERVER_PASSWORD__"
 
 RSpec.configure do |config|
   config.color_enabled = true
