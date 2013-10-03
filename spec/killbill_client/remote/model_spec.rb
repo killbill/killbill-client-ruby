@@ -138,6 +138,27 @@ describe KillBillClient::Model do
     payment = timeline.payments.first
     payment.refunds.should_not be_empty
     payment.refunds.first.amount.should == invoice_item.amount
+
+    #create a credit for invoice
+    new_credit = KillBillClient::Model::Credit.new
+    new_credit.credit_amount = 10.1
+    new_credit.invoice_id = invoice_id
+    new_credit.effective_date = "2013-09-30"
+    new_credit.account_id = account.account_id
+    new_credit.create 'KillBill Spec test'
+
+    #verify the invoice item of the credit
+    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
+    invoice.items.should_not be_empty
+    item = invoice.items.last
+    item.invoice_id.should == invoice_id
+    item.amount.should == 10.1
+    item.account_id.should == account.account_id
+
+    #verify the credit
+    account = KillBillClient::Model::Account.find_by_id account.account_id, true
+    account.account_balance.should == -10.1
+
   end
 
   it 'should manipulate tag definitions' do
