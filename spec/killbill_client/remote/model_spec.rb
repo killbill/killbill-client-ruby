@@ -153,7 +153,7 @@ describe KillBillClient::Model do
     item = invoice.items.last
     item.invoice_id.should == invoice_id
     item.amount.should == 10.1
-    item.account_id = account.account_id
+    item.account_id.should == account.account_id
 
     #verify the credit
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
