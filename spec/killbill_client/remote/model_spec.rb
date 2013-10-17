@@ -139,7 +139,7 @@ describe KillBillClient::Model do
     payment.refunds.should_not be_empty
     payment.refunds.first.amount.should == invoice_item.amount
 
-    #create a credit for invoice
+    # Create a credit for invoice
     new_credit = KillBillClient::Model::Credit.new
     new_credit.credit_amount = 10.1
     new_credit.invoice_id = invoice_id
@@ -147,7 +147,7 @@ describe KillBillClient::Model do
     new_credit.account_id = account.account_id
     new_credit.create 'KillBill Spec test'
 
-    #verify the invoice item of the credit
+    # Verify the invoice item of the credit
     invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
     invoice.items.should_not be_empty
     item = invoice.items.last
@@ -155,10 +155,24 @@ describe KillBillClient::Model do
     item.amount.should == 10.1
     item.account_id.should == account.account_id
 
-    #verify the credit
+    # Verify the credit
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
     account.account_balance.should == -10.1
 
+    # Create a subscription
+    sub = KillBillClient::Model::Subscription.new
+    sub.account_id = account.account_id
+    sub.external_key = Time.now.to_i.to_s
+    sub.product_name = 'Sports'
+    sub.product_category = 'BASE'
+    sub.billing_period = 'MONTHLY'
+    sub.price_list = 'DEFAULT'
+    sub = sub.create 'KillBill Spec test'
+
+    # Verify we can retrieve it
+    account.bundles.size.should == 1
+    account.bundles[0].subscriptions.size.should == 1
+    account.bundles[0].subscriptions[0].subscription_id.should == sub.subscription_id
   end
 
   it 'should manipulate tag definitions' do
