@@ -173,6 +173,18 @@ describe KillBillClient::Model do
     account.bundles.size.should == 1
     account.bundles[0].subscriptions.size.should == 1
     account.bundles[0].subscriptions[0].subscription_id.should == sub.subscription_id
+    bundle = account.bundles[0]
+
+    # Verify we can retrieve it by id
+    KillBillClient::Model::Bundle.find_by_id(bundle.bundle_id).should == bundle
+
+    # Verify we can retrieve it by external key
+    KillBillClient::Model::Bundle.find_by_external_key(bundle.external_key).should == bundle
+
+    # Verify we can retrieve it by account id and external key
+    bundles = KillBillClient::Model::Bundle.find_all_by_account_id_and_external_key(account.account_id, bundle.external_key)
+    bundles.size.should == 1
+    bundles[0].should == bundle
   end
 
   it 'should manipulate tag definitions' do

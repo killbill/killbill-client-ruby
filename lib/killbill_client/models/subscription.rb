@@ -6,11 +6,7 @@ module KillBillClient
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
 
-      KILLBILL_API_BUNDLE_PREFIX = "#{KILLBILL_API_PREFIX}/bundles"
-
       class << self
-
-
         def find_by_id(subscription_id,  options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
               {},
@@ -18,7 +14,7 @@ module KillBillClient
         end
 
         def find_by_bundle_id(bundle_id, options = {})
-          get "#{KILLBILL_API_BUNDLE_PREFIX}/#{bundle_id}/subscriptions",
+          get "#{Bundle::KILLBILL_API_BUNDLE_PREFIX}/#{bundle_id}/subscriptions",
               {},
               options
         end

@@ -204,6 +204,15 @@ module KillBillClient
            self
          end
        end
+
+       def ==(o)
+         o.class == self.class && o.to_hash == to_hash
+       end
+       alias_method :eql?, :==
+
+       def hash
+         to_hash.hash
+       end
      end
    end
  end
