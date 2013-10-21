@@ -1,0 +1,24 @@
+language: ruby
+
+notifications:
+  email:
+    - kill-bill-commits@googlegroups.com
+
+rvm:
+  - 1.9.2
+  - 1.9.3
+  - 2.0.0
+  - ruby-head
+  - jruby-19mode
+  - jruby-20mode
+  - jruby-head
+
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
