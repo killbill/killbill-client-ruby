@@ -7,9 +7,31 @@ module KillBillClient
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
 
       class << self
+        def find_in_batches(offset = 0, limit = 100, with_balance = false, with_balance_and_cba = false, options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
+              {
+                  :offset => offset,
+                  :limit => limit,
+                  :accountWithBalance => with_balance,
+                  :accountWithBalanceAndCBA => with_balance_and_cba
+              },
+              options
+        end
+
         def find_by_id(account_id, with_balance = false, with_balance_and_cba = false, options = {})
           get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}",
               {
+                  :accountWithBalance => with_balance,
+                  :accountWithBalanceAndCBA => with_balance_and_cba
+              },
+              options
+        end
+
+        def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, with_balance = false, with_balance_and_cba = false, options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/search/#{search_key}",
+              {
+                  :offset => offset,
+                  :limit => limit,
                   :accountWithBalance => with_balance,
                   :accountWithBalanceAndCBA => with_balance_and_cba
               },

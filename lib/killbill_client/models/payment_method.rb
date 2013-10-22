@@ -20,9 +20,11 @@ module KillBillClient
               options
         end
 
-        def find_all_by_search_key(search_key, with_plugin_info = false, options = {})
+        def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/search/#{search_key}",
               {
+                  :offset => offset,
+                  :limit => limit,
                   :withPluginInfo => with_plugin_info
               },
               options

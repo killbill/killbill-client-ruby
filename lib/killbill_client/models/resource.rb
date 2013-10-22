@@ -9,6 +9,8 @@ module KillBillClient
                   :response
 
       KILLBILL_API_PREFIX = '/1.0/kb/'
+      KILLBILL_API_PAGINATION_PREFIX = 'pagination'
+
       @@attribute_names = {}
 
       class << self
@@ -50,7 +52,13 @@ module KillBillClient
           when %r{application/json}
             record = from_json resource_class, response.body
             session_id = extract_session_id(response)
-            record.instance_eval { @etag, @session_id, @response = response['ETag'], session_id, response }
+            record.instance_eval {
+                @etag = response['ETag']
+                @session_id = session_id
+                @pagination_nb_results = response['X-Killbill-Pagination-NbResults']
+                @pagination_total_nb_results = response['X-Killbill-Pagination-TotalNbResults']
+                @response = response
+            }
             record
           else
             raise ArgumentError, "#{response['Content-Type']} is not supported by the library"
@@ -86,7 +94,7 @@ module KillBillClient
 
         def instantiate_record_from_json(resource_class, data)
           record = resource_class.send :new
-          
+
           data.each do |name, value|
             name = Utils.underscore name
             attr_desc = @@attribute_names[record.class.name][name.to_sym] rescue nil

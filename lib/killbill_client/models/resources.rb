@@ -4,6 +4,8 @@ module KillBillClient
 
      attr_reader :etag,
                  :session_id,
+                  :pagination_nb_results,
+                  :pagination_total_nb_results,
                  :response
 
     end
