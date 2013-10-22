@@ -39,8 +39,8 @@ describe KillBillClient::Model do
     accounts.size.should >= 1
     # If the remote server has lots of data, we need to page through the results (good test!)
     found = nil
-    accounts.each do |account|
-      found = (accounts.find {|a| a.external_key == external_key})
+    accounts.each_in_batches do |account|
+      found = account if account.external_key == external_key
       break unless found.nil?
     end
     found.should_not be_nil
@@ -53,8 +53,8 @@ describe KillBillClient::Model do
     accounts.size.should >= 1
     # If the remote server has lots of data, we need to page through the results (good test!)
     found = nil
-    accounts.each do |account|
-      found = (accounts.find {|a| a.external_key == external_key})
+    accounts.each_in_batches do |account|
+      found = account if account.external_key == external_key
       break unless found.nil?
     end
     found.should_not be_nil
