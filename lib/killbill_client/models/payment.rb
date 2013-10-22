@@ -11,7 +11,7 @@ module KillBillClient
 
       def create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
         # Nothing to return (nil)
-        self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/payments",
+        self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                         to_json,
                         {
                             :externalPayment => external_payment
