@@ -4,7 +4,8 @@ module KillBillClient
   module Model
     class Resource
 
-      attr_reader :etag,
+      attr_reader :clazz,
+                  :etag,
                   :session_id,
                   :response
 
@@ -53,10 +54,12 @@ module KillBillClient
             record = from_json resource_class, response.body
             session_id = extract_session_id(response)
             record.instance_eval {
+                @clazz = resource_class
                 @etag = response['ETag']
                 @session_id = session_id
-                @pagination_nb_results = response['X-Killbill-Pagination-NbResults']
-                @pagination_total_nb_results = response['X-Killbill-Pagination-TotalNbResults']
+                @pagination_nb_results = response['X-Killbill-Pagination-NbResults'].to_i unless response['X-Killbill-Pagination-NbResults'].nil?
+                @pagination_total_nb_results = response['X-Killbill-Pagination-TotalNbResults'].to_i unless response['X-Killbill-Pagination-TotalNbResults'].nil?
+                @pagination_next_page = response['X-Killbill-Pagination-NextPageUri']
                 @response = response
             }
             record

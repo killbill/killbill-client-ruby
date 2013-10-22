@@ -31,6 +31,34 @@ describe KillBillClient::Model do
     account.external_key.should == external_key
     account.payment_method_id.should be_nil
 
+    # Try to retrieve it (bis repetita placent)
+    accounts = KillBillClient::Model::Account.find_in_batches
+    # Can't test equality if the remote server has extra data
+    accounts.pagination_total_nb_results.should >= 1
+    accounts.pagination_nb_results.should >= 1
+    accounts.size.should >= 1
+    # If the remote server has lots of data, we need to page through the results (good test!)
+    found = nil
+    accounts.each do |account|
+      found = (accounts.find {|a| a.external_key == external_key})
+      break unless found.nil?
+    end
+    found.should_not be_nil
+
+    # Try to retrieve it via the search API
+    accounts = KillBillClient::Model::Account.find_in_batches_by_search_key(account.name)
+    # Can't test equality if the remote server has extra data
+    accounts.pagination_total_nb_results.should >= 1
+    accounts.pagination_nb_results.should >= 1
+    accounts.size.should >= 1
+    # If the remote server has lots of data, we need to page through the results (good test!)
+    found = nil
+    accounts.each do |account|
+      found = (accounts.find {|a| a.external_key == external_key})
+      break unless found.nil?
+    end
+    found.should_not be_nil
+
     # Add/Remove a tag
     account.tags.size.should == 0
     account.add_tag('TEST', 'KillBill Spec test')
