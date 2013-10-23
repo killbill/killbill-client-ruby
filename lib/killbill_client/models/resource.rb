@@ -57,8 +57,8 @@ module KillBillClient
                 @clazz = resource_class
                 @etag = response['ETag']
                 @session_id = session_id
-                @pagination_nb_results = response['X-Killbill-Pagination-NbResults'].to_i unless response['X-Killbill-Pagination-NbResults'].nil?
-                @pagination_total_nb_results = response['X-Killbill-Pagination-TotalNbResults'].to_i unless response['X-Killbill-Pagination-TotalNbResults'].nil?
+                @pagination_max_nb_records = response['X-Killbill-Pagination-MaxNbRecords'].to_i unless response['X-Killbill-Pagination-MaxNbRecords'].nil?
+                @pagination_total_nb_records = response['X-Killbill-Pagination-TotalNbRecords'].to_i unless response['X-Killbill-Pagination-TotalNbRecords'].nil?
                 @pagination_next_page = response['X-Killbill-Pagination-NextPageUri']
                 @response = response
             }

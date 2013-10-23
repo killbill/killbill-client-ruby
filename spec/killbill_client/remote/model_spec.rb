@@ -34,8 +34,8 @@ describe KillBillClient::Model do
     # Try to retrieve it (bis repetita placent)
     accounts = KillBillClient::Model::Account.find_in_batches
     # Can't test equality if the remote server has extra data
-    accounts.pagination_total_nb_results.should >= 1
-    accounts.pagination_nb_results.should >= 1
+    accounts.pagination_total_nb_records.should >= 1
+    accounts.pagination_max_nb_records.should >= 1
     accounts.size.should >= 1
     # If the remote server has lots of data, we need to page through the results (good test!)
     found = nil
@@ -48,8 +48,8 @@ describe KillBillClient::Model do
     # Try to retrieve it via the search API
     accounts = KillBillClient::Model::Account.find_in_batches_by_search_key(account.name)
     # Can't test equality if the remote server has extra data
-    accounts.pagination_total_nb_results.should >= 1
-    accounts.pagination_nb_results.should >= 1
+    accounts.pagination_total_nb_records.should >= 1
+    accounts.pagination_max_nb_records.should >= 1
     accounts.size.should >= 1
     # If the remote server has lots of data, we need to page through the results (good test!)
     found = nil

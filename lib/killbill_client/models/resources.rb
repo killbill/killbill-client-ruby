@@ -5,8 +5,8 @@ module KillBillClient
       attr_reader :clazz,
                   :etag,
                   :session_id,
-                  :pagination_nb_results,
-                  :pagination_total_nb_results,
+                  :pagination_max_nb_records,
+                  :pagination_total_nb_records,
                   :pagination_next_page
                   :response
 
