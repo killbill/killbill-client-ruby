@@ -82,6 +82,20 @@ describe KillBillClient::Model do
     pm = KillBillClient::Model::PaymentMethod.find_by_id pm.payment_method_id, true
     pm.account_id.should == account.account_id
 
+    # Try to retrieve it (bis repetita placent)
+    pms = KillBillClient::Model::PaymentMethod.find_in_batches
+    # Can't test equality if the remote server has extra data
+    pms.pagination_total_nb_records.should >= 1
+    pms.pagination_max_nb_records.should >= 1
+    pms.size.should >= 1
+    # If the remote server has lots of data, we need to page through the results (good test!)
+    found = nil
+    pms.each_in_batches do |payment_method|
+      found = payment_method if payment_method.payment_method_id == pm.payment_method_id
+      break unless found.nil?
+    end
+    found.should_not be_nil
+
     account = KillBillClient::Model::Account.find_by_id account.account_id
     account.payment_method_id.should == pm.payment_method_id
 
