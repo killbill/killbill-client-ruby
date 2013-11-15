@@ -77,6 +77,23 @@ module KillBillClient
                                  }.merge(options)
       end
 
+      #
+      # Uncancel a future cancelled entitlement
+      #
+      #
+      def uncancel(user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}/uncancel",
+                                 nil,
+                                 params,
+                                 {
+                                     :user => user,
+                                     :reason => reason,
+                                     :comment => comment,
+                                 }.merge(options)
+      end
+
     end
   end
 end
