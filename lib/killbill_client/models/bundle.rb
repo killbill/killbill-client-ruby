@@ -37,16 +37,49 @@ module KillBillClient
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
         result = self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
-                              to_json,
-                              params,
-                              {
-                                  :user => user,
-                                  :reason => reason,
-                                  :comment => comment,
-                              }.merge(options)
+                                to_json,
+                                params,
+                                {
+                                    :user => user,
+                                    :reason => reason,
+                                    :comment => comment,
+                                }.merge(options)
 
         result.refresh(options)
       end
+
+
+      # Pause the bundle (and all its subscription)
+      def pause(requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        params[:requestedDate] = requested_date unless requested_date.nil?
+        self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/pause",
+                                {},
+                                params,
+                                {
+                                    :user => user,
+                                    :reason => reason,
+                                    :comment => comment,
+                                }.merge(options)
+      end
+
+
+      # Resume the bundle (and all its subscription)
+      def resume(requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        params[:requestedDate] = requested_date unless requested_date.nil?
+        self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/resume",
+                                {},
+                                params,
+                                {
+                                    :user => user,
+                                    :reason => reason,
+                                    :comment => comment,
+                                }.merge(options)
+      end
+
     end
   end
 end
