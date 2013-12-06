@@ -30,6 +30,7 @@ module KillBillClient
       attribute :payment_id
       attribute :amount
       attribute :currency
+      attribute :status
       attribute :adjusted
       attribute :requested_date
       attribute :effective_date
