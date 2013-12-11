@@ -13,11 +13,35 @@ module KillBillClient
         def find_by_id_or_number(id_or_number, with_items = true, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{id_or_number}",
               {
-                :withItems => with_items,
-                :audit => audit
+                  :withItems => with_items,
+                  :audit => audit
               },
               options
         end
+
+        def trigger_invoice(account_id, target_date, dry_run, user = nil, reason = nil, comment = nil, options = {})
+          query_map = {:accountId => account_id}
+          query_map[:targetDate] = target_date if !target_date.nil?
+          query_map[:dryRun] = dry_run if !dry_run.nil?
+
+          begin
+            res = post "#{KILLBILL_API_INVOICES_PREFIX}",
+                 {},
+                 query_map,
+                 {
+                     :user => user,
+                     :reason => reason,
+                     :comment => comment,
+                 }.merge(options),
+                 Invoice
+
+            res.refresh(options)
+
+          rescue KillBillClient::API::BadRequest => e
+            # No invoice to generate : TODO parse json to verify this is indeed the case
+          end
+        end
+
       end
     end
   end
