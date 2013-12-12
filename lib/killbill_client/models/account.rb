@@ -4,6 +4,13 @@ module KillBillClient
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
+      AUTO_PAY_OFF_ID = '00000000-0000-0000-0000-000000000001'
+      AUTO_INVOICING_ID = '00000000-0000-0000-0000-000000000002'
+      OVERDUE_ENFORCEMENT_OFF_ID = '00000000-0000-0000-0000-000000000003'
+      WRITTEN_OFF_ID = '00000000-0000-0000-0000-000000000004'
+      MANUAL_PAY_ID = '00000000-0000-0000-0000-000000000005'
+      TEST_ID = '00000000-0000-0000-0000-000000000006'
+
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
 
       class << self
@@ -117,58 +124,59 @@ module KillBillClient
                           }.merge(options)
       end
 
-      def is_AUTO_PAY_OFF(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000001', options)
+
+      def auto_pay_off?(options)
+        control_tag_off?(AUTO_PAY_OFF_ID, options)
       end
 
-      def set_AUTO_PAY_OFF(user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000001', user, reason, comment, options)
+      def set_auto_pay_off(user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(AUTO_PAY_OFF_ID, user, reason, comment, options)
       end
 
-      def is_AUTO_INVOICING_OFF(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000002', options)
+      def auto_invoicing?(options)
+        control_tag_off?(AUTO_INVOICING_ID, options)
       end
 
-      def set_AUTO_INVOICING_OFF(user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000002', user, reason, comment, options)
+      def set_auto_invoicing(user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(AUTO_INVOICING_ID, user, reason, comment, options)
       end
 
-      def is_OVERDUE_ENFORCEMENT_OFF(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000003', options)
+      def overdue_enforcement_off?(options)
+        control_tag_off?(OVERDUE_ENFORCEMENT_OFF_ID, options)
       end
 
-      def set_OVERDUE_ENFORCEMENT_OFF(user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000003', user, reason, comment, options)
+      def set_overdue_enforcement_off(user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(OVERDUE_ENFORCEMENT_OFF_ID, user, reason, comment, options)
       end
 
-      def is_WRITTEN_OFF(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000004', options)
+      def written_off?(options)
+        control_tag_off?(WRITTEN_OFF_ID, options)
       end
 
-      def set_WRITTEN_OFF( user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000004', user, reason, comment, options)
+      def set_written_off( user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(WRITTEN_OFF_ID, user, reason, comment, options)
       end
 
-      def is_MANUAL_PAY(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000005', options)
+      def manual_pay?(options)
+        control_tag_off?(MANUAL_PAY_ID, options)
       end
 
-      def set_MANUAL_PAY(user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000005', user, reason, comment, options)
+      def set_manual_pay(user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(MANUAL_PAY_ID, user, reason, comment, options)
       end
 
 
-      def is_TEST(options)
-        is_control_tag_off('00000000-0000-0000-0000-000000000006', options)
+      def test?(options)
+        control_tag_off?(TEST_ID, options)
       end
 
-      def set_TEST(user = nil, reason = nil, comment = nil, options)
-        add_tag_from_definition_id('00000000-0000-0000-0000-000000000006', user, reason, comment, options)
+      def set_test(user = nil, reason = nil, comment = nil, options)
+        add_tag_from_definition_id(TEST_ID, user, reason, comment, options)
       end
 
       private
 
-      def is_control_tag_off(control_tag_definition_id, options)
+      def control_tag_off?(control_tag_definition_id, options)
         res = tags('NONE', options)
         !((res || []).select do |t|
           t.tag_definition_id == control_tag_definition_id
