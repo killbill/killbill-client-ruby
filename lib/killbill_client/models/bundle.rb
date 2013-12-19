@@ -32,10 +32,11 @@ module KillBillClient
 
 
       # Transfer the bundle to the new account. the new account_id should be set in this object
-      def transfer(bundle_id, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+      def transfer(bundle_id, requested_date = nil, billing_policy = nil, user = nil, reason = nil, comment = nil, options = {})
 
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
+        params[:billingPolicy] = billing_policy unless billing_policy.nil?
         result = self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
                                 to_json,
                                 params,
