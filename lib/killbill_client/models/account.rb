@@ -125,52 +125,51 @@ module KillBillClient
       end
 
 
-      def auto_pay_off?(options)
+      def auto_pay_off?(options = {})
         control_tag_off?(AUTO_PAY_OFF_ID, options)
       end
 
-      def set_auto_pay_off(user = nil, reason = nil, comment = nil, options)
+      def set_auto_pay_off(user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(AUTO_PAY_OFF_ID, user, reason, comment, options)
       end
 
-      def auto_invoicing?(options)
+      def auto_invoicing?(options = {})
         control_tag_off?(AUTO_INVOICING_ID, options)
       end
 
-      def set_auto_invoicing(user = nil, reason = nil, comment = nil, options)
+      def set_auto_invoicing(user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(AUTO_INVOICING_ID, user, reason, comment, options)
       end
 
-      def overdue_enforcement_off?(options)
+      def overdue_enforcement_off?(options = {})
         control_tag_off?(OVERDUE_ENFORCEMENT_OFF_ID, options)
       end
 
-      def set_overdue_enforcement_off(user = nil, reason = nil, comment = nil, options)
+      def set_overdue_enforcement_off(user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(OVERDUE_ENFORCEMENT_OFF_ID, user, reason, comment, options)
       end
 
-      def written_off?(options)
+      def written_off?(options = {})
         control_tag_off?(WRITTEN_OFF_ID, options)
       end
 
-      def set_written_off( user = nil, reason = nil, comment = nil, options)
+      def set_written_off( user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(WRITTEN_OFF_ID, user, reason, comment, options)
       end
 
-      def manual_pay?(options)
+      def manual_pay?(options = {})
         control_tag_off?(MANUAL_PAY_ID, options)
       end
 
-      def set_manual_pay(user = nil, reason = nil, comment = nil, options)
+      def set_manual_pay(user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(MANUAL_PAY_ID, user, reason, comment, options)
       end
 
-
-      def test?(options)
+      def test?(options = {})
         control_tag_off?(TEST_ID, options)
       end
 
-      def set_test(user = nil, reason = nil, comment = nil, options)
+      def set_test(user = nil, reason = nil, comment = nil, options = {})
         add_tag_from_definition_id(TEST_ID, user, reason, comment, options)
       end
 
