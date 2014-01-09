@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe KillBillClient::Model do
   it 'should manipulate accounts' do
+    # In case the remote server has lots of data
+    search_limit = 100000
+
     external_key = Time.now.to_i.to_s
 
     account = KillBillClient::Model::Account.new
@@ -32,7 +35,7 @@ describe KillBillClient::Model do
     account.payment_method_id.should be_nil
 
     # Try to retrieve it (bis repetita placent)
-    accounts = KillBillClient::Model::Account.find_in_batches
+    accounts = KillBillClient::Model::Account.find_in_batches(0, search_limit)
     # Can't test equality if the remote server has extra data
     accounts.pagination_total_nb_records.should >= 1
     accounts.pagination_max_nb_records.should >= 1
@@ -46,7 +49,7 @@ describe KillBillClient::Model do
     found.should_not be_nil
 
     # Try to retrieve it via the search API
-    accounts = KillBillClient::Model::Account.find_in_batches_by_search_key(account.name)
+    accounts = KillBillClient::Model::Account.find_in_batches_by_search_key(account.name, 0, search_limit)
     # Can't test equality if the remote server has extra data
     accounts.pagination_total_nb_records.should >= 1
     accounts.pagination_max_nb_records.should >= 1
@@ -83,7 +86,7 @@ describe KillBillClient::Model do
     pm.account_id.should == account.account_id
 
     # Try to retrieve it (bis repetita placent)
-    pms = KillBillClient::Model::PaymentMethod.find_in_batches
+    pms = KillBillClient::Model::PaymentMethod.find_in_batches(0, search_limit)
     # Can't test equality if the remote server has extra data
     pms.pagination_total_nb_records.should >= 1
     pms.pagination_max_nb_records.should >= 1
@@ -151,6 +154,24 @@ describe KillBillClient::Model do
     payment = KillBillClient::Model::Payment.new
     payment.account_id = account.account_id
     payment.create true, 'KillBill Spec test'
+
+    # Try to retrieve it
+    payments = KillBillClient::Model::Payment.find_in_batches(0, search_limit)
+    # Can't test equality if the remote server has extra data
+    payments.pagination_total_nb_records.should >= 1
+    payments.pagination_max_nb_records.should >= 1
+    payments.size.should >= 1
+    # If the remote server has lots of data, we need to page through the results (good test!)
+    found = nil
+    payments.each_in_batches do |p|
+      found = p if p.account_id == account.account_id
+      break unless found.nil?
+    end
+    found.should_not be_nil
+
+    # Try to retrieve it (bis repetita placent)
+    payment = KillBillClient::Model::Payment.find_by_id found.payment_id
+    payment.account_id.should == account.account_id
 
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
