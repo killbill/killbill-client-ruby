@@ -19,7 +19,24 @@ module KillBillClient
           options
         end
 
-      end #end class methods
+        def find_in_batches(offset = 0, limit = 100, options = {})
+          get "#{KILLBILL_API_REFUNDS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
+              {
+                  :offset => offset,
+                  :limit => limit
+              },
+              options
+        end
+
+        def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, options = {})
+          get "#{KILLBILL_API_REFUNDS_PREFIX}/search/#{search_key}",
+              {
+                  :offset => offset,
+                  :limit => limit
+              },
+              options
+        end
+      end
 
       def create(user = nil, reason = nil, comment = nil, options = {})
         created_refund = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{@payment_id}/refunds",

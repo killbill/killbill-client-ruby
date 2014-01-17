@@ -1,13 +1,13 @@
 module KillBillClient
   module Model
-    class Tag < TagAttributes
-      KILLBILL_API_TAGS_PREFIX = "#{KILLBILL_API_PREFIX}/tags"
+    class CustomField < CustomFieldAttributes
+      KILLBILL_API_CUSTOM_FIELDS_PREFIX = "#{KILLBILL_API_PREFIX}/customFields"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       class << self
         def find_all_by_account_id(account_id, included_deleted = false, audit = "NONE", options = {})
-          get "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
+          get "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
               {
                   :includedDeleted => included_deleted,
                   :audit => audit
@@ -16,7 +16,7 @@ module KillBillClient
         end
 
         def find_in_batches(offset = 0, limit = 100, options = {})
-          get "#{KILLBILL_API_TAGS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
+          get "#{KILLBILL_API_CUSTOM_FIELDS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
                   :offset => offset,
                   :limit => limit
@@ -25,7 +25,7 @@ module KillBillClient
         end
 
         def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, options = {})
-          get "#{KILLBILL_API_TAGS_PREFIX}/search/#{search_key}",
+          get "#{KILLBILL_API_CUSTOM_FIELDS_PREFIX}/search/#{search_key}",
               {
                   :offset => offset,
                   :limit => limit

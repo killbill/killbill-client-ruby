@@ -3,6 +3,8 @@ module KillBillClient
     class PaymentMethod < PaymentMethodAttributes
       KILLBILL_API_PAYMENT_METHODS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentMethods"
 
+      has_many :audit_logs, KillBillClient::Model::AuditLog
+
       class << self
         def find_by_id(payment_method_id, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/#{payment_method_id}",

@@ -19,6 +19,15 @@ module KillBillClient
               options
         end
 
+        def find_in_batches(offset = 0, limit = 100, options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
+              {
+                  :offset => offset,
+                  :limit => limit
+              },
+              options
+        end
+
         def trigger_invoice(account_id, target_date, dry_run, user = nil, reason = nil, comment = nil, options = {})
           query_map = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
