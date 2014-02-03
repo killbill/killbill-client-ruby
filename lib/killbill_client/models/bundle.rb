@@ -8,6 +8,24 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       class << self
+        def find_in_batches(offset = 0, limit = 100, options = {})
+          get "#{KILLBILL_API_BUNDLES_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
+              {
+                  :offset => offset,
+                  :limit => limit
+              },
+              options
+        end
+
+        def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, options = {})
+          get "#{KILLBILL_API_BUNDLES_PREFIX}/search/#{search_key}",
+              {
+                  :offset => offset,
+                  :limit => limit
+              },
+              options
+        end
+
         def find_by_id(bundle_id, options = {})
           get "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
               {},

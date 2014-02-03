@@ -52,6 +52,11 @@ module KillBillClient
             response.body
           when %r{application/json}
             record = from_json resource_class, response.body
+            if record.nil?
+              record = resource_class.new
+              record.uri = response.header['location']
+            end
+
             session_id = extract_session_id(response)
             record.instance_eval {
                 @clazz = resource_class
@@ -120,6 +125,7 @@ module KillBillClient
             end #end unless attr_desc.nil? or data_elem.blank?
 
             record.send("#{Utils.underscore name}=", value )
+
           end #end data.each
 
           record

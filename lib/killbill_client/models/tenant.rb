@@ -3,6 +3,8 @@ module KillBillClient
     class Tenant < TenantAttributes
       KILLBILL_API_TENANTS_PREFIX = "#{KILLBILL_API_PREFIX}/tenants"
 
+      has_many :audit_logs, KillBillClient::Model::AuditLog
+
       class << self
         def find_by_id(tenant_id, options = {})
           get "#{KILLBILL_API_TENANTS_PREFIX}/#{tenant_id}",
