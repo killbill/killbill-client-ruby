@@ -48,6 +48,7 @@ module KillBillClient
       attribute :is_notified_for_invoices
       attribute :account_balance
       attribute :account_cba
+      attribute :audit_logs
     end
   end
 end
