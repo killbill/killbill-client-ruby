@@ -210,8 +210,8 @@ module KillBillClient
          end
        end
 
-       def to_json
-         to_hash.to_json
+       def to_json(*args)
+         to_hash.to_json(*args)
        end
 
        def refresh(options = {}, clazz=self.class)
@@ -223,7 +223,7 @@ module KillBillClient
        end
 
        def ==(o)
-         o.class == self.class && o.to_hash == to_hash
+         o.class == self.class && o.hash == hash
        end
        alias_method :eql?, :==
 
