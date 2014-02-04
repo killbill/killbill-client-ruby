@@ -71,6 +71,19 @@ describe KillBillClient::Model do
     account.remove_tag('TEST', 'KillBill Spec test')
     account.tags.size.should == 0
 
+    # Add/Remove a custom field
+    account.custom_fields.size.should == 0
+    custom_field = KillBillClient::Model::CustomField.new
+    custom_field.name = Time.now.to_i.to_s
+    custom_field.value = Time.now.to_i.to_s
+    account.add_custom_field(custom_field, 'KillBill Spec test')
+    custom_fields = account.custom_fields
+    custom_fields.size.should == 1
+    custom_fields.first.name.should == custom_field.name
+    custom_fields.first.value.should == custom_field.value
+    account.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
+    account.custom_fields.size.should == 0
+
     # Add a payment method
     pm = KillBillClient::Model::PaymentMethod.new
     pm.account_id = account.account_id

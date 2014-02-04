@@ -124,6 +124,41 @@ module KillBillClient
                           }.merge(options)
       end
 
+      def custom_fields(audit = 'NONE', options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
+                       {
+                           :audit => audit
+                       },
+                       options,
+                       CustomField
+      end
+
+      def add_custom_field(custom_fields, user = nil, reason = nil, comment = nil, options = {})
+        body = custom_fields.is_a?(Enumerable) ? custom_fields : [custom_fields]
+        custom_field = self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
+                                       body.to_json,
+                                       {},
+                                       {
+                                           :user => user,
+                                           :reason => reason,
+                                           :comment => comment,
+                                       }.merge(options),
+                                       CustomField
+        custom_field.refresh(options)
+      end
+
+      def remove_custom_field(custom_fields, user = nil, reason = nil, comment = nil, options = {})
+        custom_fields_param = custom_fields.is_a?(Enumerable) ? custom_fields.join(",") : custom_fields
+        self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
+                          {
+                              :customFieldList => custom_fields_param
+                          },
+                          {
+                              :user => user,
+                              :reason => reason,
+                              :comment => comment,
+                          }.merge(options)
+      end
 
       def auto_pay_off?(options = {})
         control_tag_off?(AUTO_PAY_OFF_ID, options)
