@@ -31,6 +31,7 @@ module KillBillClient
       attribute :name
       attribute :description
       attribute :applicable_object_types
+      attribute :audit_logs
     end
   end
 end
