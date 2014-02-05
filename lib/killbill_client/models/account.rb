@@ -34,6 +34,16 @@ module KillBillClient
               options
         end
 
+        def find_by_external_key(external_key, with_balance = false, with_balance_and_cba = false, options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}",
+              {
+                  :externalKey => external_key,
+                  :accountWithBalance => with_balance,
+                  :accountWithBalanceAndCBA => with_balance_and_cba
+              },
+              options
+        end
+
         def find_in_batches_by_search_key(search_key, offset = 0, limit = 100, with_balance = false, with_balance_and_cba = false, options = {})
           get "#{KILLBILL_API_ACCOUNTS_PREFIX}/search/#{search_key}",
               {

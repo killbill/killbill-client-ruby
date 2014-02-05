@@ -34,6 +34,11 @@ describe KillBillClient::Model do
     account.external_key.should == external_key
     account.payment_method_id.should be_nil
 
+    # Try to retrieve it
+    account = KillBillClient::Model::Account.find_by_external_key external_key
+    account.account_id.should == account_id
+    account.payment_method_id.should be_nil
+
     # Try to retrieve it (bis repetita placent)
     accounts = KillBillClient::Model::Account.find_in_batches(0, search_limit)
     # Can't test equality if the remote server has extra data
