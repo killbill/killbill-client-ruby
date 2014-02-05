@@ -4,21 +4,21 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
         KILLBILL_API_CHARGEBACKS_PREFIX = "#{KILLBILL_API_PREFIX}/chargebacks"
-=begin
-
-        Missing id in the Kill Bill server Refund resource
 
         class << self
-          def find_by_id(account_id, with_balance = false, with_balance_and_cba = false, options = {})
-            get "#{KILLBILL_API_CHARGEBACKS_PREFIX}/#{account_id}",
-                {
-                    :accountWithBalance => with_balance,
-                    :accountWithBalanceAndCBA => with_balance_and_cba
-                },
+          def find_by_id(chargeback_id, options = {})
+            get "#{KILLBILL_API_CHARGEBACKS_PREFIX}/#{chargeback_id}",
+                {},
+                options
+          end
+
+          def find_all_by_payment_id(payment_id, options = {})
+            get "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}/chargebacks",
+                {},
                 options
           end
         end
-=end
+
         def create(user = nil, reason = nil, comment = nil, options = {})
           created_chargeback = self.class.post KILLBILL_API_CHARGEBACKS_PREFIX,
                                             to_json,

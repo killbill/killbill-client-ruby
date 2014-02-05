@@ -18,6 +18,14 @@ module KillBillClient
               options
         end
 
+        def find_all_by_invoice_id(invoice_id, with_refunds_and_chargebacks = false, options = {})
+          get "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/payments",
+              {
+                  :withRefundsAndChargebacks => with_refunds_and_chargebacks
+              },
+              options
+        end
+
         def find_in_batches(offset = 0, limit = 100, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {

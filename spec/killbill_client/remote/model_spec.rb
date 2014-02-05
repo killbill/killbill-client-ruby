@@ -186,6 +186,11 @@ describe KillBillClient::Model do
     payment = KillBillClient::Model::Payment.find_by_id found.payment_id
     payment.account_id.should == account.account_id
 
+    # Try to retrieve it
+    payments = KillBillClient::Model::Payment.find_all_by_invoice_id found.invoice_id
+    payments.size.should == 1
+    payments.first.account_id.should == account.account_id
+
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
     account.account_balance.should == 0
