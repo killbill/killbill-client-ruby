@@ -1,6 +1,7 @@
 ###################################################################################
 #                                                                                 #
 #                   Copyright 2010-2013 Ning, Inc.                                #
+#                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
 #      Ning licenses this file to you under the Apache License, version 2.0       #
 #      (the "License"); you may not use this file except in compliance with the   #
@@ -60,3 +61,4 @@ require 'killbill_client/models/gen/tag_definition_attributes'
 require 'killbill_client/models/gen/tag_attributes'
 require 'killbill_client/models/gen/tenant_attributes'
 require 'killbill_client/models/gen/tenant_key_attributes'
+require 'killbill_client/models/gen/usage_attributes'
