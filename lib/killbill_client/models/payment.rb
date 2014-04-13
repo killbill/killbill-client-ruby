@@ -45,12 +45,14 @@ module KillBillClient
         end
       end
 
-      def create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
+      # STEPH should that live in account resource?
+      def create(external_payment = false, payment_amount = nil, user = nil, reason = nil, comment = nil, options = {})
         # Nothing to return (nil)
         self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
-                        to_json,
+                        {},
                         {
-                            :externalPayment => external_payment
+                            :externalPayment => external_payment,
+                            :paymentAmount => payment_amount
                         },
                         {
                             :user => user,
