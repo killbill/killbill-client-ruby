@@ -14,7 +14,7 @@ module KillBillClient
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{id_or_number}",
               {
                   :withItems => with_items,
-                  :audit => audit
+                  :audit     => audit
               },
               options
         end
@@ -23,7 +23,7 @@ module KillBillClient
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
@@ -32,26 +32,26 @@ module KillBillClient
           get "#{KILLBILL_API_INVOICES_PREFIX}/search/#{search_key}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
 
         def trigger_invoice(account_id, target_date, dry_run, user = nil, reason = nil, comment = nil, options = {})
-          query_map = {:accountId => account_id}
+          query_map              = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
-          query_map[:dryRun] = dry_run if !dry_run.nil?
+          query_map[:dryRun]     = dry_run if !dry_run.nil?
 
           begin
             res = post "#{KILLBILL_API_INVOICES_PREFIX}",
-                 {},
-                 query_map,
-                 {
-                     :user => user,
-                     :reason => reason,
-                     :comment => comment,
-                 }.merge(options),
-                 Invoice
+                       {},
+                       query_map,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options),
+                       Invoice
 
             res.refresh(options)
 
@@ -59,7 +59,16 @@ module KillBillClient
             # No invoice to generate : TODO parse json to verify this is indeed the case
           end
         end
+      end
 
+      def payments(with_plugin_info = false, audit = 'NONE', options = {})
+        self.class.get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/payments",
+                       {
+                           :withPluginInfo => with_plugin_info,
+                           :audit          => audit
+                       },
+                       options,
+                       InvoicePayment
       end
     end
   end

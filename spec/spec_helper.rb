@@ -11,10 +11,22 @@ KillBillClient.url = 'http://127.0.0.1:8080'
 KillBillClient.username = 'admin'
 KillBillClient.password = 'password'
 
+
 RSpec.configure do |config|
   config.color_enabled = true
   config.tty = true
   config.formatter = 'documentation'
+
+  config.before :suite do
+    # Setup a tenant for that test
+    KillBillClient.api_key = Time.now.to_i.to_s + Random.rand(100).to_s
+    KillBillClient.api_secret = 'S4cr3333333t!!!!!!lolz'
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = KillBillClient.api_key
+    tenant.api_secret = KillBillClient.api_secret
+    tenant.create('KillBill Spec test')
+  end
 end
 
 begin

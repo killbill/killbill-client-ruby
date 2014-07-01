@@ -3,7 +3,7 @@ module KillBillClient
     class AccountTimeline < AccountTimelineAttributes
 
       has_one :account, KillBillClient::Model::Account
-      has_many :payments, KillBillClient::Model::Payment
+      has_many :payments, KillBillClient::Model::InvoicePayment
       has_many :bundles, KillBillClient::Model::Bundle
       has_many :invoices, KillBillClient::Model::Invoice
 

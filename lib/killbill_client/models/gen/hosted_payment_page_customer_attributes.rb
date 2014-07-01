@@ -26,13 +26,11 @@
 
 module KillBillClient
   module Model
-    class TagDefinitionAttributes < Resource
-      attribute :id
-      attribute :is_control_tag
-      attribute :name
-      attribute :description
-      attribute :applicable_object_types
-      attribute :audit_logs
+    class HostedPaymentPageCustomerAttributes < Resource
+      attribute :first_name
+      attribute :last_name
+      attribute :email
+      attribute :phone
     end
   end
 end

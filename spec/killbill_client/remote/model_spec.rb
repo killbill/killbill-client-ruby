@@ -28,6 +28,7 @@ describe KillBillClient::Model do
     account = account.create('KillBill Spec test')
     account.external_key.should == external_key
     account.account_id.should_not be_nil
+    account_id = account.account_id
 
     # Try to retrieve it
     account = KillBillClient::Model::Account.find_by_id account.account_id
@@ -133,7 +134,8 @@ describe KillBillClient::Model do
     invoice_item.currency = account.currency
     invoice_item.amount = 123.98
 
-    invoice = invoice_item.create 'KillBill Spec test'
+    invoice_item = invoice_item.create 'KillBill Spec test'
+    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_item.invoice_id
 
     invoice.balance.should == 123.98
 
@@ -169,9 +171,9 @@ describe KillBillClient::Model do
     invoice_with_id.invoice_number.should == invoice_with_number.invoice_number
 
     # Create an external payment
-    payment = KillBillClient::Model::Payment.new
-    payment.account_id = account.account_id
-    payment.create true, 'KillBill Spec test'
+    invoice_payment = KillBillClient::Model::Payment.new
+    invoice_payment.account_id = account.account_id
+    invoice_payment.create true, nil, 'KillBill Spec test'
 
     # Try to retrieve it
     payments = KillBillClient::Model::Payment.find_in_batches(0, search_limit)
@@ -188,11 +190,13 @@ describe KillBillClient::Model do
     found.should_not be_nil
 
     # Try to retrieve it (bis repetita placent)
-    payment = KillBillClient::Model::Payment.find_by_id found.payment_id
-    payment.account_id.should == account.account_id
+    invoice_payment = KillBillClient::Model::InvoicePayment.find_all_by_payment_id found.payment_id
+    invoice_payment.account_id.should == account.account_id
 
     # Try to retrieve it
-    payments = KillBillClient::Model::Payment.find_all_by_invoice_id found.invoice_id
+    invoice = KillBillClient::Model::Invoice.new
+    invoice.invoice_id = invoice_payment.target_invoice_id
+    payments = invoice.payments
     payments.size.should == 1
     payments.first.account_id.should == account.account_id
 
@@ -203,27 +207,31 @@ describe KillBillClient::Model do
     # Verify the timeline
     timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
     timeline.payments.should_not be_empty
-    payment = timeline.payments.first
-    payment.refunds.should be_empty
+    invoice_payment = timeline.payments.first
+    timeline.payments.first.transactions.size.should == 1
+    timeline.payments.first.transactions.first.transaction_type.should == 'PURCHASE'
+    invoice_payment.auth_amount.should == 0
+    invoice_payment.captured_amount.should == 0
+    invoice_payment.purchased_amount.should == invoice_payment.purchased_amount
+    invoice_payment.refunded_amount.should == 0
+    invoice_payment.credited_amount.should == 0
 
     # Refund the payment (with item adjustment)
     invoice_item = KillBillClient::Model::Invoice.find_by_id_or_number(invoice_number, true).items.first
-    refund = KillBillClient::Model::Refund.new
-    refund.payment_id = payment.payment_id
-    refund.amount = payment.amount
-    refund.adjusted = true
     item = KillBillClient::Model::InvoiceItem.new
     item.invoice_item_id = invoice_item.invoice_item_id
     item.amount = invoice_item.amount
-    refund.adjustments = [item]
-    refund.create 'KillBill Spec test'
+    refund = KillBillClient::Model::InvoicePayment.refund invoice_payment.payment_id, invoice_payment.purchased_amount, [item], 'KillBill Spec test'
 
     # Verify the refund
     timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
     timeline.payments.should_not be_empty
-    payment = timeline.payments.first
-    payment.refunds.should_not be_empty
-    payment.refunds.first.amount.should == invoice_item.amount
+    timeline.payments.size.should == 1
+    timeline.payments.first.transactions.size.should == 2
+    timeline.payments.first.transactions.first.transaction_type.should == 'PURCHASE'
+    refund = timeline.payments.first.transactions.last
+    refund.transaction_type.should == 'REFUND'
+    refund.amount.should == invoice_item.amount
 
     # Create a credit for invoice
     new_credit = KillBillClient::Model::Credit.new
@@ -292,7 +300,7 @@ describe KillBillClient::Model do
   end
 
   it 'should manipulate tenants' do
-    api_key = Time.now.to_i.to_s
+    api_key = Time.now.to_i.to_s + Random.rand(100).to_s
     api_secret = 'S4cr3333333t!!!!!!lolz'
 
     tenant = KillBillClient::Model::Tenant.new

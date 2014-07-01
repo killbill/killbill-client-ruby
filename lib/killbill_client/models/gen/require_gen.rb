@@ -3,9 +3,9 @@
 #                   Copyright 2010-2013 Ning, Inc.                                #
 #                   Copyright 2014 The Billing Project, LLC                       #
 #                                                                                 #
-#      Ning licenses this file to you under the Apache License, version 2.0       #
-#      (the "License"); you may not use this file except in compliance with the   #
-#      License.  You may obtain a copy of the License at:                         #
+#      The Billing Project licenses this file to you under the Apache License,    #
+#      version 2.0 (the "License"); you may not use this file except in           #
+#      compliance with the License.  You may obtain a copy of the License at:     #
 #                                                                                 #
 #          http://www.apache.org/licenses/LICENSE-2.0                             #
 #                                                                                 #
@@ -40,17 +40,24 @@ require 'killbill_client/models/gen/catalog_attributes_simple'
 require 'killbill_client/models/gen/chargeback_attributes'
 require 'killbill_client/models/gen/credit_attributes'
 require 'killbill_client/models/gen/custom_field_attributes'
+require 'killbill_client/models/gen/direct_payment_attributes'
+require 'killbill_client/models/gen/direct_transaction_attributes'
+require 'killbill_client/models/gen/gateway_notification_attributes'
+require 'killbill_client/models/gen/hosted_payment_page_billing_address_attributes'
+require 'killbill_client/models/gen/hosted_payment_page_customer_attributes'
+require 'killbill_client/models/gen/hosted_payment_page_fields_attributes'
+require 'killbill_client/models/gen/hosted_payment_page_form_descriptor_attributes'
 require 'killbill_client/models/gen/invoice_email_attributes'
 require 'killbill_client/models/gen/invoice_item_attributes'
 require 'killbill_client/models/gen/invoice_attributes'
+require 'killbill_client/models/gen/invoice_payment_attributes'
+require 'killbill_client/models/gen/invoice_payment_transaction_attributes'
 require 'killbill_client/models/gen/notification_attributes'
 require 'killbill_client/models/gen/overdue_state_attributes'
-require 'killbill_client/models/gen/payment_attributes'
 require 'killbill_client/models/gen/payment_method_plugin_detail_attributes'
-require 'killbill_client/models/gen/payment_method_properties'
 require 'killbill_client/models/gen/payment_method_attributes'
 require 'killbill_client/models/gen/plan_detail_attributes'
-require 'killbill_client/models/gen/refund_attributes'
+require 'killbill_client/models/gen/plugin_property_attributes'
 require 'killbill_client/models/gen/session_attributes'
 require 'killbill_client/models/gen/subject_attributes'
 require 'killbill_client/models/gen/event_subscription_attributes'

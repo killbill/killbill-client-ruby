@@ -26,12 +26,20 @@
 
 module KillBillClient
   module Model
-    class TagDefinitionAttributes < Resource
-      attribute :id
-      attribute :is_control_tag
-      attribute :name
-      attribute :description
-      attribute :applicable_object_types
+    class InvoicePaymentAttributes < Resource
+      attribute :target_invoice_id
+      attribute :account_id
+      attribute :payment_id
+      attribute :payment_number
+      attribute :payment_external_key
+      attribute :auth_amount
+      attribute :captured_amount
+      attribute :purchased_amount
+      attribute :refunded_amount
+      attribute :credited_amount
+      attribute :currency
+      attribute :payment_method_id
+      attribute :transactions
       attribute :audit_logs
     end
   end
