@@ -35,8 +35,8 @@ module KillBillClient
           from_response clazz, response
         end
 
-        def delete(uri, params = {}, options = {}, clazz = self)
-          response = KillBillClient::API.delete uri, params, options
+        def delete(uri, body = nil, params = {}, options = {}, clazz = self)
+          response = KillBillClient::API.delete uri, body, params, options
           from_response clazz, response
         end
 

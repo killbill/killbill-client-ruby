@@ -53,6 +53,7 @@ module KillBillClient
 
         def destroy(payment_method_id, set_auto_pay_off = false, user = nil, reason = nil, comment = nil, options = {})
           delete "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/#{payment_method_id}",
+                 {},
                  {
                      :deleteDefaultPmWithAutoPayOff => set_auto_pay_off
                  },

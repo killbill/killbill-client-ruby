@@ -69,6 +69,7 @@ module KillBillClient
         params[:useRequestedDateForBilling] = use_requested_date_for_billing unless use_requested_date_for_billing.nil?
 
         return self.class.delete "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
+                                 {},
                                  params,
                                  {
                                      :user => user,

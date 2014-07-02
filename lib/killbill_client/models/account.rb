@@ -124,6 +124,7 @@ module KillBillClient
         return nil if tag_definition.nil?
 
         self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
+                          {},
                           {
                               :tagList => tag_definition.id
                           },
@@ -160,6 +161,7 @@ module KillBillClient
       def remove_custom_field(custom_fields, user = nil, reason = nil, comment = nil, options = {})
         custom_fields_param = custom_fields.is_a?(Enumerable) ? custom_fields.join(",") : custom_fields
         self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
+                          {},
                           {
                               :customFieldList => custom_fields_param
                           },

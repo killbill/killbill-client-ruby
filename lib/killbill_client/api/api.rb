@@ -57,8 +57,8 @@ module KillBillClient
 
       # @return [Net::HTTPNoContent, Net::HTTPResponse]
       # @raise [ResponseError] With a non-2xx status code.
-      def delete(uri, params = {}, options = {})
-        request :delete, uri, {:params => params}.merge(options)
+      def delete(uri, body = nil, params = {}, options = {})
+        request :delete, uri, {:body => body.to_s}.merge({:params => params}).merge(options)
       end
 
       # @return [URI::Generic]
