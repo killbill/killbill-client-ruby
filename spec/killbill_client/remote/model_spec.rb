@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe KillBillClient::Model do
-  it 'should manipulate accounts' do
+  it 'should manipulate accounts', :integration => true  do
     # In case the remote server has lots of data
     search_limit = 100000
 
@@ -299,7 +299,7 @@ describe KillBillClient::Model do
     found_tag_definition.is_control_tag.should be_false
   end
 
-  it 'should manipulate tenants' do
+  it 'should manipulate tenants', :integration => true  do
     api_key = Time.now.to_i.to_s + Random.rand(100).to_s
     api_secret = 'S4cr3333333t!!!!!!lolz'
 
