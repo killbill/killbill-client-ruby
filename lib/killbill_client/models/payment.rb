@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Payment < DirectPaymentAttributes
+    class Payment < PaymentAttributes
       KILLBILL_API_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/payments"
 
       has_many :transactions, KillBillClient::Model::Transaction

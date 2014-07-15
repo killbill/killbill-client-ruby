@@ -14,6 +14,15 @@ module KillBillClient
 
       @@attribute_names = {}
 
+      def initialize(hash = nil)
+        # Make sure we support ActiveSupport::HashWithIndifferentAccess for Kaui
+        if hash.respond_to?(:each)
+          hash.each do |key,value|
+            send("#{Utils.underscore key.to_s}=", value)
+          end
+        end
+      end
+
       class << self
         def head(uri, params = {}, options = {}, clazz = self)
           response = KillBillClient::API.head uri, params, options
@@ -105,7 +114,13 @@ module KillBillClient
 
           data.each do |name, value|
             name = Utils.underscore name
-            attr_desc = @@attribute_names[record.class.name][name.to_sym] rescue nil
+            attr_desc = nil
+
+            # Allow for inheritance. TODO What's the performance hit?
+            resource_class.ancestors.each do |ancestor|
+              attr_desc = @@attribute_names[ancestor.name][name.to_sym] rescue nil
+              break unless attr_desc.nil?
+            end
 
             unless attr_desc.nil?
               type = attr_desc[:type]
@@ -230,6 +245,6 @@ module KillBillClient
        def hash
          to_hash.hash
        end
-     end
+    end
    end
  end

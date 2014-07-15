@@ -1,6 +1,8 @@
 module KillBillClient
   module Model
-    class Transaction < DirectTransactionAttributes
+    class Transaction < PaymentTransactionAttributes
+
+      has_many :audit_logs, KillBillClient::Model::AuditLog
 
       def auth(account_id, user = nil, reason = nil, comment = nil, options = {})
         @transaction_type = 'AUTHORIZE'
