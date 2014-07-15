@@ -64,6 +64,9 @@ module KillBillClient
             request['Cookie'] = "JSESSIONID=#{session_id}"
           end
 
+          if options[:accept]
+            request['Accept'] = options[:accept]
+          end
           if options[:body]
             request['Content-Type'] = content_type
             request.body = options[:body]

@@ -37,6 +37,14 @@ module KillBillClient
               options
         end
 
+        def as_html(invoice_id, options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/html",
+              {},
+              {
+                  :accept => 'text/html'
+              }.merge(options)
+        end
+
         def trigger_invoice(account_id, target_date, dry_run, user = nil, reason = nil, comment = nil, options = {})
           query_map              = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
