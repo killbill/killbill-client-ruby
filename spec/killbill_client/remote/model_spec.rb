@@ -190,7 +190,7 @@ describe KillBillClient::Model do
     found.should_not be_nil
 
     # Try to retrieve it (bis repetita placent)
-    invoice_payment = KillBillClient::Model::InvoicePayment.find_all_by_payment_id found.payment_id
+    invoice_payment = KillBillClient::Model::InvoicePayment.find_by_id found.payment_id
     invoice_payment.account_id.should == account.account_id
 
     # Try to retrieve it
