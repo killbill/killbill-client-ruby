@@ -47,6 +47,21 @@ module KillBillClient
                                                   }.merge(options)
         created_invoice_payment.refresh(options)
       end
+
+      def bulk_create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
+        # Nothing to return (nil)
+        self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoicePayments",
+                        {},
+                        {
+                            :externalPayment => external_payment,
+                            :paymentAmount   => purchased_amount
+                        },
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
     end
   end
 end

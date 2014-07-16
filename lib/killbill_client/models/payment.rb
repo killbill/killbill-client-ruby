@@ -17,7 +17,7 @@ module KillBillClient
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
@@ -26,27 +26,10 @@ module KillBillClient
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/search/#{search_key}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
-      end
-
-      # STEPH should that live in account resource?
-      # PIERRE Bad name really - maybe it should be Invoice.pay_all?
-      def create(external_payment = false, payment_amount = nil, user = nil, reason = nil, comment = nil, options = {})
-        # Nothing to return (nil)
-        self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoicePayments",
-                        {},
-                        {
-                            :externalPayment => external_payment,
-                            :paymentAmount => payment_amount
-                        },
-                        {
-                            :user => user,
-                            :reason => reason,
-                            :comment => comment,
-                        }.merge(options)
       end
     end
   end

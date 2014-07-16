@@ -93,11 +93,12 @@ describe KillBillClient::Model do
     # Add a payment method
     pm = KillBillClient::Model::PaymentMethod.new
     pm.account_id = account.account_id
+    pm.is_default = true
     pm.plugin_name = '__EXTERNAL_PAYMENT__'
     pm.plugin_info = {}
     pm.payment_method_id.should be_nil
 
-    pm = pm.create(true, 'KillBill Spec test')
+    pm = pm.create('KillBill Spec test')
     pm.payment_method_id.should_not be_nil
 
     # Try to retrieve it
@@ -170,10 +171,10 @@ describe KillBillClient::Model do
     invoice_with_id.invoice_id.should == invoice_with_number.invoice_id
     invoice_with_id.invoice_number.should == invoice_with_number.invoice_number
 
-    # Create an external payment
-    invoice_payment = KillBillClient::Model::Payment.new
+    # Create an external payment for each unpaid invoice
+    invoice_payment = KillBillClient::Model::InvoicePayment.new
     invoice_payment.account_id = account.account_id
-    invoice_payment.create true, nil, 'KillBill Spec test'
+    invoice_payment.bulk_create true, 'KillBill Spec test'
 
     # Try to retrieve it
     payments = KillBillClient::Model::Payment.find_in_batches(0, search_limit)
