@@ -5,7 +5,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       def auth(account_id, user = nil, reason = nil, comment = nil, options = {})
-        @transaction_type = 'AUTHORIZE'
+        @transaction_type   = 'AUTHORIZE'
         created_transaction = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                                               to_json,
                                               {},
@@ -18,7 +18,7 @@ module KillBillClient
       end
 
       def purchase(account_id, user = nil, reason = nil, comment = nil, options = {})
-        @transaction_type = 'PURCHASE'
+        @transaction_type   = 'PURCHASE'
         created_transaction = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                                               to_json,
                                               {},
@@ -31,7 +31,7 @@ module KillBillClient
       end
 
       def credit(account_id, user = nil, reason = nil, comment = nil, options = {})
-        @transaction_type = 'CREDIT'
+        @transaction_type   = 'CREDIT'
         created_transaction = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments",
                                               to_json,
                                               {},
@@ -76,6 +76,18 @@ module KillBillClient
                                                     :reason  => reason,
                                                     :comment => comment,
                                                 }.merge(options)
+        created_transaction.refresh(options, Payment)
+      end
+
+      def chargeback(user = nil, reason = nil, comment = nil, options = {})
+        created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}/chargebacks",
+                                              to_json,
+                                              {},
+                                              {
+                                                  :user    => user,
+                                                  :reason  => reason,
+                                                  :comment => comment,
+                                              }.merge(options)
         created_transaction.refresh(options, Payment)
       end
     end

@@ -322,6 +322,12 @@ describe KillBillClient::Model do
     tenant.api_key.should == api_key
   end
 
+  it 'should manipulate the catalog', :integration => true do
+    plans = KillBillClient::Model::Catalog::available_base_plans
+    plans.size.should > 0
+    plans[0].plan.should_not be_nil
+  end
+
   #it 'should retrieve users permissions' do
   #  # Tough to verify as it depends on the Kill Bill configuration
   #  puts KillBillClient::Model::Security.find_permissions
