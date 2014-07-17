@@ -48,10 +48,8 @@ module KillBillClient
 
       end
 
-
-      # Transfer the bundle to the new account. the new account_id should be set in this object
-      def transfer(bundle_id, requested_date = nil, billing_policy = nil, user = nil, reason = nil, comment = nil, options = {})
-
+      # Transfer the bundle to the new account. The new account_id should be set in this object
+      def transfer(requested_date = nil, billing_policy = nil, user = nil, reason = nil, comment = nil, options = {})
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
         params[:billingPolicy] = billing_policy unless billing_policy.nil?
@@ -66,7 +64,6 @@ module KillBillClient
 
         result.refresh(options)
       end
-
 
       # Pause the bundle (and all its subscription)
       def pause(requested_date = nil, user = nil, reason = nil, comment = nil, options = {})

@@ -65,11 +65,11 @@ module KillBillClient
         end
       end
 
-      def create(set_default = true, user = nil, reason = nil, comment = nil, options = {})
+      def create(user = nil, reason = nil, comment = nil, options = {})
         created_pm = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods",
                                      to_json,
                                      {
-                                         :isDefault => set_default
+                                         :isDefault => is_default
                                      },
                                      {
                                          :user => user,
@@ -88,12 +88,10 @@ module KillBillClient
         @plugin_info.properties = []
         return if info.nil?
 
-        info.each { |k, v| @plugin_info.send("#{Utils.underscore k}=", v) unless k == 'properties' }
-
         if info['properties'].nil?
           # Convenience method to create properties to add a payment method
           info.each do |key, value|
-            property = PaymentMethodProperties.new
+            property = PluginPropertyAttributes.new
             property.key = key
             property.value = value
             property.is_updatable = false
@@ -102,7 +100,7 @@ module KillBillClient
         else
           # De-serialization from JSON payload
           info['properties'].each do |property_json|
-            property = PaymentMethodProperties.new
+            property = PluginPropertyAttributes.new
             property.key = property_json['key']
             property.value = property_json['value']
             property.is_updatable = property_json['isUpdatable']
