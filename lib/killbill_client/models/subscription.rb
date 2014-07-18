@@ -21,8 +21,8 @@ module KillBillClient
                                               to_json,
                                               {},
                                               {
-                                                  :user => user,
-                                                  :reason => reason,
+                                                  :user    => user,
+                                                  :reason  => reason,
                                                   :comment => comment,
                                               }.merge(options)
         created_entitlement.refresh(options)
@@ -37,19 +37,19 @@ module KillBillClient
       # @ call_completion : whether the call should wait for invoice/payment to be completed before calls return
       #
       def change_plan(input, user = nil, reason = nil, comment = nil,
-          requested_date = nil, billing_policy = nil, call_completion = false, options = {})
+                      requested_date = nil, billing_policy = nil, call_completion = false, options = {})
 
-        params = {}
+        params                  = {}
         params[:callCompletion] = call_completion
-        params[:requestedDate] = requested_date unless requested_date.nil?
-        params[:billingPolicy] = billing_policy unless billing_policy.nil?
+        params[:requestedDate]  = requested_date unless requested_date.nil?
+        params[:billingPolicy]  = billing_policy unless billing_policy.nil?
 
         return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
                               input.to_json,
                               params,
                               {
-                                  :user => user,
-                                  :reason => reason,
+                                  :user    => user,
+                                  :reason  => reason,
                                   :comment => comment,
                               }.merge(options)
       end
@@ -61,37 +61,35 @@ module KillBillClient
       # @billing_policy : the override for the billing policy {END_OF_TERM, IMMEDIATE}
       #
       def cancel(user = nil, reason = nil, comment = nil, requested_date = nil, entitlementPolicy = nil, billing_policy = nil, use_requested_date_for_billing = nil, options = {})
-        params = {}
-        params[:requestedDate] = requested_date unless requested_date.nil?
-        params[:billingPolicy] = billing_policy unless billing_policy.nil?
-        params[:entitlementPolicy] = entitlementPolicy unless entitlementPolicy.nil?
+        params                              = {}
+        params[:requestedDate]              = requested_date unless requested_date.nil?
+        params[:billingPolicy]              = billing_policy unless billing_policy.nil?
+        params[:entitlementPolicy]          = entitlementPolicy unless entitlementPolicy.nil?
         params[:useRequestedDateForBilling] = use_requested_date_for_billing unless use_requested_date_for_billing.nil?
 
-        return self.class.delete "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
-                                 {},
-                                 params,
-                                 {
-                                     :user => user,
-                                     :reason => reason,
-                                     :comment => comment,
-                                 }.merge(options)
+        self.class.delete "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
+                          {},
+                          params,
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
       end
 
       #
       # Uncancel a future cancelled entitlement
       #
-      #
       def uncancel(user = nil, reason = nil, comment = nil, options = {})
-
         params = {}
-        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}/uncancel",
-                                 nil,
-                                 params,
-                                 {
-                                     :user => user,
-                                     :reason => reason,
-                                     :comment => comment,
-                                 }.merge(options)
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/uncancel",
+                       nil,
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
       end
 
     end
