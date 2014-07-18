@@ -39,10 +39,27 @@ module KillBillClient
 
           uri = base_uri + URI.escape(relative_uri)
 
+          # Plugin properties are passed in the options but we want to send them as query parameters,
+          # so remove with from global hash and insert them under :params
+          plugin_properties = options.delete :pluginProperty
+          if plugin_properties && plugin_properties.size > 0
+            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{p.key}=#{p.value}"}
+          end
+
+
           if options[:params] && !options[:params].empty?
             pairs = options[:params].map { |key, value|
-              "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
+              # If the value is an array, we 'demultiplex' into several
+              if value.is_a? Array
+                internal_pairs = value.map do |simple_value|
+                  "#{CGI.escape key.to_s}=#{CGI.escape simple_value.to_s}"
+                end
+                internal_pairs
+              else
+                "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
+              end
             }
+            pairs.flatten!
             uri += "?#{pairs.join '&'}"
           end
           request = METHODS[method].new uri.request_uri, head
