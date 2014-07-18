@@ -2,16 +2,15 @@ module KillBillClient
   module Model
     class Account < AccountAttributes
 
-      has_many :audit_logs, KillBillClient::Model::AuditLog
-
-      AUTO_PAY_OFF_ID            = '00000000-0000-0000-0000-000000000001'
-      AUTO_INVOICING_ID          = '00000000-0000-0000-0000-000000000002'
-      OVERDUE_ENFORCEMENT_OFF_ID = '00000000-0000-0000-0000-000000000003'
-      WRITTEN_OFF_ID             = '00000000-0000-0000-0000-000000000004'
-      MANUAL_PAY_ID              = '00000000-0000-0000-0000-000000000005'
-      TEST_ID                    = '00000000-0000-0000-0000-000000000006'
-
       KILLBILL_API_ACCOUNTS_PREFIX = "#{KILLBILL_API_PREFIX}/accounts"
+
+      include KillBillClient::Model::TagHelper
+      include KillBillClient::Model::CustomFieldHelper
+
+      has_custom_fields KILLBILL_API_ACCOUNTS_PREFIX, :account_id
+      has_tags KILLBILL_API_ACCOUNTS_PREFIX, :account_id
+
+      has_many :audit_logs, KillBillClient::Model::AuditLog
 
       class << self
         def find_in_batches(offset = 0, limit = 100, with_balance = false, with_balance_and_cba = false, options = {})
@@ -98,80 +97,6 @@ module KillBillClient
                        OverdueStateAttributes
       end
 
-      def tags(audit = 'NONE', options = {})
-        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
-                       {
-                           :audit => audit
-                       },
-                       options,
-                       Tag
-      end
-
-      def add_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
-        tag_definition = TagDefinition.find_by_name(tag_name, options)
-        if tag_definition.nil?
-          tag_definition             = TagDefinition.new
-          tag_definition.name        = tag_name
-          tag_definition.description = "Tag created for account #{@account_id}"
-          tag_definition             = TagDefinition.create(user, options)
-        end
-
-        add_tag_from_definition_id(tag_definition.id, user, reason, comment, options)
-      end
-
-      def remove_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
-        tag_definition = TagDefinition.find_by_name(tag_name)
-        return nil if tag_definition.nil?
-
-        self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
-                          {},
-                          {
-                              :tagList => tag_definition.id
-                          },
-                          {
-                              :user    => user,
-                              :reason  => reason,
-                              :comment => comment,
-                          }.merge(options)
-      end
-
-      def custom_fields(audit = 'NONE', options = {})
-        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
-                       {
-                           :audit => audit
-                       },
-                       options,
-                       CustomField
-      end
-
-      def add_custom_field(custom_fields, user = nil, reason = nil, comment = nil, options = {})
-        body         = custom_fields.is_a?(Enumerable) ? custom_fields : [custom_fields]
-        custom_field = self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
-                                       body.to_json,
-                                       {},
-                                       {
-                                           :user    => user,
-                                           :reason  => reason,
-                                           :comment => comment,
-                                       }.merge(options),
-                                       CustomField
-        custom_field.refresh(options)
-      end
-
-      def remove_custom_field(custom_fields, user = nil, reason = nil, comment = nil, options = {})
-        custom_fields_param = custom_fields.is_a?(Enumerable) ? custom_fields.join(",") : custom_fields
-        self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/customFields",
-                          {},
-                          {
-                              :customFieldList => custom_fields_param
-                          },
-                          {
-                              :user    => user,
-                              :reason  => reason,
-                              :comment => comment,
-                          }.merge(options)
-      end
-
       def auto_pay_off?(options = {})
         control_tag_off?(AUTO_PAY_OFF_ID, options)
       end
@@ -225,7 +150,7 @@ module KillBillClient
                         {
                             # TODO Required ATM
                             :accountId => account_id,
-                            :email => email
+                            :email     => email
                         }.to_json,
                         {},
                         {
@@ -265,31 +190,6 @@ module KillBillClient
                            :comment => comment,
                        }.merge(options)
       end
-
-      private
-
-      def control_tag_off?(control_tag_definition_id, options)
-        res = tags('NONE', options)
-        !((res || []).select do |t|
-          t.tag_definition_id == control_tag_definition_id
-        end.first.nil?)
-      end
-
-      def add_tag_from_definition_id(tag_definition_id, user = nil, reason = nil, comment = nil, options = {})
-        created_tag = self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/tags",
-                                      {},
-                                      {
-                                          :tagList => tag_definition_id
-                                      },
-                                      {
-                                          :user    => user,
-                                          :reason  => reason,
-                                          :comment => comment,
-                                      }.merge(options),
-                                      Tag
-        created_tag.refresh(options)
-      end
-
     end
   end
 end

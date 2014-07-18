@@ -4,6 +4,12 @@ module KillBillClient
 
       KILLBILL_API_BUNDLES_PREFIX = "#{KILLBILL_API_PREFIX}/bundles"
 
+      include KillBillClient::Model::TagHelper
+      include KillBillClient::Model::CustomFieldHelper
+
+      has_custom_fields KILLBILL_API_BUNDLES_PREFIX, :bundle_id
+      has_tags KILLBILL_API_BUNDLES_PREFIX, :bundle_id
+
       has_many :subscriptions, KillBillClient::Model::Subscription
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
@@ -12,7 +18,7 @@ module KillBillClient
           get "#{KILLBILL_API_BUNDLES_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
@@ -21,7 +27,7 @@ module KillBillClient
           get "#{KILLBILL_API_BUNDLES_PREFIX}/search/#{search_key}",
               {
                   :offset => offset,
-                  :limit => limit
+                  :limit  => limit
               },
               options
         end
@@ -50,17 +56,17 @@ module KillBillClient
 
       # Transfer the bundle to the new account. The new account_id should be set in this object
       def transfer(requested_date = nil, billing_policy = nil, user = nil, reason = nil, comment = nil, options = {})
-        params = {}
+        params                 = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
         params[:billingPolicy] = billing_policy unless billing_policy.nil?
-        result = self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
-                                to_json,
-                                params,
-                                {
-                                    :user => user,
-                                    :reason => reason,
-                                    :comment => comment,
-                                }.merge(options)
+        result                 = self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
+                                                to_json,
+                                                params,
+                                                {
+                                                    :user    => user,
+                                                    :reason  => reason,
+                                                    :comment => comment,
+                                                }.merge(options)
 
         result.refresh(options)
       end
@@ -68,34 +74,32 @@ module KillBillClient
       # Pause the bundle (and all its subscription)
       def pause(requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
-        params = {}
+        params                 = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
         self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/pause",
-                                {},
-                                params,
-                                {
-                                    :user => user,
-                                    :reason => reason,
-                                    :comment => comment,
-                                }.merge(options)
+                       {},
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
       end
-
 
       # Resume the bundle (and all its subscription)
       def resume(requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
-        params = {}
+        params                 = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
         self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/resume",
-                                {},
-                                params,
-                                {
-                                    :user => user,
-                                    :reason => reason,
-                                    :comment => comment,
-                                }.merge(options)
+                       {},
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
       end
-
     end
   end
 end

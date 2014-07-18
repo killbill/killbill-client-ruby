@@ -3,6 +3,9 @@ require 'killbill_client/models/resources'
 
 require 'killbill_client/models/gen/require_gen'
 
+require 'killbill_client/models/helpers/tag_helper'
+require 'killbill_client/models/helpers/custom_field_helper'
+
 require 'killbill_client/models/audit_log'
 require 'killbill_client/models/event_subscription'
 require 'killbill_client/models/phase'
