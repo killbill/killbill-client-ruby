@@ -89,7 +89,7 @@ module KillBillClient
     # A method was attempted where it is not allowed.
     #
     # If this is raised, there may be a bug with the client library or with
-    # the server. Please contact skillbilling-users@googlegroups.com or
+    # the server. Please contact killbilling-users@googlegroups.com or
     # {file a bug}[https://github.com/killbill/killbill-client-ruby/issues].
     class MethodNotAllowed < ClientError
     end

@@ -4,14 +4,24 @@ module KillBillClient
       KILLBILL_API_TAG_DEFINITIONS_PREFIX = "#{KILLBILL_API_PREFIX}/tagDefinitions"
 
       class << self
-        def all(options = {})
+        def all(audit = 'NONE', options = {})
           get KILLBILL_API_TAG_DEFINITIONS_PREFIX,
-              {},
+              {
+                  :audit => audit
+              },
               options
         end
 
-        def find_by_name(name, options = {})
-          self.all(options).select { |tag_definition| tag_definition.name == name }.first
+        def find_by_id(id, audit = 'NONE', options = {})
+          get "#{KILLBILL_API_TAG_DEFINITIONS_PREFIX}/#{id}",
+              {
+                  :audit => audit
+              },
+              options
+        end
+
+        def find_by_name(name, audit = 'NONE', options = {})
+          self.all(audit, options).select { |tag_definition| tag_definition.name == name }.first
         end
       end
 
@@ -20,11 +30,22 @@ module KillBillClient
                                                  to_json,
                                                  {},
                                                  {
-                                                     :user => user,
-                                                     :reason => reason,
+                                                     :user    => user,
+                                                     :reason  => reason,
                                                      :comment => comment,
                                                  }.merge(options)
         created_tag_definition.refresh(options)
+      end
+
+      def delete(user = nil, reason = nil, comment = nil, options = {})
+        self.class.delete "#{KILLBILL_API_TAG_DEFINITIONS_PREFIX}/#{id}",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
       end
     end
   end

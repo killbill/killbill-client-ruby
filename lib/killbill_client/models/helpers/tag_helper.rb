@@ -10,7 +10,7 @@ module KillBillClient
       TEST_ID                    = '00000000-0000-0000-0000-000000000006'
 
       def add_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
-        tag_definition = TagDefinition.find_by_name(tag_name, options)
+        tag_definition = TagDefinition.find_by_name(tag_name, 'NONE', options)
         if tag_definition.nil?
           tag_definition             = TagDefinition.new
           tag_definition.name        = tag_name
@@ -22,7 +22,7 @@ module KillBillClient
       end
 
       def remove_tag(tag_name, user = nil, reason = nil, comment = nil, options = {})
-        tag_definition = TagDefinition.find_by_name(tag_name)
+        tag_definition = TagDefinition.find_by_name(tag_name, 'NONE', options)
         return nil if tag_definition.nil?
 
         remove_tag_from_definition_id(tag_definition.id, user, reason, comment, options)
