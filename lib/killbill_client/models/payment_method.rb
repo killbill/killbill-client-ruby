@@ -65,7 +65,7 @@ module KillBillClient
         end
       end
 
-      def create(user = nil, reason = nil, comment = nil, options = {})
+      def create(is_default, user = nil, reason = nil, comment = nil, options = {})
         created_pm = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods",
                                      to_json,
                                      {
