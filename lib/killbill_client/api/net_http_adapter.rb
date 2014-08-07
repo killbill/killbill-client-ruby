@@ -1,5 +1,6 @@
 require 'cgi'
 require 'net/https'
+require 'json'
 
 module KillBillClient
   class API
@@ -24,6 +25,8 @@ module KillBillClient
 
         private
 
+        RE_PATH = /(\/1.0\/kb(?:\/\w+){1,2}\/)\w+-\w+-\w+-\w+-\w+(\/\w+)*/
+
         METHODS = {
             :head => ::Net::HTTP::Head,
             :get => ::Net::HTTP::Get,
@@ -39,11 +42,12 @@ module KillBillClient
 
           uri = base_uri + URI.escape(relative_uri)
 
+
           # Plugin properties are passed in the options but we want to send them as query parameters,
           # so remove with from global hash and insert them under :params
           plugin_properties = options.delete :pluginProperty
           if plugin_properties && plugin_properties.size > 0
-            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{p.key}=#{p.value}"}
+            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{p.key}=#{p.value}" }
           end
 
 
@@ -106,6 +110,18 @@ module KillBillClient
             request['X-Killbill-Comment'] = options[:comment]
           end
 
+          #
+          # Extract profiling data map if it exists and set X-Killbill-Profiling-Req HTTP header
+          # (there will be no synchronization done, so if multiple threads are running they should probably
+          # pass a per-tread profiling Map)
+          #
+          cur_thread_profiling_data = nil
+          if options[:profilingData]
+            request['X-Killbill-Profiling-Req'] = 'JAXRS'
+            cur_thread_profiling_data = options[:profilingData]
+          end
+
+
           http = ::Net::HTTP.new uri.host, uri.port
           http.use_ssl = uri.scheme == 'https'
           net_http.each_pair { |key, value| http.send "#{key}=", value }
@@ -123,6 +139,24 @@ module KillBillClient
 
           response = http.start { http.request request }
           code = response.code.to_i
+
+          # Add profiling data if required
+          if cur_thread_profiling_data && response.header['X-Killbill-Profiling-Resp']
+            profiling_header = JSON.parse response.header['X-Killbill-Profiling-Resp']
+            jaxrs_profiling_header = profiling_header['rawData'][0]
+            key = nil
+            if RE_PATH.match(uri.path)
+              second_arg = $2.nil? ? "" : $2
+              key = "#{method}:#{$1}uuid#{second_arg}"
+            else
+              key = "#{method}:#{uri.path}"
+            end
+            if cur_thread_profiling_data[key].nil?
+              cur_thread_profiling_data[key] = []
+            end
+            cur_thread_profiling_data[key] << jaxrs_profiling_header['durationUsec']
+          end
+
 
           if KillBillClient.logger
             #noinspection RubyScope
