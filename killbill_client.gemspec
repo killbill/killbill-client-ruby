@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
 
   s.rdoc_options << '--exclude' << '.'
 
-  s.add_dependency 'json', '~> 1.8.0'
+  s.add_dependency 'json', '~> 1.2.0'
 
   s.add_development_dependency 'rake', '>= 10.0.0'
   s.add_development_dependency 'rspec', '~> 2.12.0'
