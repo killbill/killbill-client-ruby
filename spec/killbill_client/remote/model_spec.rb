@@ -98,7 +98,7 @@ describe KillBillClient::Model do
     pm.plugin_info = {}
     pm.payment_method_id.should be_nil
 
-    pm = pm.create('KillBill Spec test')
+    pm = pm.create(true, 'KillBill Spec test')
     pm.payment_method_id.should_not be_nil
 
     # Try to retrieve it
