@@ -59,6 +59,7 @@ module KillBillClient
           case response['Content-Type']
           when %r{application/pdf}
           when %r{text/html}
+          when %r{text/plain}
             response.body
           when %r{application/json}
             record = from_json resource_class, response.body
