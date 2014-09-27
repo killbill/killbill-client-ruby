@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Usage < UsageAttributes
+    class UsageRecord < SubscriptionUsageRecordAttributes
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
@@ -8,11 +8,15 @@ module KillBillClient
       KILLBILL_API_USAGES_PREFIX = "#{KILLBILL_API_PREFIX}/usages"
 
       class << self
-        def find_by_subscription_id(subscription_id, options = {})
+        def find_by_subscription_id(subscription_id, start_date, end_date, options = {})
+          params                  = {}
+          params[:startDate] = start_date
+          params[:endDate]  = end_date
+
           get "#{KILLBILL_API_USAGES_PREFIX}/#{subscription_id}",
-              {
-              },
-              options
+              params,
+              options,
+              KillBillClient::Model::RolledUpUsageAttributes.new.class
         end
       end
 

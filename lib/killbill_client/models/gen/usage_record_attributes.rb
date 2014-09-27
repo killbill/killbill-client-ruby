@@ -27,24 +27,9 @@
 
 module KillBillClient
   module Model
-    class InvoicePaymentTransactionAttributes < Resource
-      attribute :transaction_id
-      attribute :transaction_external_key
-      attribute :payment_id
-      attribute :payment_external_key
-      attribute :transaction_type
+    class UsageRecordAttributes < Resource
+      attribute :record_date
       attribute :amount
-      attribute :currency
-      attribute :effective_date
-      attribute :status
-      attribute :gateway_error_code
-      attribute :gateway_error_msg
-      attribute :first_payment_reference_id
-      attribute :second_payment_reference_id
-      attribute :properties
-      attribute :is_adjusted
-      attribute :adjustments
-      attribute :audit_logs
     end
   end
 end
