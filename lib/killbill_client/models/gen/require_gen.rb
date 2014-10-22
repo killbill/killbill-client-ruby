@@ -45,6 +45,7 @@ require 'killbill_client/models/gen/hosted_payment_page_billing_address_attribut
 require 'killbill_client/models/gen/hosted_payment_page_customer_attributes'
 require 'killbill_client/models/gen/hosted_payment_page_fields_attributes'
 require 'killbill_client/models/gen/hosted_payment_page_form_descriptor_attributes'
+require 'killbill_client/models/gen/invoice_dry_run_attributes'
 require 'killbill_client/models/gen/invoice_email_attributes'
 require 'killbill_client/models/gen/invoice_item_attributes'
 require 'killbill_client/models/gen/invoice_attributes'
