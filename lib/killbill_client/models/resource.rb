@@ -57,19 +57,25 @@ module KillBillClient
         # @param response [Net::HTTPResponse]
         def from_response(resource_class, response)
           case response['Content-Type']
-          when %r{application/pdf}
-          when %r{text/html}
-          when %r{text/plain}
-            response.body
-          when %r{application/json}
-            record = from_json resource_class, response.body
-            if record.nil?
-              record = resource_class.new
-              record.uri = response.header['location']
-            end
+            when %r{application/pdf}
+            when %r{text/html}
+            when %r{text/plain}
+              response.body
+            when %r{application/xml}
+              if response.header['location']
+                response.header['location']
+              else
+                response.body
+              end
+            when %r{application/json}
+              record = from_json resource_class, response.body
+              if record.nil?
+                record = resource_class.new
+                record.uri = response.header['location']
+              end
 
-            session_id = extract_session_id(response)
-            record.instance_eval {
+              session_id = extract_session_id(response)
+              record.instance_eval {
                 @clazz = resource_class
                 @etag = response['ETag']
                 @session_id = session_id
@@ -77,10 +83,10 @@ module KillBillClient
                 @pagination_total_nb_records = response['X-Killbill-Pagination-TotalNbRecords'].to_i unless response['X-Killbill-Pagination-TotalNbRecords'].nil?
                 @pagination_next_page = response['X-Killbill-Pagination-NextPageUri']
                 @response = response
-            }
-            record
-          else
-            raise ArgumentError, "#{response['Content-Type']} is not supported by the library"
+              }
+              record
+            else
+              raise ArgumentError, "#{response['Content-Type']} is not supported by the library"
           end
         end
 
