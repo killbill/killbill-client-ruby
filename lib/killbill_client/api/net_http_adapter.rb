@@ -89,7 +89,7 @@ module KillBillClient
             request['Accept'] = options[:accept]
           end
           if options[:body]
-            request['Content-Type'] = content_type
+            request['Content-Type'] = options[:content_type] || content_type
             request.body = options[:body]
           end
           if options[:etag]
