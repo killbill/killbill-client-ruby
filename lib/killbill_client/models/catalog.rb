@@ -28,40 +28,39 @@ module KillBillClient
               options,
               PlanDetail
         end
-      end
 
+        def get_tenant_catalog(options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Retrieving a catalog is only supported in multi-tenant mode"
+          end
 
-      def get_tenant_catalog(options = {})
-        if options[:api_key].nil? || options[:api_secret].nil?
-          raise ArgumentError, "Retrieving a catalog is only supported in multi-tenant mode"
+          get KILLBILL_API_CATALOG_PREFIX,
+              {},
+              {
+                  :head => {'Accept' => 'application/xml'},
+              }.merge(options)
         end
 
-        self.class.get KILLBILL_API_CATALOG_PREFIX,
-                       {},
-                       {
-                           :head => {'Accept' => 'application/xml'},
-                       }.merge(options)
-      end
+        def upload_tenant_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a catalog is only supported in multi-tenant mode"
+          end
 
-      def upload_tenant_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
-        if options[:api_key].nil? || options[:api_secret].nil?
-          raise ArgumentError, "Uploading a catalog is only supported in multi-tenant mode"
+          post KILLBILL_API_CATALOG_PREFIX,
+               catalog_xml,
+               {
+               },
+               {
+                   :head => {'Accept' => 'application/xml'},
+                   :content_type => 'application/xml',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+          get_tenant_catalog(options)
         end
 
-        self.class.post KILLBILL_API_CATALOG_PREFIX,
-                                          catalog_xml,
-                                          {
-                                          },
-                                          {
-                                              :head => {'Accept' => 'application/xml'},
-                                              :content_type => 'application/xml',
-                                              :user => user,
-                                              :reason => reason,
-                                              :comment => comment,
-                                          }.merge(options)
-        get_tenant_catalog(options)
       end
-
     end
   end
 end
