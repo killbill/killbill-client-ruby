@@ -186,6 +186,109 @@ module KillBillClient
           end
         end
 
+
+        def get_invoice_template(is_manual_pay, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Retrieving an invoice template supported in multi-tenant mode"
+          end
+
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate" : "template"}",
+              {},
+              {
+                  :head => {'Accept' => 'text/html'},
+              }.merge(options)
+        end
+
+        def upload_invoice_template(invoice_template, is_manual_pay, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a invoice template is only supported in multi-tenant mode"
+          end
+
+          params                  = {}
+          params[:deleteIfExists] = delete_if_exists if delete_if_exists
+
+          post "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate" : "template"}",
+               invoice_template,
+               params,
+               {
+                   :head => {'Accept' => 'text/html'},
+                   :content_type => 'text/html',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+          get_invoice_template(is_manual_pay, options)
+        end
+
+        def get_invoice_translation(locale, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Retrieving an invoice template supported in multi-tenant mode"
+          end
+
+          get "#{KILLBILL_API_INVOICES_PREFIX}/translation/#{locale}",
+              {},
+              {
+                  :head => {'Accept' => 'text/plain'},
+              }.merge(options)
+        end
+
+        def upload_invoice_translation(invoice_translation, locale, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a invoice template is only supported in multi-tenant mode"
+          end
+
+          params                  = {}
+          params[:deleteIfExists] = delete_if_exists if delete_if_exists
+
+          post "#{KILLBILL_API_INVOICES_PREFIX}/translation/#{locale}",
+               invoice_translation,
+               params,
+               {
+                   :head => {'Accept' => 'text/plain'},
+                   :content_type => 'text/plain',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+          get_invoice_translation(locale, options)
+        end
+
+
+        def get_catalog_translation(locale, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Retrieving a catalog translation is only supported in multi-tenant mode"
+          end
+
+          get "#{KILLBILL_API_INVOICES_PREFIX}/catalogTranslation/#{locale}",
+              {},
+              {
+                  :head => {'Accept' => 'text/plain'},
+              }.merge(options)
+        end
+
+        def upload_catalog_translation(catalog_translation, locale, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a catalog translation is only supported in multi-tenant mode"
+          end
+
+          params                  = {}
+          params[:deleteIfExists] = delete_if_exists if delete_if_exists
+
+          post "#{KILLBILL_API_INVOICES_PREFIX}/catalogTranslation/#{locale}",
+               catalog_translation,
+               params,
+               {
+                   :head => {'Accept' => 'text/plain'},
+                   :content_type => 'text/plain',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+          get_catalog_translation(locale, options)
+        end
+
+
+
       end
 
       def payments(with_plugin_info = false, audit = 'NONE', options = {})
