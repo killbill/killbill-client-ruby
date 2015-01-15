@@ -40,8 +40,7 @@ module KillBillClient
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
 
-          uri = base_uri + URI.escape(relative_uri)
-
+          uri = (options[:base_uri] || base_uri) + URI.escape(relative_uri)
 
           # Plugin properties are passed in the options but we want to send them as query parameters,
           # so remove with from global hash and insert them under :params
