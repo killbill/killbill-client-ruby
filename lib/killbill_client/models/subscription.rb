@@ -2,9 +2,12 @@ module KillBillClient
   module Model
     class Subscription < SubscriptionAttributes
 
-      has_many :events, KillBillClient::Model::EventSubscription
+      include KillBillClient::Model::CustomFieldHelper
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
+
+      has_many :events, KillBillClient::Model::EventSubscription
+      has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
 
       class << self
         def find_by_id(subscription_id, options = {})

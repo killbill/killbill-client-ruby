@@ -1,12 +1,17 @@
 module KillBillClient
   module Model
     class Invoice < InvoiceAttributes
+
+      include KillBillClient::Model::CustomFieldHelper
+
       KILLBILL_API_INVOICES_PREFIX = "#{KILLBILL_API_PREFIX}/invoices"
       KILLBILL_API_DRY_RUN_INVOICES_PREFIX = "#{KILLBILL_API_INVOICES_PREFIX}/dryRun"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
       has_many :items, KillBillClient::Model::InvoiceItem
       has_many :credits, KillBillClient::Model::Credit
+
+      has_custom_fields KILLBILL_API_INVOICES_PREFIX, :invoice_id
 
       create_alias :bundle_keys, :external_bundle_keys
 
