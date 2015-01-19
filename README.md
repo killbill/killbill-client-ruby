@@ -40,3 +40,6 @@ rake test:remote:spec
 
 You need to set in spec/spec_helper.rb the url of your instance, e.g. `KillBillClient.url = 'http://127.0.0.1:8080'` and the username and password to authenticate the API, e.g. `KillBillClient.username = 'admin'` and `KillBillClient.password = 'password'`
 
+## License
+
+The Kill Bill Ruby client is released under the [Apache license](http://www.apache.org/licenses/LICENSE-2.0).
