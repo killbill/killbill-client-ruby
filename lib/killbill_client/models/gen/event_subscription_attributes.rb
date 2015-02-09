@@ -35,6 +35,10 @@ module KillBillClient
       attribute :product
       attribute :price_list
       attribute :event_type
+      attribute :is_blocked_billing
+      attribute :is_blocked_entitlement
+      attribute :service_name
+      attribute :service_state_name
       attribute :phase
       attribute :audit_logs
     end

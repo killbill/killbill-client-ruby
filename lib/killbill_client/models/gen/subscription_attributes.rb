@@ -42,8 +42,6 @@ module KillBillClient
       attribute :billing_start_date
       attribute :billing_end_date
       attribute :events
-      attribute :new_events
-      attribute :deleted_events
       attribute :audit_logs
     end
   end
