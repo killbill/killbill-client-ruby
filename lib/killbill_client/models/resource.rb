@@ -57,6 +57,8 @@ module KillBillClient
         # @param response [Net::HTTPResponse]
         def from_response(resource_class, response)
           case response['Content-Type']
+            when nil
+              response.body
             when %r{application/pdf}
               response.body
             when %r{text/html}
