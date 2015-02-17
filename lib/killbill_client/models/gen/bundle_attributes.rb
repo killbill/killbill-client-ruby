@@ -32,6 +32,7 @@ module KillBillClient
       attribute :bundle_id
       attribute :external_key
       attribute :subscriptions
+      attribute :timeline
       attribute :audit_logs
     end
   end

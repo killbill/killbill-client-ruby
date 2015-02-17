@@ -28,11 +28,11 @@
 module KillBillClient
   module Model
     class BundleTimelineAttributes < Resource
-      attribute :view_id
-      attribute :bundle
-      attribute :payments
-      attribute :invoices
-      attribute :reason_for_change
+      attribute :account_id
+      attribute :bundle_id
+      attribute :external_key
+      attribute :events
+      attribute :audit_logs
     end
   end
 end

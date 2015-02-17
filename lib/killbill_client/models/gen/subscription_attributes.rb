@@ -36,7 +36,10 @@ module KillBillClient
       attribute :product_name
       attribute :product_category
       attribute :billing_period
+      attribute :phase_type
       attribute :price_list
+      attribute :state
+      attribute :source_type
       attribute :cancelled_date
       attribute :charged_through_date
       attribute :billing_start_date
