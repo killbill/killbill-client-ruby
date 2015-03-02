@@ -17,7 +17,59 @@ module KillBillClient
               {},
               options
         end
+
+        def get_tenant_plugin_config(plugin_name, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Retrieving a plugin config is only supported in multi-tenant mode"
+          end
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+          get uri,
+              {},
+              {
+              }.merge(options),
+              KillBillClient::Model::TenantKeyAttributes
+        end
+
+        def upload_tenant_plugin_config(plugin_name, plugin_config, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a plugin config is only supported in multi-tenant mode"
+          end
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+          post uri,
+               plugin_config,
+               {
+               },
+               {
+                   :content_type => 'text/plain',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+          get_tenant_plugin_config(plugin_name, options)
+        end
+
+        def delete_tenant_plugin_config(plugin_name, user = nil, reason = nil, comment = nil, options = {})
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, "Uploading a plugin config is only supported in multi-tenant mode"
+          end
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+          delete uri,
+               {},
+               {
+               },
+               {
+                   :content_type => 'text/plain',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+
+        end
       end
+
 
       def create(user = nil, reason = nil, comment = nil, options = {})
         created_tenant = self.class.post KILLBILL_API_TENANTS_PREFIX,
