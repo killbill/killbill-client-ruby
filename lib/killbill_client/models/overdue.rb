@@ -6,6 +6,9 @@ module KillBillClient
 
       class << self
         def get_tenant_overdue_config(options = {})
+
+          require_multi_tenant_options!(options, "Retrieving an overdue config is only supported in multi-tenant mode")
+
           get KILLBILL_API_OVERDUE_PREFIX,
               {},
               {
@@ -14,6 +17,9 @@ module KillBillClient
         end
 
         def upload_tenant_overdue_config(overdue_config_xml, user = nil, reason = nil, comment = nil, options = {})
+
+          require_multi_tenant_options!(options, "Uploading an overdue config is only supported in multi-tenant mode")
+
           post KILLBILL_API_OVERDUE_PREFIX,
                overdue_config_xml,
                {

@@ -19,9 +19,8 @@ module KillBillClient
         end
 
         def get_tenant_plugin_config(plugin_name, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Retrieving a plugin config is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Retrieving a plugin config is only supported in multi-tenant mode")
 
           uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
           get uri,
@@ -32,9 +31,8 @@ module KillBillClient
         end
 
         def upload_tenant_plugin_config(plugin_name, plugin_config, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a plugin config is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a plugin config is only supported in multi-tenant mode")
 
           uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
           post uri,
@@ -51,9 +49,8 @@ module KillBillClient
         end
 
         def delete_tenant_plugin_config(plugin_name, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a plugin config is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a plugin config is only supported in multi-tenant mode")
 
           uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
           delete uri,
@@ -68,6 +65,7 @@ module KillBillClient
                }.merge(options)
 
         end
+
       end
 
 

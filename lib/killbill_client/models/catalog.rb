@@ -30,9 +30,8 @@ module KillBillClient
         end
 
         def get_tenant_catalog(options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Retrieving a catalog is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
 
           get KILLBILL_API_CATALOG_PREFIX,
               {},
@@ -42,9 +41,8 @@ module KillBillClient
         end
 
         def upload_tenant_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a catalog is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a catalog is only supported in multi-tenant mode")
 
           post KILLBILL_API_CATALOG_PREFIX,
                catalog_xml,

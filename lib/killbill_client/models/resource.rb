@@ -17,7 +17,7 @@ module KillBillClient
       def initialize(hash = nil)
         # Make sure we support ActiveSupport::HashWithIndifferentAccess for Kaui
         if hash.respond_to?(:each)
-          hash.each do |key,value|
+          hash.each do |key, value|
             send("#{Utils.underscore key.to_s}=", value)
           end
         end
@@ -62,7 +62,7 @@ module KillBillClient
             when %r{application/pdf}
               response.body
             when %r{text/html}
-               response.body
+              response.body
             when %r{text/plain}
               response.body
             when %r{application/xml}
@@ -168,96 +168,105 @@ module KillBillClient
           attributes = self.instance_variable_get('@json_attributes')
 
           (
-           class << self;
-             self
-           end).send(:define_method, :json_attributes) do
-             attributes
-           end
-         end
+          class << self;
+            self
+          end).send(:define_method, :json_attributes) do
+            attributes
+          end
+        end
 
-         def has_many(attr_name, type = nil)
-           send("attr_accessor", attr_name.to_sym)
+        def has_many(attr_name, type = nil)
+          send("attr_accessor", attr_name.to_sym)
 
-           #add it to attribute_names
-           @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
-           @@attribute_names[self.name][attr_name.to_sym] = {:type => type,  :cardinality => :many }
-         end
+          #add it to attribute_names
+          @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
+          @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :many}
+        end
 
-         def has_one(attr_name, type = nil)
-           send("attr_accessor", attr_name.to_sym)
+        def has_one(attr_name, type = nil)
+          send("attr_accessor", attr_name.to_sym)
 
-           #add it to attribute_names
-           @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
-           @@attribute_names[self.name][attr_name.to_sym] = { :type => type, :cardinality => :one }
-         end
+          #add it to attribute_names
+          @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
+          @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :one}
+        end
 
-         #hack to cater the api return attributes and javax attributes without editing gen scripts
-         #call only after its declared as a instance_method using attr_accessor
-         def create_alias(new_name, old_name)
-           alias_method new_name.to_sym, old_name.to_sym #getter
-           alias_method "#{new_name}=".to_sym, "#{old_name}=".to_sym #setter
-         end
+        #hack to cater the api return attributes and javax attributes without editing gen scripts
+        #call only after its declared as a instance_method using attr_accessor
+        def create_alias(new_name, old_name)
+          alias_method new_name.to_sym, old_name.to_sym #getter
+          alias_method "#{new_name}=".to_sym, "#{old_name}=".to_sym #setter
+        end
 
-         # Extract the session id from a response
-         def extract_session_id(response)
-           # The Set-Cookie header looks like
-           # "set-cookie"=>["JSESSIONID=16; Path=/; HttpOnly", "rememberMe=deleteMe; Path=/; Max-Age=0; Expires=Sat, 17-Aug-2013 23:39:37 GMT"],
-           session_cookie = response['set-cookie']
-           unless session_cookie.nil?
-             session_cookie.split(';').each do |chunk|
-               chunk.strip!
-               key, value = chunk.split('=')
-               return value if key == 'JSESSIONID'
-             end
-           end
-           nil
-         end
-       end #end self methods
+        # Extract the session id from a response
+        def extract_session_id(response)
+          # The Set-Cookie header looks like
+          # "set-cookie"=>["JSESSIONID=16; Path=/; HttpOnly", "rememberMe=deleteMe; Path=/; Max-Age=0; Expires=Sat, 17-Aug-2013 23:39:37 GMT"],
+          session_cookie = response['set-cookie']
+          unless session_cookie.nil?
+            session_cookie.split(';').each do |chunk|
+              chunk.strip!
+              key, value = chunk.split('=')
+              return value if key == 'JSESSIONID'
+            end
+          end
+          nil
+        end
+      end #end self methods
 
-       # Set on create call
-       attr_accessor :uri
+      # Set on create call
+      attr_accessor :uri
 
-       def to_hash
-         json_hash = {}
-         self.class.json_attributes.each do |name|
-           value = self.send(name)
-           unless value.nil?
-             json_hash[Utils.camelize name, :lower] = _to_hash(value)
-           end
-         end
-         json_hash
-       end
+      def to_hash
+        json_hash = {}
+        self.class.json_attributes.each do |name|
+          value = self.send(name)
+          unless value.nil?
+            json_hash[Utils.camelize name, :lower] = _to_hash(value)
+          end
+        end
+        json_hash
+      end
 
-       def _to_hash(value)
-         if value.is_a?(Resource)
-           value.to_hash
-         elsif value.is_a?(Array)
-           value.map { |v| _to_hash(v) }
-         else
-           value
-         end
-       end
+      def _to_hash(value)
+        if value.is_a?(Resource)
+          value.to_hash
+        elsif value.is_a?(Array)
+          value.map { |v| _to_hash(v) }
+        else
+          value
+        end
+      end
 
-       def to_json(*args)
-         to_hash.to_json(*args)
-       end
+      def to_json(*args)
+        to_hash.to_json(*args)
+      end
 
-       def refresh(options = {}, clazz=self.class)
-         if @uri
-           self.class.get @uri, {}, options, clazz
-         else
-           self
-         end
-       end
+      def refresh(options = {}, clazz=self.class)
+        if @uri
+          self.class.get @uri, {}, options, clazz
+        else
+          self
+        end
+      end
 
-       def ==(o)
-         o.class == self.class && o.hash == hash
-       end
-       alias_method :eql?, :==
 
-       def hash
-         to_hash.hash
-       end
+      def require_multi_tenant_options!(options, msg)
+        if options[:api_key].nil? || options[:api_secret].nil?
+          raise ArgumentError, msg
+        end
+      end
+
+
+      def ==(o)
+        o.class == self.class && o.hash == hash
+      end
+
+      alias_method :eql?, :==
+
+      def hash
+        to_hash.hash
+      end
     end
-   end
- end
+  end
+end

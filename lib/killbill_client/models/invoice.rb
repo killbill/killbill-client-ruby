@@ -193,9 +193,9 @@ module KillBillClient
 
 
         def get_invoice_template(is_manual_pay, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Retrieving an invoice template supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Retrieving an invoice template supported in multi-tenant mode")
+
 
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate" : "template"}",
               {},
@@ -205,9 +205,9 @@ module KillBillClient
         end
 
         def upload_invoice_template(invoice_template, is_manual_pay, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a invoice template is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a invoice template is only supported in multi-tenant mode")
+
 
           params                  = {}
           params[:deleteIfExists] = delete_if_exists if delete_if_exists
@@ -226,9 +226,9 @@ module KillBillClient
         end
 
         def get_invoice_translation(locale, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Retrieving an invoice template supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Retrieving an invoice translation supported in multi-tenant mode")
+
 
           get "#{KILLBILL_API_INVOICES_PREFIX}/translation/#{locale}",
               {},
@@ -238,9 +238,9 @@ module KillBillClient
         end
 
         def upload_invoice_translation(invoice_translation, locale, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a invoice template is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a invoice translation is only supported in multi-tenant mode")
+
 
           params                  = {}
           params[:deleteIfExists] = delete_if_exists if delete_if_exists
@@ -260,9 +260,8 @@ module KillBillClient
 
 
         def get_catalog_translation(locale, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Retrieving a catalog translation is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Retrieving a catalog translation is only supported in multi-tenant mode")
 
           get "#{KILLBILL_API_INVOICES_PREFIX}/catalogTranslation/#{locale}",
               {},
@@ -272,9 +271,8 @@ module KillBillClient
         end
 
         def upload_catalog_translation(catalog_translation, locale, delete_if_exists, user = nil, reason = nil, comment = nil, options = {})
-          if options[:api_key].nil? || options[:api_secret].nil?
-            raise ArgumentError, "Uploading a catalog translation is only supported in multi-tenant mode"
-          end
+
+          require_multi_tenant_options!(options, "Uploading a catalog translation is only supported in multi-tenant mode")
 
           params                  = {}
           params[:deleteIfExists] = delete_if_exists if delete_if_exists
