@@ -24,6 +24,13 @@ module KillBillClient
       end
 
       class << self
+
+        def require_multi_tenant_options!(options, msg)
+          if options[:api_key].nil? || options[:api_secret].nil?
+            raise ArgumentError, msg
+          end
+        end
+
         def head(uri, params = {}, options = {}, clazz = self)
           response = KillBillClient::API.head uri, params, options
           from_response clazz, response
@@ -247,13 +254,6 @@ module KillBillClient
           self.class.get @uri, {}, options, clazz
         else
           self
-        end
-      end
-
-
-      def require_multi_tenant_options!(options, msg)
-        if options[:api_key].nil? || options[:api_secret].nil?
-          raise ArgumentError, msg
         end
       end
 
