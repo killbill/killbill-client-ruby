@@ -47,6 +47,10 @@ module KillBillClient
         params[:requestedDate]  = requested_date unless requested_date.nil?
         params[:billingPolicy]  = billing_policy unless billing_policy.nil?
 
+        # Make sure account_id is set
+        input[:accountId] = @account_id
+        input[:productCategory] = @product_category
+
         return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
                               input.to_json,
                               params,
