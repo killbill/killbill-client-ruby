@@ -38,6 +38,7 @@ module KillBillClient
       attribute :bundle_id
       attribute :effective_date
       attribute :billing_policy
+      attribute :price_overrides
     end
   end
 end

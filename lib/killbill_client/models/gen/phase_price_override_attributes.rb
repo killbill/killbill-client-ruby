@@ -27,26 +27,11 @@
 
 module KillBillClient
   module Model
-    class SubscriptionAttributes < Resource
-      attribute :account_id
-      attribute :bundle_id
-      attribute :subscription_id
-      attribute :external_key
-      attribute :start_date
-      attribute :product_name
-      attribute :product_category
-      attribute :billing_period
+    class PhasePriceOverrideAttributes < Resource
+      attribute :phase_name
       attribute :phase_type
-      attribute :price_list
-      attribute :state
-      attribute :source_type
-      attribute :cancelled_date
-      attribute :charged_through_date
-      attribute :billing_start_date
-      attribute :billing_end_date
-      attribute :events
-      attribute :price_overrides
-      attribute :audit_logs
+      attribute :fixed_price
+      attribute :recurring_price
     end
   end
 end
