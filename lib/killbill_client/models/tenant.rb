@@ -19,10 +19,35 @@ module KillBillClient
         end
 
         def get_tenant_plugin_config(plugin_name, options = {})
+          get_tenant_key_value(plugin_name, "uploadPluginConfig", "plugin config", options)
+        end
 
-          require_multi_tenant_options!(options, "Retrieving a plugin config is only supported in multi-tenant mode")
+        def upload_tenant_plugin_config(plugin_name, plugin_config, user = nil, reason = nil, comment = nil, options = {})
+          upload_tenant_key_value(plugin_name, plugin_config, "uploadPluginConfig", "get_tenant_plugin_config", "plugin config", user, reason, comment, options)
+        end
 
-          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+        def delete_tenant_plugin_config(plugin_name, user = nil, reason = nil, comment = nil, options = {})
+          delete_tenant_user_key_value(plugin_name, "uploadPluginConfig", "plugin config", user, reason, comment, options)
+        end
+
+        def get_tenant_user_key_value(key_name, options = {})
+          get_tenant_key_value(key_name, "userKeyValue", "tenant key/value", options)
+        end
+
+        def upload_tenant_user_key_value(key_name, key_value, user = nil, reason = nil, comment = nil, options = {})
+          upload_tenant_key_value(key_name, key_value, "userKeyValue", "get_tenant_user_key_value", "tenant key/value", user, reason, comment, options)
+        end
+
+
+        def delete_tenant_user_key_value(key_name, user = nil, reason = nil, comment = nil, options = {})
+          delete_tenant_user_key_value(key_name, "userKeyValue", "tenant key/value", user, reason, comment, options)
+        end
+
+        def get_tenant_key_value(key_name, key_path, error_id_str, options = {})
+
+          require_multi_tenant_options!(options, "Retrieving a #{error_id_str} is only supported in multi-tenant mode")
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/#{key_path}/" + key_name
           get uri,
               {},
               {
@@ -30,13 +55,14 @@ module KillBillClient
               KillBillClient::Model::TenantKeyAttributes
         end
 
-        def upload_tenant_plugin_config(plugin_name, plugin_config, user = nil, reason = nil, comment = nil, options = {})
 
-          require_multi_tenant_options!(options, "Uploading a plugin config is only supported in multi-tenant mode")
+        def upload_tenant_key_value(key_name, key_value, key_path, get_method, error_id_str, user = nil, reason = nil, comment = nil, options = {})
 
-          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+          require_multi_tenant_options!(options, "Uploading a #{error_id_str} is only supported in multi-tenant mode")
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/#{key_path}/" + key_name
           post uri,
-               plugin_config,
+               key_value,
                {
                },
                {
@@ -45,27 +71,27 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_tenant_plugin_config(plugin_name, options)
+          send(get_method.to_sym, key_name, options)
         end
 
-        def delete_tenant_plugin_config(plugin_name, user = nil, reason = nil, comment = nil, options = {})
 
-          require_multi_tenant_options!(options, "Uploading a plugin config is only supported in multi-tenant mode")
+        def delete_tenant_user_key_value(key_name, key_path, error_id_str, user = nil, reason = nil, comment = nil, options = {})
 
-          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPluginConfig/" + plugin_name
+          require_multi_tenant_options!(options, "Deleting a #{error_id_str} is only supported in multi-tenant mode")
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/#{key_path}/" + key_name
           delete uri,
-               {},
-               {
-               },
-               {
-                   :content_type => 'text/plain',
-                   :user => user,
-                   :reason => reason,
-                   :comment => comment,
-               }.merge(options)
+                 {},
+                 {
+                 },
+                 {
+                     :content_type => 'text/plain',
+                     :user => user,
+                     :reason => reason,
+                     :comment => comment,
+                 }.merge(options)
 
         end
-
       end
 
 
