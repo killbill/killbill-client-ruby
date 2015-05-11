@@ -11,7 +11,7 @@ Examples
 
 The following script will tag a list of accounts with OVERDUE_ENFORCEMENT_OFF and AUTO_PAY_OFF:
 
-```
+```ruby
 require 'killbill_client'
 
 KillBillClient.url = 'http://127.0.0.1:8080'
@@ -34,7 +34,7 @@ Tests
 
 To run the integration tests:
 
-```
+```bash
 rake test:remote:spec
 ```
 
