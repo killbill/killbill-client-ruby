@@ -73,17 +73,21 @@ module KillBillClient
           end
         end
 
-        def trigger_invoice_dry_run(account_id, target_date, options = {})
-          query_map              = {:accountId => account_id}
-          query_map[:targetDate] = target_date if !target_date.nil?
+        def trigger_invoice_dry_run(account_id, target_date, upcoming_invoice_target_date, options = {})
+          query_map = {:accountId => account_id}
+          if upcoming_invoice_target_date
+            query_map[:targetDate] = "upcomingInvoiceTargetDate"
+          elsif target_date != nil
+            query_map[:targetDate] = target_date
+          end
 
           begin
             res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
                        {},
                        query_map,
                        {
-                           :user    => 'trigger_invoice_dry_run',
-                           :reason  => '',
+                           :user => 'trigger_invoice_dry_run',
+                           :reason => '',
                            :comment => '',
                        }.merge(options),
                        Invoice
