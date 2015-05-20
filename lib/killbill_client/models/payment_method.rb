@@ -66,15 +66,15 @@ module KillBillClient
       end
 
       def create(is_default, user = nil, reason = nil, comment = nil, options = {})
+        params = { :isDefault => is_default }
+        params[:pluginProperty] = 'skip_gw=true' if options[:skip_gw].present?
         created_pm = self.class.post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods",
                                      to_json,
-                                     {
-                                         :isDefault => is_default
-                                     },
+                                     params,
                                      {
                                          :user => user,
                                          :reason => reason,
-                                         :comment => comment,
+                                         :comment => comment
                                      }.merge(options)
         created_pm.refresh(options)
       end
