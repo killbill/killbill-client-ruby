@@ -94,7 +94,7 @@ describe KillBillClient::Model do
     pm = KillBillClient::Model::PaymentMethod.new
     pm.account_id = account.account_id
     pm.is_default = true
-    pm.plugin_name = '__EXTERNAL_PAYMENT__'
+    pm.plugin_name = KillBillClient::Model::PaymentMethod::EXTERNAL_PAYMENT
     pm.plugin_info = {}
     pm.payment_method_id.should be_nil
 

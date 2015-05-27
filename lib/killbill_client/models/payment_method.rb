@@ -2,6 +2,7 @@ module KillBillClient
   module Model
     class PaymentMethod < PaymentMethodAttributes
       KILLBILL_API_PAYMENT_METHODS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentMethods"
+      EXTERNAL_PAYMENT = '__EXTERNAL_PAYMENT__'.freeze
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
