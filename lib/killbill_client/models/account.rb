@@ -110,7 +110,7 @@ module KillBillClient
       end
 
       def auto_pay_off?(options = {})
-        control_tag_off?(AUTO_PAY_OFF_ID, options)
+        control_tag?(AUTO_PAY_OFF_ID, options)
       end
 
       def set_auto_pay_off(user = nil, reason = nil, comment = nil, options = {})
@@ -122,7 +122,7 @@ module KillBillClient
       end
 
       def auto_invoicing_off?(options = {})
-        control_tag_off?(AUTO_INVOICING_OFF_ID, options)
+        control_tag?(AUTO_INVOICING_OFF_ID, options)
       end
 
       def set_auto_invoicing_off(user = nil, reason = nil, comment = nil, options = {})
@@ -134,7 +134,7 @@ module KillBillClient
       end
 
       def overdue_enforcement_off?(options = {})
-        control_tag_off?(OVERDUE_ENFORCEMENT_OFF_ID, options)
+        control_tag?(OVERDUE_ENFORCEMENT_OFF_ID, options)
       end
 
       def set_overdue_enforcement_off(user = nil, reason = nil, comment = nil, options = {})
@@ -146,7 +146,7 @@ module KillBillClient
       end
 
       def written_off?(options = {})
-        control_tag_off?(WRITTEN_OFF_ID, options)
+        control_tag?(WRITTEN_OFF_ID, options)
       end
 
       def set_written_off(user = nil, reason = nil, comment = nil, options = {})
@@ -158,7 +158,7 @@ module KillBillClient
       end
 
       def manual_pay?(options = {})
-        control_tag_off?(MANUAL_PAY_ID, options)
+        control_tag?(MANUAL_PAY_ID, options)
       end
 
       def set_manual_pay(user = nil, reason = nil, comment = nil, options = {})
@@ -170,7 +170,7 @@ module KillBillClient
       end
 
       def test?(options = {})
-        control_tag_off?(TEST_ID, options)
+        control_tag?(TEST_ID, options)
       end
 
       def set_test(user = nil, reason = nil, comment = nil, options = {})
