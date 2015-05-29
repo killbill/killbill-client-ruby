@@ -118,7 +118,7 @@ module KillBillClient
       end
 
       def remove_auto_pay_off(user = nil, reason = nil, comment = nil, options = {})
-        remove_tag_from_definition_id(AUTO_PAY_OFF_ID.id, user, reason, comment, options)
+        remove_tag_from_definition_id(AUTO_PAY_OFF_ID, user, reason, comment, options)
       end
 
       def auto_invoicing_off?(options = {})
