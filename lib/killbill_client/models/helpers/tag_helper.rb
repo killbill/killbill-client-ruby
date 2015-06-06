@@ -55,11 +55,10 @@ module KillBillClient
         remove_tags_from_definition_ids([tag_definition_id], user, reason, comment, options)
       end
 
-      def control_tag_off?(control_tag_definition_id, options)
-        res = tags('NONE', options)
-        !((res || []).select do |t|
+      def control_tag?(control_tag_definition_id, options)
+        tags(false, 'NONE', options).any? do |t|
           t.tag_definition_id == control_tag_definition_id
-        end.first.nil?)
+        end
       end
 
       module ClassMethods
