@@ -31,20 +31,11 @@ module KillBillClient
       def set_tags(tag_definition_ids, user = nil, reason = nil, comment = nil, options = {})
         current_tag_definition_ids = tags(false, 'NONE', options).map { |tag| tag.tag_definition_id }
 
-        # Find tags to remove
-        tags_to_remove             = Set.new
-        current_tag_definition_ids.each do |current_tag_definition_id|
-          tags_to_remove << current_tag_definition_id unless tag_definition_ids.include?(current_tag_definition_id)
-        end
+        tags_to_remove = current_tag_definition_ids - tag_definition_ids
+        tags_to_add = tag_definition_ids - current_tag_definition_ids
 
-        # Find tags to add
-        tags_to_add = Set.new
-        tag_definition_ids.each do |new_tag_definition_id|
-          tags_to_add << new_tag_definition_id unless current_tag_definition_ids.include?(new_tag_definition_id)
-        end
-
-        remove_tags_from_definition_ids(tags_to_remove.to_a, user, reason, comment, options) unless tags_to_remove.empty?
-        add_tags_from_definition_ids(tags_to_add.to_a, user, reason, comment, options) unless tags_to_add.empty?
+        remove_tags_from_definition_ids(tags_to_remove.uniq, user, reason, comment, options) unless tags_to_remove.empty?
+        add_tags_from_definition_ids(tags_to_add.uniq, user, reason, comment, options) unless tags_to_add.empty?
       end
 
       def add_tag_from_definition_id(tag_definition_id, user = nil, reason = nil, comment = nil, options = {})
