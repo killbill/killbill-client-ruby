@@ -1,13 +1,16 @@
 module KillBillClient
   module Utils
+    ACRONYMS = %w(CBA).freeze
+
     def camelize(underscored_word, first_letter = :upper)
-      camelized = underscored_word.to_s.gsub(/(?:^|_)(.)/) { $1.upcase }
-      case first_letter
-        when :lower then
-          camelized = camelized[0, 1].downcase + camelized[1..-1]
+      camelized = underscored_word.to_s.split('_').map do |word|
+        if acronym?(word)
+          word.upcase
         else
-          # camelized = camelized
-      end
+          word[0, 1].upcase + word[1..-1]
+        end
+      end.join
+      camelized = camelized[0, 1].downcase + camelized[1..-1] if first_letter == :lower
       camelized
     end
 
@@ -23,6 +26,10 @@ module KillBillClient
       word.tr! '-', '_'
       word.downcase!
       word
+    end
+
+    def acronym?(word)
+      ACRONYMS.include?(word.to_s.upcase)
     end
 
     extend self
