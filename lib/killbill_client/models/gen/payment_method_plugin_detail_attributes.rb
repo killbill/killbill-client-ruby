@@ -28,7 +28,7 @@
 module KillBillClient
   module Model
     class PaymentMethodPluginDetailAttributes < Resource
-      attribute :external_payment_id
+      attribute :external_payment_method_id
       attribute :is_default_payment_method
       attribute :properties
     end
