@@ -53,7 +53,7 @@ module KillBillClient
       end
 
       def capture(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}",
+        created_transaction = self.class.post "#{follow_up_path(payment_id)}",
                                               to_json,
                                               {},
                                               {
@@ -65,7 +65,7 @@ module KillBillClient
       end
 
       def refund(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}/refunds",
+        created_transaction = self.class.post "#{follow_up_path(payment_id)}/refunds",
                                               to_json,
                                               {},
                                               {
@@ -77,7 +77,7 @@ module KillBillClient
       end
 
       def void(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = self.class.delete "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}",
+        created_transaction = self.class.delete "#{follow_up_path(payment_id)}",
                                                 to_json,
                                                 {},
                                                 {
@@ -89,7 +89,7 @@ module KillBillClient
       end
 
       def chargeback(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}/chargebacks",
+        created_transaction = self.class.post "#{follow_up_path(payment_id)}/chargebacks",
                                               to_json,
                                               {},
                                               {
@@ -98,6 +98,14 @@ module KillBillClient
                                                   :comment => comment,
                                               }.merge(options)
         created_transaction.refresh(options, Payment)
+      end
+
+      private
+
+      def follow_up_path(payment_id)
+        path = Payment::KILLBILL_API_PAYMENTS_PREFIX
+        path += "/#{payment_id}" unless payment_id.nil?
+        path
       end
     end
   end

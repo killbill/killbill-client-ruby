@@ -18,6 +18,14 @@ module KillBillClient
               options
         end
 
+        def find_by_external_key(external_key, options = {})
+          get "#{KILLBILL_API_PAYMENTS_PREFIX}",
+              {
+                  :externalKey => external_key
+              },
+              options
+        end
+
         def find_in_batches(offset = 0, limit = 100, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {

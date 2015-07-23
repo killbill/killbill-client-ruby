@@ -30,7 +30,9 @@ module KillBillClient
     class ComboPaymentTransactionAttributes < Resource
       attribute :account
       attribute :payment_method
+      attribute :payment_method_plugin_properties
       attribute :transaction
+      attribute :transaction_plugin_properties
       attribute :audit_logs
     end
   end
