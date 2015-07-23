@@ -27,10 +27,11 @@
 
 module KillBillClient
   module Model
-    class PaymentMethodPluginDetailAttributes < Resource
-      attribute :external_payment_method_id
-      attribute :is_default_payment_method
-      attribute :properties
+    class ComboPaymentTransactionAttributes < Resource
+      attribute :account
+      attribute :payment_method
+      attribute :transaction
+      attribute :audit_logs
     end
   end
 end
