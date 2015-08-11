@@ -40,6 +40,21 @@ module KillBillClient
         create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options)
       end
 
+      def complete_auth(user = nil, reason = nil, comment = nil, options = {})
+        @transaction_type = 'AUTHORIZE'
+        complete_initial_transaction(user, reason, comment, options)
+      end
+
+      def complete_purchase(user = nil, reason = nil, comment = nil, options = {})
+        @transaction_type = 'PURCHASE'
+        complete_initial_transaction(user, reason, comment, options)
+      end
+
+      def complete_credit(user = nil, reason = nil, comment = nil, options = {})
+        @transaction_type = 'CREDIT'
+        complete_initial_transaction(user, reason, comment, options)
+      end
+
       def capture(user = nil, reason = nil, comment = nil, options = {})
         created_transaction = self.class.post "#{follow_up_path(payment_id)}",
                                               to_json,
@@ -107,6 +122,18 @@ module KillBillClient
                                                   :reason => reason,
                                                   :comment => comment,
                                               }.merge(options)
+        created_transaction.refresh(options, Payment)
+      end
+
+      def complete_initial_transaction(user, reason, comment, options)
+        created_transaction = self.class.put follow_up_path(payment_id),
+                                             to_json,
+                                             {},
+                                             {
+                                                 :user => user,
+                                                 :reason => reason,
+                                                 :comment => comment,
+                                             }.merge(options)
         created_transaction.refresh(options, Payment)
       end
     end
