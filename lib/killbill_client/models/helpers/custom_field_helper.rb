@@ -4,7 +4,11 @@ module KillBillClient
 
       module ClassMethods
         def has_custom_fields(url_prefix, id_alias)
-          define_method('custom_fields') do |audit = 'NONE', options = {}|
+          define_method('custom_fields') do |*args|
+
+            audit = args[0] || 'NONE'
+            options = args[1] || {}
+
             self.class.get "#{url_prefix}/#{send(id_alias)}/customFields",
                            {
                                :audit => audit
@@ -13,7 +17,14 @@ module KillBillClient
                            CustomField
           end
 
-          define_method('add_custom_field') do |custom_fields, user = nil, reason = nil, comment = nil, options = {}|
+          define_method('add_custom_field') do |*args|
+
+            custom_fields = args[0]
+            user = args[1]
+            reason = args[2]
+            comment = args[3]
+            options = args[4] || {}
+
             body         = custom_fields.is_a?(Enumerable) ? custom_fields : [custom_fields]
             custom_field = self.class.post "#{url_prefix}/#{send(id_alias)}/customFields",
                                            body.to_json,
@@ -27,7 +38,14 @@ module KillBillClient
             custom_field.refresh(options)
           end
 
-          define_method('remove_custom_field') do |custom_fields, user = nil, reason = nil, comment = nil, options = {}|
+          define_method('remove_custom_field') do |*args|
+
+            custom_fields = args[0]
+            user = args[1]
+            reason = args[2]
+            comment = args[3]
+            options = args[4] || {}
+
             custom_fields_param = custom_fields.is_a?(Enumerable) ? custom_fields.join(",") : custom_fields
             self.class.delete "#{url_prefix}/#{send(id_alias)}/customFields",
                               {},

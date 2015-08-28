@@ -54,7 +54,12 @@ module KillBillClient
 
       module ClassMethods
         def has_tags(url_prefix, id_alias)
-          define_method('tags') do |included_deleted = false, audit = 'NONE', options = {}|
+          define_method('tags') do |*args|
+
+            included_deleted = args[0] || false
+            audit = args[1] || 'NONE'
+            options = args[2] || {}
+
             self.class.get "#{url_prefix}/#{send(id_alias)}/tags",
                            {
                                :includedDeleted => included_deleted,
@@ -64,7 +69,14 @@ module KillBillClient
                            Tag
           end
 
-          define_method('add_tags_from_definition_ids') do |tag_definition_ids, user = nil, reason = nil, comment = nil, options = {}|
+          define_method('add_tags_from_definition_ids') do |*args|
+
+            tag_definition_ids = args[0]
+            user = args[1]
+            reason = args[2]
+            comment = args[3]
+            options = args[4] || {}
+
             created_tag = self.class.post "#{url_prefix}/#{send(id_alias)}/tags",
                                           {},
                                           {
@@ -79,7 +91,14 @@ module KillBillClient
             created_tag.refresh(options)
           end
 
-          define_method('remove_tags_from_definition_ids') do |tag_definition_ids, user = nil, reason = nil, comment = nil, options = {}|
+          define_method('remove_tags_from_definition_ids') do |*args|
+
+            tag_definition_ids = args[0]
+            user = args[1]
+            reason = args[2]
+            comment = args[3]
+            options = args[4] || {}
+
             self.class.delete "#{url_prefix}/#{send(id_alias)}/tags",
                               {},
                               {
