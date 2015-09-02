@@ -61,9 +61,10 @@ module KillBillClient
         request :delete, uri, {:body => body.to_s}.merge({:params => params}).merge(options)
       end
 
-      # @return [URI::Generic]
+      # @return [URI::HTTP]
       def base_uri
-        URI.parse(KillBillClient.url)
+        url = URI.parse(KillBillClient.url)
+        url = URI.parse("http://" + KillBillClient.url) unless url.is_a?(URI::HTTP)
       end
 
       # @return [String]
