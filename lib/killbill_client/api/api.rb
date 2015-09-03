@@ -63,8 +63,9 @@ module KillBillClient
 
       # @return [URI::HTTP]
       def base_uri
-        url = URI.parse(KillBillClient.url)
-        url = URI.parse("http://" + KillBillClient.url) unless url.is_a?(URI::HTTP)
+        parsed_uri = URI.parse(KillBillClient.url)
+        parsed_uri = URI.parse("http://" + KillBillClient.url) unless parsed_uri.is_a?(URI::HTTP)
+        parsed_uri
       end
 
       # @return [String]
