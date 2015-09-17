@@ -4,8 +4,10 @@ module KillBillClient
 
       def build_form_descriptor(user = nil, reason = nil, comment = nil, options = {})
         query_map = {
-            :controlPluginName => options.delete(:controlPluginNames)
         }
+        if options.include? :controlPluginNames
+          query_map[:controlPluginName] = options.delete(:controlPluginNames)
+        end
 
         self.class.post "#{HostedPaymentPage::KILLBILL_API_HPP_PREFIX}/hosted/form",
                         to_json,
