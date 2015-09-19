@@ -30,6 +30,7 @@ module KillBillClient
     class TagAttributes < Resource
       attribute :tag_id
       attribute :object_type
+      attribute :object_id
       attribute :tag_definition_id
       attribute :tag_definition_name
       attribute :audit_logs

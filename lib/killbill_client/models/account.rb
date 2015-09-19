@@ -221,10 +221,22 @@ module KillBillClient
                        to_json,
                        {},
                        {
-                           :user    => user,
-                           :reason  => reason,
+                           :user => user,
+                           :reason => reason,
                            :comment => comment,
                        }.merge(options)
+      end
+
+      def all_tags(object_type, included_deleted, audit = 'NONE', options = {})
+
+        params = {}
+        params[:objectType] = object_type if object_type
+        params[:includedDeleted] = included_deleted if included_deleted
+        params[:audit] = audit
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/allTags",
+                       params,
+                       options,
+                       Tag
       end
     end
   end
