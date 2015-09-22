@@ -1,6 +1,8 @@
 require 'cgi'
 require 'net/https'
 require 'json'
+require 'zlib'
+require 'stringio'
 
 module KillBillClient
   class API
@@ -87,6 +89,10 @@ module KillBillClient
           if options[:accept]
             request['Accept'] = options[:accept]
           end
+          if options[:accept_encoding]
+            request['Accept-Encoding'] = 'gzip'
+          end
+
           if options[:body]
             request['Content-Type'] = options[:content_type] || content_type
             request.body = options[:body]
@@ -154,6 +160,11 @@ module KillBillClient
               cur_thread_profiling_data[key] = []
             end
             cur_thread_profiling_data[key] << jaxrs_profiling_header['durationUsec']
+          end
+
+          if response.body && response.header['Content-Encoding'] && response.header['Content-Encoding'] == 'gzip'
+            gz = Zlib::GzipReader.new(StringIO.new(response.body.to_s))
+            response.body = gz.read
           end
 
 
