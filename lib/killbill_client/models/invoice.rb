@@ -74,16 +74,16 @@ module KillBillClient
         end
 
         def trigger_invoice_dry_run(account_id, target_date, upcoming_invoice_target_date, options = {})
+
+          dry_run = InvoiceDryRunAttributes.new
+          dry_run.dry_run_type = upcoming_invoice_target_date ? 'UPCOMING_INVOICE' : 'TARGET_DATE'
+
           query_map = {:accountId => account_id}
-          if upcoming_invoice_target_date
-            query_map[:targetDate] = "upcomingInvoiceTargetDate"
-          elsif target_date != nil
-            query_map[:targetDate] = target_date
-          end
+          query_map[:targetDate] = target_date if target_date != nil
 
           begin
             res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       {},
+                       dry_run.to_json,
                        query_map,
                        {
                            :user => 'trigger_invoice_dry_run',
@@ -106,6 +106,7 @@ module KillBillClient
           query_map[:targetDate] = target_date if !target_date.nil?
 
           dry_run = InvoiceDryRunAttributes.new
+          dry_run.dry_run_type = 'SUBSCRIPTION_ACTION'
           dry_run.dry_run_action = 'START_BILLING'
           dry_run.product_name = product_name
           dry_run.product_category = product_category
@@ -136,6 +137,7 @@ module KillBillClient
           query_map[:targetDate] = target_date if !target_date.nil?
 
           dry_run = InvoiceDryRunAttributes.new
+          dry_run.dry_run_type = 'SUBSCRIPTION_ACTION'
           dry_run.dry_run_action = 'CHANGE'
           dry_run.product_name = product_name
           dry_run.product_category = product_category
@@ -170,6 +172,7 @@ module KillBillClient
           query_map[:targetDate] = target_date if !target_date.nil?
 
           dry_run = InvoiceDryRunAttributes.new
+          dry_run.dry_run_type = 'SUBSCRIPTION_ACTION'
           dry_run.dry_run_action = 'STOP_BILLING'
           dry_run.effective_date = effective_date
           dry_run.billing_policy = billing_policy
