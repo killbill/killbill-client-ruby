@@ -28,6 +28,7 @@
 module KillBillClient
   module Model
     class InvoiceDryRunAttributes < Resource
+      attribute :dry_run_type
       attribute :dry_run_action
       attribute :phase_type
       attribute :product_name
