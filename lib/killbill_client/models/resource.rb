@@ -131,13 +131,14 @@ module KillBillClient
         def instantiate_record_from_json(resource_class, data)
           record = resource_class.send :new
 
+          kb_ancestors = resource_class.ancestors.select { |ancestor| !@@attribute_names[ancestor.name].nil? }
           data.each do |name, value|
             name = Utils.underscore name
             attr_desc = nil
 
-            # Allow for inheritance. TODO What's the performance hit?
-            resource_class.ancestors.each do |ancestor|
-              attr_desc = @@attribute_names[ancestor.name][name.to_sym] rescue nil
+            # Allow for inheritance
+            kb_ancestors.each do |ancestor|
+              attr_desc = @@attribute_names[ancestor.name][name.to_sym]
               break unless attr_desc.nil?
             end
 
