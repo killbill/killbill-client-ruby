@@ -121,6 +121,9 @@ module KillBillClient
             cur_thread_profiling_data = options[:profilingData]
           end
 
+          if options[:request_id]
+            request['X-Killbill-Request-Id-Req'] = options[:request_id]
+          end
 
           http = ::Net::HTTP.new uri.host, uri.port
           http.use_ssl = uri.scheme == 'https'
@@ -156,7 +159,7 @@ module KillBillClient
             end
             cur_thread_profiling_data[key] << jaxrs_profiling_header['durationUsec']
           end
-          
+
           if KillBillClient.logger
             #noinspection RubyScope
             latency = (Time.now - start_time) * 1_000
