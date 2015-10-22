@@ -122,7 +122,7 @@ module KillBillClient
           end
 
           if options[:request_id]
-            request['X-Killbill-Request-Id-Req'] = options[:request_id]
+            request['X-Request-Id'] = options[:request_id]
           end
 
           http = ::Net::HTTP.new uri.host, uri.port
