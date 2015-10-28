@@ -40,7 +40,11 @@ module KillBillClient
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
 
-          uri = (options[:base_uri] || base_uri) + URI.escape(relative_uri)
+          uri = (options[:base_uri] || base_uri)
+          # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
+          # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
+          base_path = uri.request_uri == '/' ? '' : uri.request_uri
+          uri += (base_path + URI.escape(relative_uri))
 
           # Plugin properties are passed in the options but we want to send them as query parameters,
           # so remove with from global hash and insert them under :params
@@ -48,7 +52,6 @@ module KillBillClient
           if plugin_properties && plugin_properties.size > 0
             options[:params][:pluginProperty] = plugin_properties.map { |p| "#{p.key}=#{p.value}" }
           end
-
 
           if options[:params] && !options[:params].empty?
             pairs = options[:params].map { |key, value|
