@@ -100,6 +100,30 @@ module KillBillClient
                            :comment => comment,
                        }.merge(options)
       end
+
+
+
+      # Low level api to block/unblock a given subscription/bundle/account
+      def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        body = KillBillClient::Model::BlockingStateAttributes.new
+        body.state_name = state_name
+        body.service = service
+        body.block_change = block_change
+        body.block_entitlement = block_entitlement
+        body.block_billing = block_billing
+        body.effective_date = requested_date
+
+        self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/block",
+                       body.to_json,
+                       {},
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
+
     end
   end
 end
