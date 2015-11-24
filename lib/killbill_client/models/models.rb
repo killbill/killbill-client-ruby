@@ -34,10 +34,10 @@ require 'killbill_client/models/role_definition'
 require 'killbill_client/models/tag'
 require 'killbill_client/models/tag_definition'
 require 'killbill_client/models/tenant'
-require 'killbill_client/models/plugin_info'
 require 'killbill_client/models/usage_record'
 require 'killbill_client/models/rolled_up_usage'
 require 'killbill_client/models/account_timeline'
+require 'killbill_client/models/nodes_info'
 
 module KillBillClient
   module Model
