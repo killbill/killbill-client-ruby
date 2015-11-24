@@ -31,7 +31,7 @@ module KillBillClient
       attribute :bundle_symbolic_name
       attribute :plugin_name
       attribute :version
-      attribute :running
+      attribute :state
       attribute :services
     end
   end
