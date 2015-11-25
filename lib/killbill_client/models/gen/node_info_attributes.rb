@@ -28,6 +28,9 @@
 module KillBillClient
   module Model
     class NodeInfoAttributes < Resource
+      attribute :node_name
+      attribute :boot_time
+      attribute :last_updated_date
       attribute :kb_version
       attribute :api_version
       attribute :plugin_api_version
