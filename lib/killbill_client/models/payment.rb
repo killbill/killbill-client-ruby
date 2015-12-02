@@ -13,10 +13,6 @@ module KillBillClient
 
       class << self
         def find_by_id(payment_id, with_plugin_info = false, options = {})
-          if with_plugin_info.is_a? Hash
-            options = with_plugin_info
-            with_plugin_info = false
-          end
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}",
               {
                   :withPluginInfo => with_plugin_info
@@ -25,10 +21,6 @@ module KillBillClient
         end
 
         def find_by_external_key(external_key, with_plugin_info = false, options = {})
-          if with_plugin_info.is_a? Hash
-            options = with_plugin_info
-            with_plugin_info = false
-          end
           get "#{KILLBILL_API_PAYMENTS_PREFIX}",
               {
                   :externalKey => external_key,
