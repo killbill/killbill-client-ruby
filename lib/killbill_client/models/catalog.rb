@@ -8,7 +8,7 @@ module KillBillClient
 
       class << self
         def simple_catalog(options = {})
-          get "#{KILLBILL_API_CATALOG_PREFIX}/simpleCatalog",
+          get "#{KILLBILL_API_CATALOG_PREFIX}",
               {},
               options
         end
