@@ -32,6 +32,7 @@ module KillBillClient
       attribute :plugin_name
       attribute :version
       attribute :state
+      attribute :is_selected_for_start
       attribute :services
     end
   end

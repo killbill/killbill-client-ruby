@@ -30,6 +30,8 @@ module KillBillClient
     class PhaseAttributes < Resource
       attribute :type
       attribute :prices
+      attribute :fixed_prices
+      attribute :duration
     end
   end
 end
