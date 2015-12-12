@@ -1,3 +1,5 @@
+require 'timeout'
+
 module KillBillClient
   module Model
     class NodesInfo < NodeInfoAttributes
@@ -14,6 +16,38 @@ module KillBillClient
               options
         end
 
+
+        def start_plugin_wait_for_plugin_command_completion(plugin_name, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+
+          proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, "RUNNING")
+
+          trigger_node_command_wait_for_plugin_command_completion(:START_PLUGIN, nil, plugin_name, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+        end
+
+        def stop_plugin_wait_for_plugin_command_completion(plugin_name, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+
+          proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, "STOPPED")
+
+          trigger_node_command_wait_for_plugin_command_completion(:STOP_PLUGIN, nil, plugin_name, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+        end
+
+
+        def install_plugin_wait_for_plugin_command_completion(plugin_key, plugin_name, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=20, sleep_sec=1)
+
+          proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, nil)
+
+          trigger_node_command_wait_for_plugin_command_completion(:INSTALL_PLUGIN, plugin_key, plugin_name, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+        end
+
+        def uninstall_plugin_wait_for_plugin_command_completion(plugin_name, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+
+          is_negate = true # We are looking for absence of plugin_info from result (after plugin got successfully uninstalled)
+          proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, nil, is_negate)
+
+          trigger_node_command_wait_for_plugin_command_completion(:UNINSTALL_PLUGIN, nil, plugin_name, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+        end
+
+
         def trigger_node_command(node_command, local_node_only, user = nil, reason = nil, comment = nil, options = {})
           post KILLBILL_NODES_INFO_PREFIX,
                node_command.to_json,
@@ -23,6 +57,54 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
+        end
+
+        private
+
+        def trigger_node_command_wait_for_plugin_command_completion(node_command_type, plugin_key, plugin_name, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+          # Idempotency : Check if already installed
+          res = proc_condition.call
+          return res if res
+
+          node_command = KillBillClient::Model::NodeCommandAttributes.new
+          node_command.system_command_type = true
+          node_command.node_command_type = node_command_type
+          node_command.node_command_properties = []
+          node_command.node_command_properties << {:key => 'pluginName', :value => "#{plugin_name}"} if plugin_name
+          node_command.node_command_properties << {:key => 'pluginKey', :value => "#{plugin_key}"} if plugin_key
+          node_command.node_command_properties << {:key => 'pluginVersion', :value => "#{plugin_version}"} if plugin_version
+
+          KillBillClient::Model::NodesInfo.trigger_node_command(node_command, local_node_only, user, reason, comment, options)
+
+          wait_for_plugin_command_completion(node_command_type, (plugin_key ? plugin_key : plugin_name),timeout_sec, sleep_sec, &proc_condition)
+        end
+
+        def create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, state=nil, is_negate=false)
+          proc_condition = Proc.new {
+            info = KillBillClient::Model::NodesInfo.nodes_info(options)
+            res = info[0].plugins_info.find do |e|
+              e.plugin_name == plugin_name && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version) && (state.nil? ||  e.state == state)
+            end
+            is_negate ? !res : res
+          }
+          proc_condition
+        end
+
+        def wait_for_plugin_command_completion(command, plugin, timeout_sec, sleep_sec)
+          begin
+            Timeout::timeout(timeout_sec) do
+              while true do
+                installed_plugin = yield
+                return installed_plugin if installed_plugin
+                sleep(sleep_sec)
+              end
+            end
+          rescue Timeout::Error => e
+            if KillBillClient.logger
+              KillBillClient.log :info, 'Reached timeout after %s sec: command=%s, plugin=%s' % [timeout_sec, command, plugin]
+            end
+            raise e
+          end
         end
 
       end
