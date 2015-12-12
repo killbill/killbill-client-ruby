@@ -70,22 +70,28 @@ module KillBillClient
           node_command.system_command_type = true
           node_command.node_command_type = node_command_type
           node_command.node_command_properties = []
-          node_command.node_command_properties << {:key => 'pluginName', :value => "#{plugin_name}"} if plugin_name
-          node_command.node_command_properties << {:key => 'pluginKey', :value => "#{plugin_key}"} if plugin_key
-          node_command.node_command_properties << {:key => 'pluginVersion', :value => "#{plugin_version}"} if plugin_version
+          node_command.node_command_properties << {:key => 'pluginName', :value => plugin_name} if plugin_name
+          node_command.node_command_properties << {:key => 'pluginKey', :value => plugin_key} if plugin_key
+          node_command.node_command_properties << {:key => 'pluginVersion', :value => plugin_version} if plugin_version
 
           KillBillClient::Model::NodesInfo.trigger_node_command(node_command, local_node_only, user, reason, comment, options)
 
-          wait_for_plugin_command_completion(node_command_type, (plugin_key ? plugin_key : plugin_name),timeout_sec, sleep_sec, &proc_condition)
+          wait_for_plugin_command_completion(node_command_type, plugin_key || plugin_name,timeout_sec, sleep_sec, &proc_condition)
         end
 
         def create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_name, plugin_version, state=nil, is_negate=false)
           proc_condition = Proc.new {
-            info = KillBillClient::Model::NodesInfo.nodes_info(options)
-            res = info[0].plugins_info.find do |e|
-              e.plugin_name == plugin_name && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version) && (state.nil? ||  e.state == state)
+            node_infos = KillBillClient::Model::NodesInfo.nodes_info(options)
+
+            res = true
+            node_infos.each do |info|
+              raw_node_res = info.plugins_info.find do |e|
+                e.plugin_name == plugin_name && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version) && (state.nil? ||  e.state == state)
+              end
+              node_res = is_negate ? !raw_node_res : raw_node_res
+              res = res & node_res
             end
-            is_negate ? !res : res
+            res
           }
           proc_condition
         end
