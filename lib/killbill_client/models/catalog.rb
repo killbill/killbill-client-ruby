@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Catalog < CatalogAttributesSimple
+    class Catalog < CatalogAttributes
 
       has_many :products, KillBillClient::Model::Product
 
