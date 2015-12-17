@@ -29,6 +29,7 @@ module KillBillClient
   module Model
     class PluginInfoAttributes < Resource
       attribute :bundle_symbolic_name
+      attribute :plugin_key
       attribute :plugin_name
       attribute :version
       attribute :state
