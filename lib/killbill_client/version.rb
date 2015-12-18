@@ -1,7 +1,7 @@
 module KillBillClient
   module Version
     MAJOR = 0
-    MINOR = 27
+    MINOR = 28
     PATCH = 0
     PRE = nil
 
