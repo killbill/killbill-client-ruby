@@ -17,34 +17,34 @@ module KillBillClient
         end
 
 
-        def start_plugin(plugin_key, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+        def start_plugin(plugin_key, plugin_version=nil, plugin_props=[], local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=15, sleep_sec=1)
 
           proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_key, plugin_version, "RUNNING")
 
-          trigger_node_command_wait_for_plugin_command_completion(:START_PLUGIN, plugin_key, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+          trigger_node_command_wait_for_plugin_command_completion(:START_PLUGIN, plugin_key, plugin_version, plugin_props, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
         end
 
-        def stop_plugin(plugin_key, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+        def stop_plugin(plugin_key, plugin_version=nil, plugin_props=[], local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=15, sleep_sec=1)
 
           proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_key, plugin_version, "STOPPED")
 
-          trigger_node_command_wait_for_plugin_command_completion(:STOP_PLUGIN, plugin_key, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+          trigger_node_command_wait_for_plugin_command_completion(:STOP_PLUGIN, plugin_key, plugin_version, plugin_props, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
         end
 
 
-        def install_plugin(plugin_key, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=20, sleep_sec=1)
+        def install_plugin(plugin_key, plugin_version=nil, plugin_props=[], local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=30, sleep_sec=1)
 
           proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_key, plugin_version, nil)
 
-          trigger_node_command_wait_for_plugin_command_completion(:INSTALL_PLUGIN, plugin_key, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+          trigger_node_command_wait_for_plugin_command_completion(:INSTALL_PLUGIN, plugin_key, plugin_version, plugin_props, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
         end
 
-        def uninstall_plugin(plugin_key, plugin_version=nil, local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=10, sleep_sec=1)
+        def uninstall_plugin(plugin_key, plugin_version=nil, plugin_props=[], local_node_only=false, user = nil, reason = nil, comment = nil, options = {}, timeout_sec=15, sleep_sec=1)
 
           is_negate = true # We are looking for absence of plugin_info from result (after plugin got successfully uninstalled)
           proc_condition = create_proc_condition_for_wait_for_plugin_command_completion(options, plugin_key, plugin_version, nil, is_negate)
 
-          trigger_node_command_wait_for_plugin_command_completion(:UNINSTALL_PLUGIN, plugin_key, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+          trigger_node_command_wait_for_plugin_command_completion(:UNINSTALL_PLUGIN, plugin_key, plugin_version, plugin_props, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
         end
 
 
@@ -61,7 +61,7 @@ module KillBillClient
 
         private
 
-        def trigger_node_command_wait_for_plugin_command_completion(node_command_type, plugin_key, plugin_version, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
+        def trigger_node_command_wait_for_plugin_command_completion(node_command_type, plugin_key, plugin_version, plugin_props, local_node_only, user, reason, comment, options, timeout_sec, sleep_sec, &proc_condition)
           # Idempotency : Check if already installed
           res = proc_condition.call
           return res if res
@@ -72,6 +72,9 @@ module KillBillClient
           node_command.node_command_properties = []
           node_command.node_command_properties << {:key => 'pluginKey', :value => plugin_key} if plugin_key
           node_command.node_command_properties << {:key => 'pluginVersion', :value => plugin_version} if plugin_version
+          plugin_props.each do |e|
+            node_command.node_command_properties << e
+          end
 
           KillBillClient::Model::NodesInfo.trigger_node_command(node_command, local_node_only, user, reason, comment, options)
 
@@ -85,6 +88,11 @@ module KillBillClient
             res = true
             node_infos.each do |info|
               raw_node_res = info.plugins_info.find do |e|
+                if e.plugin_key == plugin_key
+                  if KillBillClient.logger
+                    KillBillClient.log :info, 'NodesInfo  -> check for plugin command completion version_check=%s, state_check=%s' % [(plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version, state.nil? || e.state == state]
+                  end
+                end
                 e.plugin_key == plugin_key && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version) && (state.nil? ||  e.state == state)
               end
               node_res = is_negate ? !raw_node_res : raw_node_res
@@ -96,6 +104,9 @@ module KillBillClient
         end
 
         def wait_for_plugin_command_completion(command, plugin, timeout_sec, sleep_sec)
+          if KillBillClient.logger
+            KillBillClient.log :info, 'NodesInfo wait for plugin command %s, plugin =%s' % [command, plugin]
+          end
           begin
             Timeout::timeout(timeout_sec) do
               while true do
