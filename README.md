@@ -4,10 +4,68 @@
 killbill-client-ruby
 ====================
 
-Kill Bill ruby library.
+Kill Bill Ruby client library.
+
+Installation
+------------
+
+Get the [killbill-client](https://rubygems.org/gems/killbill-client) gem:
+
+```
+gem install killbill-client
+```
+
+Alternatively, add the dependency in your Gemfile:
+
+```
+gem 'killbill-client', '~> 0.24'
+```
 
 Examples
 --------
+
+Here is a snippet creating your first account and subscription:
+
+```ruby
+require 'killbill_client'
+
+KillBillClient.url = 'http://127.0.0.1:8080'
+
+# Multi-tenancy and RBAC credentials
+options = {
+  :username => 'admin',
+  :password => 'password',
+  :api_key => 'bob',
+  :api_secret => 'lazar'
+}
+
+# Audit log data
+user = 'me'
+reason = 'Going through my first tutorial'
+comment = 'I like it!'
+
+# Create an account
+account = KillBillClient::Model::Account.new
+account.name = 'John Doe'
+account.first_name_length = 4
+account.external_key = 'john-doe'
+account.currency = 'USD'
+account = account.create(user, reason, comment, options)
+
+# Add a subscription
+subscription = KillBillClient::Model::Subscription.new
+subscription.account_id = account.account_id
+subscription.product_name = 'Sports'
+subscription.product_category = 'BASE'
+subscription.billing_period = 'MONTHLY'
+subscription.price_list = 'DEFAULT'
+subscription = subscription.create(user, reason, comment, nil, true, options)
+
+# List invoices
+account.invoices(true, options).each do |invoice|
+  puts invoice.inspect
+end
+```
 
 The following script will tag a list of accounts with OVERDUE_ENFORCEMENT_OFF and AUTO_PAY_OFF:
 
@@ -28,6 +86,8 @@ File.open(File.dirname(__FILE__) + '/accounts.txt').readlines.map(&:chomp).each 
   puts "New tags for #{account.name} (#{account.account_id}): #{account.tags.map(&:tag_definition_name).join(', ')}"
 end
 ```
+
+We have lots of examples in our [integration tests](https://github.com/killbill/killbill-integration-tests).
 
 Tests
 -----
