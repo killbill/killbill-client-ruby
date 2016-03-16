@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe KillBillClient::Model::Resource do
   class_var_name = '@@attribute_names'
-  
+
   it 'should test has_one property' do
     #test account_timeline has one account
     #has_one :account, KillBillClient::Model::Account
     #expected "KillBillClient::Model::AccountTimeline"=>{:account=>{:type=>KillBillClient::Model::Account, :cardinality=>:one}, :payments=>{:type=>KillBillClient::Model::Payment, :cardinality=>:many}, :bundles=>{:type=>KillBillClient::Model::Bundle, :cardinality=>:many}, :invoices=>{:type=>KillBillClient::Model::Invoice, :cardinality=>:many}}
     test_var = KillBillClient::Model::AccountTimeline.class_variable_defined? class_var_name
-    test_var.should_not be_false
+    test_var.should_not be(false)
 
     var = KillBillClient::Model::AccountTimeline.send(:class_variable_get, class_var_name)
     var.size.should > 0
@@ -36,7 +36,7 @@ describe KillBillClient::Model::Resource do
     #expected {"KillBillClient::Model::SubscriptionEvent"=>{:audit_logs=>{:type=>KillBillClient::Model::AuditLog, :cardinality=>:many}}}
 
     test_var = KillBillClient::Model::EventSubscription.class_variable_defined? class_var_name
-    test_var.should_not be_false
+    test_var.should be(true)
 
     var = KillBillClient::Model::EventSubscription.send(:class_variable_get, class_var_name)
     var.size.should > 0
@@ -71,4 +71,4 @@ describe KillBillClient::Model::Resource do
     evt.alias_date.should == "devaroop"
   end
 end
- 
+
