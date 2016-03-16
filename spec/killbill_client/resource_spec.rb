@@ -10,10 +10,10 @@ describe KillBillClient::Model::Resource do
 
     payment2 = KillBillClient::Model::InvoicePayment.new(payment1.to_hash)
 
-    payment2.should == payment1
-    payment2.account_id.should == '1234'
-    payment2.target_invoice_id.should == '5678'
-    payment2.purchased_amount.should == 12.42
+    expect(payment2).to eq(payment1)
+    expect(payment2.account_id).to eq('1234')
+    expect(payment2.target_invoice_id).to eq('5678')
+    expect(payment2.purchased_amount).to eq(12.42)
   end
 
   describe '#require_multi_tenant_options!' do
