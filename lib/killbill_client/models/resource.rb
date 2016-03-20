@@ -26,7 +26,9 @@ module KillBillClient
       class << self
 
         def require_multi_tenant_options!(options, msg)
-          if options[:api_key].nil? || options[:api_secret].nil?
+          api_key = options[:api_key] || KillBillClient.api_key
+          api_secret = options[:api_secret] || KillBillClient.api_secret
+          if api_key.nil? || api_secret.nil?
             raise ArgumentError, msg
           end
         end
