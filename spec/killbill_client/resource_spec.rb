@@ -26,8 +26,8 @@ describe KillBillClient::Model::Resource do
     context 'when api_key and api_secret passed as options' do
       let(:options) do
         {
-          api_key: 'bob',
-          api_secret: 'lazar'
+          :api_key => 'bob',
+          :api_secret =>'lazar'
         }
       end
 
@@ -39,7 +39,7 @@ describe KillBillClient::Model::Resource do
     context 'when no api_key passed as options' do
       let(:options) do
         {
-          api_secret: 'lazar'
+          :api_secret => 'lazar'
         }
       end
 
@@ -51,7 +51,7 @@ describe KillBillClient::Model::Resource do
     context 'when no api_secret passed as options' do
       let(:options) do
         {
-          api_key: 'bob'
+          :api_key => 'bob'
         }
       end
 
