@@ -9,16 +9,16 @@ describe KillBillClient::API do
             'value' => "test"
         },
         {
-            'key'   => 'ledgerDetails',
+            'key'   => 'details',
             'value' =>  {
-                'eventType' => 'void',
-                'transactionType' => 'ubergateway',
-                'contractType' => 'as_line_item'
+                'eventType' => 'voidEvent',
+                'transactionType' => 'void',
+                'contractType' => 'temp'
             }.to_json
         }
     ].map{|hash| KVPair.from_hash(hash)}
     options = {
-        :params => {:controlPluginName => "killbill-gtg"},
+        :params => {:controlPluginName => "killbill-example-plugin"},
         :pluginProperty => plugin_properties
     }
     http_adapter = DummyForHTTPAdapter.new
@@ -27,7 +27,7 @@ describe KillBillClient::API do
   end
 
   def expected_uri
-    '?controlPluginName=killbill-gtg&pluginProperty=contractId%3Dtest&pluginProperty=ledgerDetails%3D%257B%2522eventType%2522%253A%2522void%2522%252C%2522transactionType%2522%253A%2522ubergateway%2522%252C%2522contractType%2522%253A%2522as_line_item%2522%257D'
+    '?controlPluginName=killbill-example-plugin&pluginProperty=contractId%3Dtest&pluginProperty=details%3D%257B%2522eventType%2522%253A%2522voidEvent%2522%252C%2522transactionType%2522%253A%2522void%2522%252C%2522contractType%2522%253A%2522temp%2522%257D'
   end
 end
 
