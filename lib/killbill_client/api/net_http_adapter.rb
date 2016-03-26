@@ -50,6 +50,7 @@ module KillBillClient
                 internal_pairs = value.map do |simple_value|
                   "#{CGI.escape key.to_s}=#{CGI.escape simple_value.to_s}"
                 end
+                internal_pairs
               else
                 "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
               end
