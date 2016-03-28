@@ -2,32 +2,32 @@ require 'spec_helper'
 
 describe KillBillClient::Model::Resource do
   class_var_name = '@@attribute_names'
-  
+
   it 'should test has_one property' do
     #test account_timeline has one account
     #has_one :account, KillBillClient::Model::Account
     #expected "KillBillClient::Model::AccountTimeline"=>{:account=>{:type=>KillBillClient::Model::Account, :cardinality=>:one}, :payments=>{:type=>KillBillClient::Model::Payment, :cardinality=>:many}, :bundles=>{:type=>KillBillClient::Model::Bundle, :cardinality=>:many}, :invoices=>{:type=>KillBillClient::Model::Invoice, :cardinality=>:many}}
     test_var = KillBillClient::Model::AccountTimeline.class_variable_defined? class_var_name
-    test_var.should_not be_false
+    expect(test_var).not_to be(false)
 
     var = KillBillClient::Model::AccountTimeline.send(:class_variable_get, class_var_name)
-    var.size.should > 0
-    var.should have_key "KillBillClient::Model::AccountTimeline"
-    var["KillBillClient::Model::AccountTimeline"].should have_key :account
+    expect(var.size).to be > 0
+    expect(var).to have_key "KillBillClient::Model::AccountTimeline"
+    expect(var["KillBillClient::Model::AccountTimeline"]).to have_key :account
 
     attr = var["KillBillClient::Model::AccountTimeline"][:account]
 
-    attr.should have_key :type
-    attr.should have_key :cardinality
+    expect(attr).to have_key :type
+    expect(attr).to have_key :cardinality
 
-    attr[:type].should == KillBillClient::Model::Account
-    attr[:cardinality].should == :one #has one
+    expect(attr[:type]).to eq(KillBillClient::Model::Account)
+    expect(attr[:cardinality]).to eq(:one) #has one
 
     #should also be accessible by attr_accessors
 
     methods = KillBillClient::Model::AccountTimeline.instance_methods
-    methods.map(&:to_sym).should include :account     # attr_reader
-    methods.map(&:to_sym).should include :account= #attr_writer
+    expect(methods.map(&:to_sym)).to include :account     # attr_reader
+    expect(methods.map(&:to_sym)).to include :account= #attr_writer
   end
 
   it 'should test has_many property' do
@@ -36,39 +36,39 @@ describe KillBillClient::Model::Resource do
     #expected {"KillBillClient::Model::SubscriptionEvent"=>{:audit_logs=>{:type=>KillBillClient::Model::AuditLog, :cardinality=>:many}}}
 
     test_var = KillBillClient::Model::EventSubscription.class_variable_defined? class_var_name
-    test_var.should_not be_false
+    expect(test_var).to be(true)
 
     var = KillBillClient::Model::EventSubscription.send(:class_variable_get, class_var_name)
-    var.size.should > 0
-    var.should have_key "KillBillClient::Model::Subscription"
-    var["KillBillClient::Model::Subscription"].should have_key :events
+    expect(var.size).to be > 0
+    expect(var).to have_key "KillBillClient::Model::Subscription"
+    expect(var["KillBillClient::Model::Subscription"]).to have_key :events
 
     attr = var["KillBillClient::Model::Subscription"][:events]
 
-    attr.should have_key :type
-    attr.should have_key :cardinality
+    expect(attr).to have_key :type
+    expect(attr).to have_key :cardinality
 
-    attr[:type].should == KillBillClient::Model::EventSubscription
-    attr[:cardinality].should == :many #has many
+    expect(attr[:type]).to eq(KillBillClient::Model::EventSubscription)
+    expect(attr[:cardinality]).to eq(:many) #has many
 
     #should also be accessible by attr_accessors
 
     methods = KillBillClient::Model::EventSubscription.instance_methods
-    methods.map(&:to_sym).should include :audit_logs     # attr_reader
-    methods.map(&:to_sym).should include :audit_logs= #attr_writer
+    expect(methods.map(&:to_sym)).to include :audit_logs     # attr_reader
+    expect(methods.map(&:to_sym)).to include :audit_logs= #attr_writer
   end
 
   it 'should create alias attr accessors' do
     KillBillClient::Model::EventSubscription.create_alias :alias_date, :requested_dt
 
     methods = KillBillClient::Model::EventSubscription.instance_methods
-    methods.map(&:to_sym).should include :alias_date
-    methods.map(&:to_sym).should include :alias_date=
+    expect(methods.map(&:to_sym)).to include :alias_date
+    expect(methods.map(&:to_sym)).to include :alias_date=
 
     evt = KillBillClient::Model::EventSubscription.new
     evt.alias_date = "devaroop"
-    evt.requested_dt.should == "devaroop"
-    evt.alias_date.should == "devaroop"
+    expect(evt.requested_dt).to eq("devaroop")
+    expect(evt.alias_date).to eq("devaroop")
   end
 end
- 
+
