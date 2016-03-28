@@ -63,8 +63,8 @@ describe KillBillClient::Model::Resource do
     context 'when api_key and api_secret passed as KillBillClient configuration option' do
       let(:options) { { } }
       before do
-        KillBillClient.stub(:api_key) { 'bob' }
-        KillBillClient.stub(:api_secret) { 'lazar' }
+        allow(KillBillClient).to receive_messages(:api_key => 'bob')
+        allow(KillBillClient).to receive_messages(:api_secret => 'lazar')
       end
 
       it do
