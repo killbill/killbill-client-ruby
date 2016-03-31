@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe KillBillClient::API do
-
   it 'should send double-encoded uri' do
     plugin_properties = [
         {
@@ -23,7 +22,7 @@ describe KillBillClient::API do
     }
     http_adapter = DummyForHTTPAdapter.new
     uri = http_adapter.send(:encode_params, options)
-    (uri == expected_uri).should be_true
+    expect(uri).to eq(expected_uri)
   end
 
   def expected_uri

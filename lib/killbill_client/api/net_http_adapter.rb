@@ -42,27 +42,24 @@ module KillBillClient
           if plugin_properties && plugin_properties.size > 0
             options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key}=#{CGI.escape p.value}" }
           end
-          query_params = ''
-          if options[:params] && !options[:params].empty?
-            pairs = options[:params].map { |key, value|
-              # If the value is an array, we 'demultiplex' into several
-              if value.is_a? Array
-                internal_pairs = value.map do |simple_value|
-                  "#{CGI.escape key.to_s}=#{CGI.escape simple_value.to_s}"
-                end
-                internal_pairs
-              else
-                "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
+          return nil unless (options[:params] && !options[:params].empty?)
+
+          pairs = options[:params].map { |key, value|
+            # If the value is an array, we 'demultiplex' into several
+            if value.is_a? Array
+              internal_pairs = value.map do |simple_value|
+                "#{CGI.escape key.to_s}=#{CGI.escape simple_value.to_s}"
               end
-            }
-            pairs.flatten!
-            query_params = "?#{pairs.join '&'}"
-          end
-          query_params
+              internal_pairs
+            else
+              "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
+            end
+          }
+          pairs.flatten!
+          return "?#{pairs.join '&'}"
         end
 
         def request(method, relative_uri, options = {})
-
           head = headers.dup
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
@@ -72,7 +69,7 @@ module KillBillClient
           # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
           base_path = uri.request_uri == '/' ? '' : uri.request_uri
           uri += (base_path + URI.escape(relative_uri))
-          uri += encode_params(options)
+          uri += encode_params(options).to_s
           request = METHODS[method].new uri.request_uri, head
 
           # Configure multi-tenancy headers, if enabled
