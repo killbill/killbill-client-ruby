@@ -2,27 +2,27 @@ module KillBillClient
   module Model
     class ComboTransaction < ComboPaymentTransactionAttributes
 
-      def auth(user = nil, reason = nil, comment = nil, options = {})
+      def auth(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction.transaction_type = 'AUTHORIZE'
 
-        combo_payment(user, reason, comment, options)
+        combo_payment(user, reason, comment, options, refresh_options)
       end
 
-      def purchase(user = nil, reason = nil, comment = nil, options = {})
+      def purchase(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction.transaction_type = 'PURCHASE'
 
-        combo_payment(user, reason, comment, options)
+        combo_payment(user, reason, comment, options, refresh_options)
       end
 
-      def credit(user = nil, reason = nil, comment = nil, options = {})
+      def credit(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction.transaction_type = 'CREDIT'
 
-        combo_payment(user, reason, comment, options)
+        combo_payment(user, reason, comment, options, refresh_options)
       end
 
       private
 
-      def combo_payment(user, reason, comment, options)
+      def combo_payment(user, reason, comment, options, refresh_options = nil)
         query_map = {
         }
         if options.include? :controlPluginNames
@@ -37,7 +37,7 @@ module KillBillClient
                                                   :reason => reason,
                                                   :comment => comment,
                                               }.merge(options)
-        created_transaction.refresh(options, Payment)
+        created_transaction.refresh(refresh_options || options, Payment)
       end
     end
   end
