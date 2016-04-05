@@ -56,7 +56,7 @@ module KillBillClient
             end
           }
           pairs.flatten!
-          return "?#{pairs.join '&'}"
+          "?#{pairs.join '&'}"
         end
 
         def request(method, relative_uri, options = {})
