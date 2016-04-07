@@ -2,6 +2,7 @@ module KillBillClient
   module Model
     class Transaction < PaymentTransactionAttributes
 
+      has_many :properties, KillBillClient::Model::PluginPropertyAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
