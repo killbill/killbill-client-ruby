@@ -41,6 +41,10 @@ module KillBillClient
         create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options)
       end
 
+      def complete(user = nil, reason = nil, comment = nil, options = {})
+        complete_initial_transaction(user, reason, comment, options)
+      end
+
       def complete_auth(user = nil, reason = nil, comment = nil, options = {})
         @transaction_type = 'AUTHORIZE'
         complete_initial_transaction(user, reason, comment, options)
