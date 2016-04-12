@@ -23,15 +23,9 @@ module KillBillClient
       private
 
       def combo_payment(user, reason, comment, options, refresh_options = nil)
-        query_map = {
-        }
-        if options.include? :controlPluginNames
-          query_map[:controlPluginName] = options.delete(:controlPluginNames)
-        end
-
         created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/combo",
                                               to_json,
-                                              query_map,
+                                              {},
                                               {
                                                   :user => user,
                                                   :reason => reason,

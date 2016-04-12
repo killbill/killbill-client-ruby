@@ -61,15 +61,9 @@ module KillBillClient
       end
 
       def capture(user = nil, reason = nil, comment = nil, options = {})
-        query_map = {
-        }
-        if options.include? :controlPluginNames
-          query_map[:controlPluginName] = options.delete(:controlPluginNames)
-        end
-
         created_transaction = self.class.post "#{follow_up_path(payment_id)}",
                                               to_json,
-                                              query_map,
+                                              {},
                                               {
                                                   :user    => user,
                                                   :reason  => reason,
@@ -80,14 +74,9 @@ module KillBillClient
 
       def refund(user = nil, reason = nil, comment = nil, options = {})
 
-        query_map = {
-        }
-        if options.include? :controlPluginNames
-          query_map[:controlPluginName] = options.delete(:controlPluginNames)
-        end
         created_transaction = self.class.post "#{follow_up_path(payment_id)}/refunds",
                                               to_json,
-                                              query_map,
+                                              {},
                                               {
                                                   :user    => user,
                                                   :reason  => reason,
@@ -98,14 +87,9 @@ module KillBillClient
 
       def void(user = nil, reason = nil, comment = nil, options = {})
 
-        query_map = {
-        }
-        if options.include? :controlPluginNames
-          query_map[:controlPluginName] = options.delete(:controlPluginNames)
-        end
         created_transaction = self.class.delete "#{follow_up_path(payment_id)}",
                                                 to_json,
-                                                query_map,
+                                                {},
                                                 {
                                                     :user    => user,
                                                     :reason  => reason,
@@ -116,14 +100,9 @@ module KillBillClient
 
       def chargeback(user = nil, reason = nil, comment = nil, options = {})
 
-        query_map = {
-        }
-        if options.include? :controlPluginNames
-          query_map[:controlPluginName] = options.delete(:controlPluginNames)
-        end
         created_transaction = self.class.post "#{follow_up_path(payment_id)}/chargebacks",
                                               to_json,
-                                              query_map,
+                                              {},
                                               {
                                                   :user    => user,
                                                   :reason  => reason,

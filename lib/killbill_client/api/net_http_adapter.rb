@@ -36,12 +36,16 @@ module KillBillClient
         }
 
         def encode_params(options = {})
-          # Plugin properties are passed in the options but we want to send them as query parameters,
+          # Plugin properties and controlPluginNames are passed in the options but we want to send them as query parameters,
           # so remove with from global hash and insert them under :params
           plugin_properties = options.delete :pluginProperty
           if plugin_properties && plugin_properties.size > 0
             options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key}=#{CGI.escape p.value}" }
           end
+
+          control_plugin_names = options.delete(:controlPluginNames)
+          options[:params][:controlPluginName] = control_plugin_names if control_plugin_names
+
           return nil unless (options[:params] && !options[:params].empty?)
 
           pairs = options[:params].map { |key, value|
