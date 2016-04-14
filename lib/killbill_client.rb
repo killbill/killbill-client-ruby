@@ -63,11 +63,11 @@ module KillBillClient
     # @return [Logger, nil]
     # @example
     #   require 'logger'
-    #   KillBill.logger = Logger.new STDOUT
+    #   KillBillClient.logger = Logger.new STDOUT
     # @example Rails applications automatically log to the Rails log:
-    #   KillBill.logger = Rails.logger
+    #   KillBillClient.logger = Rails.logger
     # @example Turn off logging entirely:
-    #   KillBill.logger = nil # Or KillBill.logger = Logger.new nil
+    #   KillBillClient.logger = nil # Or KillBillClient.logger = Logger.new nil
     attr_accessor :logger
 
     # Convenience logging method includes a Logger#progname dynamically.

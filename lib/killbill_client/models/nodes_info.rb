@@ -105,7 +105,7 @@ module KillBillClient
 
         def wait_for_plugin_command_completion(command, plugin, timeout_sec, sleep_sec)
           if KillBillClient.logger
-            KillBillClient.log :info, 'NodesInfo wait for plugin command %s, plugin =%s' % [command, plugin]
+            KillBillClient.log :info, "NodesInfo waiting for command='%s', plugin='%s'" % [command, plugin]
           end
           begin
             Timeout::timeout(timeout_sec) do
@@ -117,7 +117,7 @@ module KillBillClient
             end
           rescue Timeout::Error => e
             if KillBillClient.logger
-              KillBillClient.log :info, 'Reached timeout after %s sec: command=%s, plugin=%s' % [timeout_sec, command, plugin]
+              KillBillClient.log :warn, "NodesInfo timeout after %s sec for command='%s', plugin='%s'" % [timeout_sec, command, plugin]
             end
             raise e
           end

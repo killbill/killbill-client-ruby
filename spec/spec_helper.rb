@@ -11,6 +11,7 @@ KillBillClient.url = 'http://127.0.0.1:8080'
 KillBillClient.username = 'admin'
 KillBillClient.password = 'password'
 
+KillBillClient.logger = Logger.new(STDOUT)
 
 RSpec.configure do |config|
   config.color = true

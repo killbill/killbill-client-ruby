@@ -139,12 +139,12 @@ module KillBillClient
           net_http.each_pair { |key, value| http.send "#{key}=", value }
 
           if KillBillClient.logger
-            KillBillClient.log :info, '===> %s %s' % [request.method, uri]
+            KillBillClient.log :info, "Request method='%s', uri='%s'" % [request.method, uri]
             headers = request.to_hash
             headers['authorization'] &&= ['Basic [FILTERED]']
-            KillBillClient.log :debug, headers.inspect
+            KillBillClient.log :debug, headers.keys.map { |k| "#{k}='#{headers[k].join(',')}'" }.join(', ')
             if request.body && !request.body.empty? && request['Content-Type'].include?('application/json')
-              KillBillClient.log :debug, request.body
+              KillBillClient.log :debug, "requestBody='#{request.body}'"
             end
             start_time = Time.now
           end
@@ -182,15 +182,16 @@ module KillBillClient
                       else
                         :fatal
                     end
-            KillBillClient.log level, '<=== %d %s (%.1fms)' % [
+            KillBillClient.log level, "Response code='%d', reason='%s', latency='%.1f'" % [
                 code,
                 response.class.name[9, response.class.name.length].gsub(
                     /([a-z])([A-Z])/, '\1 \2'
                 ),
                 latency
             ]
-            KillBillClient.log :debug, response.to_hash.inspect
-            KillBillClient.log :debug, response.body if response.body
+            hash_response = response.to_hash
+            KillBillClient.log :debug, hash_response.keys.map { |k| "#{k}='#{hash_response[k].join(',')}'" }.join(', ')
+            KillBillClient.log :debug, "responseBody='#{response.body}'" if response.body
           end
 
           case code
