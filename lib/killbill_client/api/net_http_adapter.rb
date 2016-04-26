@@ -40,7 +40,7 @@ module KillBillClient
           # so remove with from global hash and insert them under :params
           plugin_properties = options.delete :pluginProperty
           if plugin_properties && plugin_properties.size > 0
-            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key}=#{CGI.escape p.value}" }
+            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key.to_s}=#{CGI.escape p.value.to_s}" }
           end
 
           control_plugin_names = options.delete(:controlPluginNames)
