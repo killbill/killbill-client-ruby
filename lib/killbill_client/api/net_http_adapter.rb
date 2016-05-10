@@ -198,7 +198,7 @@ module KillBillClient
             when 200...300 then
               response
             else
-              raise ERRORS[code].new request, response
+              raise ResponseError.error_for(code, request, response)
           end
         end
       end

@@ -26,6 +26,10 @@ module KillBillClient
         ]
       end
 
+      def self.error_for(status, request, response)
+        ERRORS[status].new(request, response)
+      end
+
       private
 
       def description
@@ -67,6 +71,12 @@ module KillBillClient
     #
     # The API key is missing or invalid for the given request.
     class Unauthorized < ClientError
+    end
+
+    # === 402 Payment Required
+    #
+    # The payment failed with a transaction declined error
+    class PaymentRequired < ClientError
     end
 
     # === 403 Forbidden
@@ -116,8 +126,7 @@ module KillBillClient
 
     # === 422 Unprocessable Entity
     #
-    # Could not process a POST or PUT request because the request is invalid.
-    # See the response body for more details.
+    # The payment was aborted before anything happened
     class UnprocessableEntity < ClientError
     end
 
@@ -146,6 +155,12 @@ module KillBillClient
     class ServiceUnavailable < ServerError
     end
 
+    # === 504 Gateway Timeout
+    #
+    # The service did not receive a timely response from the upstream server.
+    class GatewayTimeout < ServerError
+    end
+
     # Error mapping by status code.
     ERRORS = Hash.new { |hash, code|
       unless hash.key? code
@@ -162,6 +177,7 @@ module KillBillClient
         304 => NotModified,
         400 => BadRequest,
         401 => Unauthorized,
+        402 => PaymentRequired,
         403 => Forbidden,
         404 => NotFound,
         406 => NotAcceptable,
@@ -169,7 +185,8 @@ module KillBillClient
         422 => UnprocessableEntity,
         500 => InternalServerError,
         502 => GatewayError,
-        503 => ServiceUnavailable
+        503 => ServiceUnavailable,
+        504 => GatewayTimeout
     ).freeze
   end
 end
