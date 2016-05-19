@@ -63,7 +63,7 @@ module KillBillClient
       end
 
       def capture(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}",
                           to_json,
                           {},
@@ -76,7 +76,7 @@ module KillBillClient
       end
 
       def refund(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}/refunds",
                           to_json,
                           {},
@@ -89,7 +89,7 @@ module KillBillClient
       end
 
       def void(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.delete "#{follow_up_path(payment_id)}",
                             to_json,
                             {},
@@ -102,7 +102,7 @@ module KillBillClient
       end
 
       def chargeback(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}/chargebacks",
                           to_json,
                           {},
@@ -126,7 +126,7 @@ module KillBillClient
       def create_initial_transaction(path, query_map, payment_method_id, user, reason, comment, options)
         query_map[:paymentMethodId] = payment_method_id unless payment_method_id.nil?
 
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.post path,
                           to_json,
                           query_map,
@@ -139,7 +139,7 @@ module KillBillClient
       end
 
       def complete_initial_transaction(user, reason, comment, options)
-        with_payment_required_handling do
+        with_payment_failure_handling do
           self.class.put follow_up_path(payment_id),
                          to_json,
                          {},
@@ -153,11 +153,16 @@ module KillBillClient
 
       private
 
-      def with_payment_required_handling
+      def with_payment_failure_handling
         begin
           created_transaction = yield
-        rescue KillBillClient::API::PaymentRequired => e
-          created_transaction = self.class.from_response(e.response)
+        rescue KillBillClient::API::ResponseError => error
+          response = error.response
+          if response.header['location']
+            created_transaction = self.class.from_response(response)
+          else
+            raise error
+          end
         end
 
         created_transaction.refresh(options, Payment)

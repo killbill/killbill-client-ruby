@@ -32,8 +32,13 @@ module KillBillClient
                                                     :reason => reason,
                                                     :comment => comment,
                                                 }.merge(options)
-        rescue KillBillClient::API::PaymentRequired => e
-          created_transaction = self.class.from_response(e.response)
+        rescue KillBillClient::API::ResponseError => error
+          response = error.response
+          if response.header['location']
+            created_transaction = self.class.from_response(response)
+          else
+            raise error
+          end
         end
         created_transaction.refresh(refresh_options || options, Payment)
       end
