@@ -159,7 +159,8 @@ module KillBillClient
         rescue KillBillClient::API::ResponseError => error
           response = error.response
           if response.header['location']
-            created_transaction = self.class.from_response(response)
+            created_transaction = Transaction.new
+            created_transaction.uri = response.header['location']
           else
             raise error
           end
