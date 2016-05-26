@@ -63,7 +63,7 @@ module KillBillClient
       end
 
       def capture(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}",
                           to_json,
                           {},
@@ -73,10 +73,11 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       def refund(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}/refunds",
                           to_json,
                           {},
@@ -86,10 +87,11 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       def void(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.delete "#{follow_up_path(payment_id)}",
                             to_json,
                             {},
@@ -99,10 +101,11 @@ module KillBillClient
                                 :comment => comment,
                             }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       def chargeback(user = nil, reason = nil, comment = nil, options = {})
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.post "#{follow_up_path(payment_id)}/chargebacks",
                           to_json,
                           {},
@@ -112,6 +115,7 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       private
@@ -126,7 +130,7 @@ module KillBillClient
       def create_initial_transaction(path, query_map, payment_method_id, user, reason, comment, options)
         query_map[:paymentMethodId] = payment_method_id unless payment_method_id.nil?
 
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.post path,
                           to_json,
                           query_map,
@@ -136,10 +140,11 @@ module KillBillClient
                               :comment => comment
                           }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       def complete_initial_transaction(user, reason, comment, options)
-        with_payment_failure_handling do
+        created_transaction = with_payment_failure_handling do
           self.class.put follow_up_path(payment_id),
                          to_json,
                          {},
@@ -149,6 +154,7 @@ module KillBillClient
                              :comment => comment
                          }.merge(options)
         end
+        created_transaction.refresh(options, Payment)
       end
 
       private
@@ -166,7 +172,7 @@ module KillBillClient
           end
         end
 
-        created_transaction.refresh(options, Payment)
+        created_transaction
       end
     end
   end
