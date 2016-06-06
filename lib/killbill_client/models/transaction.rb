@@ -9,63 +9,64 @@ module KillBillClient
       has_many :properties, KillBillClient::Model::PluginPropertyAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
-      def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
         query_map = {}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def purchase(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def purchase(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'PURCHASE'
         query_map = {}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def credit(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def credit(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'CREDIT'
         query_map = {}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def auth_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def auth_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
         query_map = {:externalKey => account_external_key}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def purchase_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def purchase_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'PURCHASE'
         query_map = {:externalKey => account_external_key}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def credit_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {})
+      def credit_by_external_key(account_external_key, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'CREDIT'
         query_map = {:externalKey => account_external_key}
-        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options)
+        create_initial_transaction("#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/payments", query_map, payment_method_id, user, reason, comment, options, refresh_options)
       end
 
-      def complete(user = nil, reason = nil, comment = nil, options = {})
-        complete_initial_transaction(user, reason, comment, options)
+      def complete(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        complete_initial_transaction(user, reason, comment, options, refresh_options)
       end
 
-      def complete_auth(user = nil, reason = nil, comment = nil, options = {})
+      def complete_auth(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
-        complete_initial_transaction(user, reason, comment, options)
+        complete_initial_transaction(user, reason, comment, options, refresh_options)
       end
 
-      def complete_purchase(user = nil, reason = nil, comment = nil, options = {})
+      def complete_purchase(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'PURCHASE'
-        complete_initial_transaction(user, reason, comment, options)
+        complete_initial_transaction(user, reason, comment, options, refresh_options)
       end
 
-      def complete_credit(user = nil, reason = nil, comment = nil, options = {})
+      def complete_credit(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'CREDIT'
-        complete_initial_transaction(user, reason, comment, options)
+        complete_initial_transaction(user, reason, comment, options, refresh_options)
       end
 
-      def capture(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = with_payment_failure_handling do
+      def capture(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.post "#{follow_up_path(payment_id)}",
                           to_json,
                           {},
@@ -75,11 +76,11 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
-      def refund(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = with_payment_failure_handling do
+      def refund(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.post "#{follow_up_path(payment_id)}/refunds",
                           to_json,
                           {},
@@ -89,11 +90,11 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
-      def void(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = with_payment_failure_handling do
+      def void(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.delete "#{follow_up_path(payment_id)}",
                             to_json,
                             {},
@@ -103,11 +104,11 @@ module KillBillClient
                                 :comment => comment,
                             }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
-      def chargeback(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = with_payment_failure_handling do
+      def chargeback(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.post "#{follow_up_path(payment_id)}/chargebacks",
                           to_json,
                           {},
@@ -117,7 +118,6 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
 
@@ -147,10 +147,11 @@ module KillBillClient
         path
       end
 
-      def create_initial_transaction(path, query_map, payment_method_id, user, reason, comment, options)
+      def create_initial_transaction(path, query_map, payment_method_id, user, reason, comment, options, refresh_options)
         query_map[:paymentMethodId] = payment_method_id unless payment_method_id.nil?
 
-        created_transaction = with_payment_failure_handling do
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.post path,
                           to_json,
                           query_map,
@@ -160,11 +161,11 @@ module KillBillClient
                               :comment => comment
                           }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
-      def complete_initial_transaction(user, reason, comment, options)
-        created_transaction = with_payment_failure_handling do
+      def complete_initial_transaction(user, reason, comment, options, refresh_options)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.put follow_up_path(payment_id),
                          to_json,
                          {},
@@ -174,17 +175,22 @@ module KillBillClient
                              :comment => comment
                          }.merge(options)
         end
-        created_transaction.refresh(options, Payment)
       end
 
-      private
+      def delete_follow_location(options, key = :follow_location, default_value = true)
+        if options.has_key?(key)
+          return options.delete(key)
+        end
 
-      def with_payment_failure_handling
+        default_value
+      end
+
+      def refresh_payment_with_failure_handling(follow_location, refresh_options)
         begin
           created_transaction = yield
         rescue KillBillClient::API::ResponseError => error
           response = error.response
-          if response['location']
+          if follow_location && response['location']
             created_transaction = Transaction.new
             created_transaction.uri = response['location']
           else
@@ -192,6 +198,9 @@ module KillBillClient
           end
         end
 
+        if follow_location
+          return created_transaction.refresh(refresh_options, Payment)
+        end
         created_transaction
       end
     end
