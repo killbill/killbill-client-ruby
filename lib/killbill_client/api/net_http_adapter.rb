@@ -40,7 +40,7 @@ module KillBillClient
           # so remove with from global hash and insert them under :params
           plugin_properties = options.delete :pluginProperty
           if plugin_properties && plugin_properties.size > 0
-            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key}=#{CGI.escape p.value}" }
+            options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key.to_s}=#{CGI.escape p.value.to_s}" }
           end
 
           control_plugin_names = options.delete(:controlPluginNames)
@@ -68,11 +68,17 @@ module KillBillClient
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
 
-          uri = (options[:base_uri] || base_uri)
-          # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
-          # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
-          base_path = uri.request_uri == '/' ? '' : uri.request_uri
-          uri += (base_path + URI.escape(relative_uri))
+          if URI(relative_uri).scheme.nil?
+            uri = (options[:base_uri] || base_uri)
+            uri = URI.parse(uri) unless uri.is_a?(URI)
+            # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
+            # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
+            base_path = uri.request_uri == '/' ? '' : uri.request_uri
+            uri += (base_path + URI.escape(relative_uri))
+          else
+            uri = relative_uri
+            uri = URI.parse(uri) unless uri.is_a?(URI)
+          end
           uri += encode_params(options).to_s
           request = METHODS[method].new uri.request_uri, head
 
@@ -198,7 +204,7 @@ module KillBillClient
             when 200...300 then
               response
             else
-              raise ERRORS[code].new request, response
+              raise ResponseError.error_for(code, request, response)
           end
         end
       end

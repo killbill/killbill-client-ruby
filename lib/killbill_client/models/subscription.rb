@@ -7,6 +7,8 @@ module KillBillClient
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
 
       has_many :events, KillBillClient::Model::EventSubscription
+      has_many :price_overrides, KillBillClient::Model::PhasePriceOverrideAttributes
+
       has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
 
       class << self

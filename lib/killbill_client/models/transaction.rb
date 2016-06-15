@@ -1,3 +1,5 @@
+require 'killbill_client/api/errors'
+
 module KillBillClient
   module Model
     class Transaction < PaymentTransactionAttributes
@@ -61,53 +63,58 @@ module KillBillClient
       end
 
       def capture(user = nil, reason = nil, comment = nil, options = {})
-        created_transaction = self.class.post "#{follow_up_path(payment_id)}",
-                                              to_json,
-                                              {},
-                                              {
-                                                  :user    => user,
-                                                  :reason  => reason,
-                                                  :comment => comment,
-                                              }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.post "#{follow_up_path(payment_id)}",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
       end
 
       def refund(user = nil, reason = nil, comment = nil, options = {})
-
-        created_transaction = self.class.post "#{follow_up_path(payment_id)}/refunds",
-                                              to_json,
-                                              {},
-                                              {
-                                                  :user    => user,
-                                                  :reason  => reason,
-                                                  :comment => comment,
-                                              }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.post "#{follow_up_path(payment_id)}/refunds",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
       end
 
       def void(user = nil, reason = nil, comment = nil, options = {})
-
-        created_transaction = self.class.delete "#{follow_up_path(payment_id)}",
-                                                to_json,
-                                                {},
-                                                {
-                                                    :user    => user,
-                                                    :reason  => reason,
-                                                    :comment => comment,
-                                                }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.delete "#{follow_up_path(payment_id)}",
+                            to_json,
+                            {},
+                            {
+                                :user    => user,
+                                :reason  => reason,
+                                :comment => comment,
+                            }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
       end
 
       def chargeback(user = nil, reason = nil, comment = nil, options = {})
-
-        created_transaction = self.class.post "#{follow_up_path(payment_id)}/chargebacks",
-                                              to_json,
-                                              {},
-                                              {
-                                                  :user    => user,
-                                                  :reason  => reason,
-                                                  :comment => comment,
-                                              }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.post "#{follow_up_path(payment_id)}/chargebacks",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
       end
 
@@ -123,27 +130,49 @@ module KillBillClient
       def create_initial_transaction(path, query_map, payment_method_id, user, reason, comment, options)
         query_map[:paymentMethodId] = payment_method_id unless payment_method_id.nil?
 
-        created_transaction = self.class.post path,
-                                              to_json,
-                                              query_map,
-                                              {
-                                                  :user => user,
-                                                  :reason => reason,
-                                                  :comment => comment,
-                                              }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.post path,
+                          to_json,
+                          query_map,
+                          {
+                              :user => user,
+                              :reason => reason,
+                              :comment => comment
+                          }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
       end
 
       def complete_initial_transaction(user, reason, comment, options)
-        created_transaction = self.class.put follow_up_path(payment_id),
-                                             to_json,
-                                             {},
-                                             {
-                                                 :user => user,
-                                                 :reason => reason,
-                                                 :comment => comment,
-                                             }.merge(options)
+        created_transaction = with_payment_failure_handling do
+          self.class.put follow_up_path(payment_id),
+                         to_json,
+                         {},
+                         {
+                             :user => user,
+                             :reason => reason,
+                             :comment => comment
+                         }.merge(options)
+        end
         created_transaction.refresh(options, Payment)
+      end
+
+      private
+
+      def with_payment_failure_handling
+        begin
+          created_transaction = yield
+        rescue KillBillClient::API::ResponseError => error
+          response = error.response
+          if response.header['location']
+            created_transaction = Transaction.new
+            created_transaction.uri = response.header['location']
+          else
+            raise error
+          end
+        end
+
+        created_transaction
       end
     end
   end

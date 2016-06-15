@@ -10,7 +10,7 @@ describe KillBillClient::API do
 
   it 'should send double-encoded uri' do
     contract_property = KillBillClient::Model::PluginPropertyAttributes.new
-    contract_property.key = 'contractId'
+    contract_property.key = :contractId
     contract_property.value = 'test'
     info_property = KillBillClient::Model::PluginPropertyAttributes.new
     info_property.key = 'details'

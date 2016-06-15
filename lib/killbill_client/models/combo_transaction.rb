@@ -23,14 +23,24 @@ module KillBillClient
       private
 
       def combo_payment(user, reason, comment, options, refresh_options = nil)
-        created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/combo",
-                                              to_json,
-                                              {},
-                                              {
-                                                  :user => user,
-                                                  :reason => reason,
-                                                  :comment => comment,
-                                              }.merge(options)
+        begin
+          created_transaction = self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/combo",
+                                                to_json,
+                                                {},
+                                                {
+                                                    :user => user,
+                                                    :reason => reason,
+                                                    :comment => comment,
+                                                }.merge(options)
+        rescue KillBillClient::API::ResponseError => error
+          response = error.response
+          if response.header['location']
+            created_transaction = ComboTransaction.new
+            created_transaction.uri = response.header['location']
+          else
+            raise error
+          end
+        end
         created_transaction.refresh(refresh_options || options, Payment)
       end
     end
