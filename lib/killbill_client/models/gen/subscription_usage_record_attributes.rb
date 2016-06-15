@@ -29,6 +29,7 @@ module KillBillClient
   module Model
     class SubscriptionUsageRecordAttributes < Resource
       attribute :subscription_id
+      attribute :tracking_id
       attribute :unit_usage_records
     end
   end

@@ -36,6 +36,8 @@ module KillBillClient
       attribute :amount
       attribute :currency
       attribute :effective_date
+      attribute :processed_amount
+      attribute :processed_currency
       attribute :status
       attribute :gateway_error_code
       attribute :gateway_error_msg

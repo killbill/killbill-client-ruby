@@ -44,6 +44,7 @@ module KillBillClient
       attribute :charged_through_date
       attribute :billing_start_date
       attribute :billing_end_date
+      attribute :bill_cycle_day_local
       attribute :events
       attribute :price_overrides
       attribute :audit_logs

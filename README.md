@@ -1,6 +1,14 @@
 [![Build Status](https://travis-ci.org/killbill/killbill-client-ruby.png)](https://travis-ci.org/killbill/killbill-client-ruby)
 [![Code Climate](https://codeclimate.com/github/killbill/killbill-client-ruby.png)](https://codeclimate.com/github/killbill/killbill-client-ruby)
 
+------------------------------------------------
+| Ruby client              | Kill Bill version |
+| -----------------------: | ----------------: |
+| 0.x.y                    | 0.16.z            |
+| -----------------------: | ----------------: |
+| 1.x.y                    | 0.18.z(and 0.17.x)|
+
+
 killbill-client-ruby
 ====================
 

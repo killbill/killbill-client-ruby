@@ -29,10 +29,12 @@ module KillBillClient
   module Model
     class CreditAttributes < Resource
       attribute :credit_amount
+      attribute :currency
       attribute :invoice_id
       attribute :invoice_number
       attribute :effective_date
       attribute :account_id
+      attribute :description
       attribute :audit_logs
     end
   end
