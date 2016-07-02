@@ -30,6 +30,7 @@ module KillBillClient
     class InvoiceAttributes < Resource
       attribute :amount
       attribute :currency
+      attribute :status
       attribute :credit_adj
       attribute :refund_adj
       attribute :invoice_id
@@ -41,6 +42,7 @@ module KillBillClient
       attribute :external_bundle_keys
       attribute :credits
       attribute :items
+      attribute :is_parent_invoice
       attribute :audit_logs
     end
   end

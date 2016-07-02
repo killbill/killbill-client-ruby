@@ -32,6 +32,7 @@ module KillBillClient
       attribute :invoice_id
       attribute :linked_invoice_item_id
       attribute :account_id
+      attribute :child_account_id
       attribute :bundle_id
       attribute :subscription_id
       attribute :plan_name

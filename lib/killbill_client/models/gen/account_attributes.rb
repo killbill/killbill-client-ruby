@@ -35,6 +35,8 @@ module KillBillClient
       attribute :email
       attribute :bill_cycle_day_local
       attribute :currency
+      attribute :parent_account_id
+      attribute :is_payment_delegated_to_parent
       attribute :payment_method_id
       attribute :time_zone
       attribute :address1
