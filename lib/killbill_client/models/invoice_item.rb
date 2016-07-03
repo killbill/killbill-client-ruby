@@ -4,10 +4,10 @@ module KillBillClient
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
-      def create(user = nil, reason = nil, comment = nil, options = {})
+      def create(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
         created_invoice_item = self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/charges/#{account_id}",
                                                [to_hash].to_json,
-                                               {},
+                                               {:autoCommit => auto_commit},
                                                {
                                                    :user    => user,
                                                    :reason  => reason,
