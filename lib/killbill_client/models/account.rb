@@ -79,6 +79,19 @@ module KillBillClient
         updated_account.refresh(options)
       end
 
+
+      def transfer_child_credit(user = nil, reason = nil, comment = nil, options = {})
+        self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/transferCredit",
+                                         {},
+                                         {},
+                                         {
+                                             :user    => user,
+                                             :reason  => reason,
+                                             :comment => comment,
+                                         }.merge(options)
+      end
+
+
       def bundles(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/bundles",
                        {},
