@@ -39,10 +39,15 @@ module KillBillClient
         end
 
         # Return the active one
-        def find_by_external_key(external_key, options = {})
-          get "#{KILLBILL_API_BUNDLES_PREFIX}?externalKey=#{external_key}",
-              {},
+        def find_by_external_key(external_key, included_deleted, options = {})
+          params = {}
+          params[:externalKey] = external_key
+          params[:includedDeleted] = included_deleted if included_deleted
+
+          result  = get "#{KILLBILL_API_BUNDLES_PREFIX}",
+              params,
               options
+          return included_deleted ? result : result[0]
         end
 
         # Return active and inactive ones
