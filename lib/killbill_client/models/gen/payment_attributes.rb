@@ -40,6 +40,7 @@ module KillBillClient
       attribute :currency
       attribute :payment_method_id
       attribute :transactions
+      attribute :payment_attempts
       attribute :audit_logs
     end
   end

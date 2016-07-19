@@ -27,21 +27,19 @@
 
 module KillBillClient
   module Model
-    class InvoicePaymentAttributes < Resource
-      attribute :target_invoice_id
+    class PaymentAttemptAttributes < Resource
       attribute :account_id
-      attribute :payment_id
-      attribute :payment_number
-      attribute :payment_external_key
-      attribute :auth_amount
-      attribute :captured_amount
-      attribute :purchased_amount
-      attribute :refunded_amount
-      attribute :credited_amount
-      attribute :currency
       attribute :payment_method_id
-      attribute :transactions
-      attribute :payment_attempts
+      attribute :payment_external_key
+      attribute :transaction_id
+      attribute :transaction_external_key
+      attribute :transaction_type
+      attribute :effective_date
+      attribute :state_name
+      attribute :amount
+      attribute :currency
+      attribute :plugin_name
+      attribute :plugin_properties
       attribute :audit_logs
     end
   end
