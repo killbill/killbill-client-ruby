@@ -52,10 +52,11 @@ module KillBillClient
               }.merge(options)
         end
 
-        def destroy(payment_method_id, set_auto_pay_off = false, user = nil, reason = nil, comment = nil, options = {})
+        def destroy(payment_method_id, set_auto_pay_off = false, force_default_deletion = false, user = nil, reason = nil, comment = nil, options = {})
           delete "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/#{payment_method_id}",
                  {},
                  {
+                     :forceDefaultPmDeletion => force_default_deletion,
                      :deleteDefaultPmWithAutoPayOff => set_auto_pay_off
                  },
                  {

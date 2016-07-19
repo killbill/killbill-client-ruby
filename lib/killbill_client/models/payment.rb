@@ -12,18 +12,20 @@ module KillBillClient
       has_custom_fields KILLBILL_API_PAYMENTS_PREFIX, :payment_id
 
       class << self
-        def find_by_id(payment_id, with_plugin_info = false, options = {})
+        def find_by_id(payment_id, with_attempts = false, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{payment_id}",
               {
+                  :withAttempts => with_attempts,
                   :withPluginInfo => with_plugin_info
               },
               options
         end
 
-        def find_by_external_key(external_key, with_plugin_info = false, options = {})
+        def find_by_external_key(external_key, with_attempts = false, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}",
               {
                   :externalKey => external_key,
+                  :withAttempts => with_attempts,
                   :withPluginInfo => with_plugin_info
               },
               options
