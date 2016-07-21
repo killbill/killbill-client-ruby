@@ -65,6 +65,17 @@ module KillBillClient
                      :comment => comment,
                  }.merge(options)
         end
+
+        def refresh(account_id, user = nil, reason = nil, comment = nil, options = {})
+          post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/refresh",
+               nil,
+               {},
+               {
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+        end
       end
 
       def create(is_default, user = nil, reason = nil, comment = nil, options = {})
