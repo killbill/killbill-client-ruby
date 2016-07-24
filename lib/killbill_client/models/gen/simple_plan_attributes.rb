@@ -27,25 +27,14 @@
 
 module KillBillClient
   module Model
-    class InvoiceItemAttributes < Resource
-      attribute :invoice_item_id
-      attribute :invoice_id
-      attribute :linked_invoice_item_id
-      attribute :account_id
-      attribute :child_account_id
-      attribute :bundle_id
-      attribute :subscription_id
-      attribute :plan_name
-      attribute :phase_name
-      attribute :usage_name
-      attribute :item_type
-      attribute :description
-      attribute :start_date
-      attribute :end_date
-      attribute :amount
+    class SimplePlanAttributes < Resource
+      attribute :plan_id
+      attribute :product_name
       attribute :currency
-      attribute :child_items
-      attribute :audit_logs
+      attribute :amount
+      attribute :billing_period
+      attribute :trial_length
+      attribute :trial_time_unit
     end
   end
 end
