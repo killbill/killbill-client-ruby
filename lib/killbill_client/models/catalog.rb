@@ -29,14 +29,14 @@ module KillBillClient
               PlanDetail
         end
 
-        def get_tenant_catalog(options = {})
+        def get_tenant_catalog(format, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
 
           get KILLBILL_API_CATALOG_PREFIX,
               {},
               {
-                  :head => {'Accept' => 'application/xml'},
+                  :head => {'Accept' => "application/#{format}"}
               }.merge(options)
         end
 
@@ -55,9 +55,24 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_tenant_catalog(options)
+          get_tenant_catalog('xml', options)
         end
 
+
+        def add_tenant_catalog_simple_plan(simple_plan, user = nil, reason = nil, comment = nil, options = {})
+
+          require_multi_tenant_options!(options, "Uploading a catalog is only supported in multi-tenant mode")
+
+          post "#{KILLBILL_API_CATALOG_PREFIX}/simplePlan",
+               simple_plan.to_json,
+               {
+               },
+               {
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+        end
       end
     end
   end
