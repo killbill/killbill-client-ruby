@@ -29,12 +29,15 @@ module KillBillClient
               PlanDetail
         end
 
-        def get_tenant_catalog(format, options = {})
+        def get_tenant_catalog(format, requested_date=nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
 
+          params = {}
+          params[:requestedDate] = requested_date if requested_date
+
           get KILLBILL_API_CATALOG_PREFIX,
-              {},
+              params,
               {
                   :head => {'Accept' => "application/#{format}"}
               }.merge(options)
@@ -55,7 +58,7 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_tenant_catalog('xml', options)
+          get_tenant_catalog('xml', nil, options)
         end
 
 
