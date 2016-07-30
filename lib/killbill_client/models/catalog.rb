@@ -39,8 +39,11 @@ module KillBillClient
           get KILLBILL_API_CATALOG_PREFIX,
               params,
               {
-                  :head => {'Accept' => "application/#{format}"}
-              }.merge(options)
+                  :head => {'Accept' => "application/#{format}"},
+                  :content_type => "application/#{format}",
+
+          }.merge(options)
+
         end
 
         def upload_tenant_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
