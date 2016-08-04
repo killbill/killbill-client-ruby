@@ -30,11 +30,13 @@ module KillBillClient
     class SimplePlanAttributes < Resource
       attribute :plan_id
       attribute :product_name
+      attribute :product_category
       attribute :currency
       attribute :amount
       attribute :billing_period
       attribute :trial_length
       attribute :trial_time_unit
+      attribute :available_base_products
     end
   end
 end
