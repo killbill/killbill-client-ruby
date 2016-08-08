@@ -95,10 +95,11 @@ module KillBillClient
       end
 
 
-      def create(user = nil, reason = nil, comment = nil, options = {})
+      def create(use_global_default=true, user = nil, reason = nil, comment = nil, options = {})
+
         created_tenant = self.class.post KILLBILL_API_TENANTS_PREFIX,
                                          to_json,
-                                         {},
+                                         {:useGlobalDefault => use_global_default},
                                          {
                                              :user => user,
                                              :reason => reason,
