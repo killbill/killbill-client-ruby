@@ -8,7 +8,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       class << self
-        def find_by_id(payment_id, with_attempts = false, with_plugin_info = false, options = {})
+        def find_by_id(payment_id, with_plugin_info = false, with_attempts = false, options = {})
           get "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}",
               {
                   :withAttempts => with_attempts,

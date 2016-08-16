@@ -301,7 +301,7 @@ module KillBillClient
 
       end
 
-      def payments(with_attempts = false, with_plugin_info = false, audit = 'NONE', options = {})
+      def payments(with_plugin_info = false, with_attempts = false, audit = 'NONE', options = {})
         self.class.get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/payments",
                        {
                            :withAttempts => with_attempts,
