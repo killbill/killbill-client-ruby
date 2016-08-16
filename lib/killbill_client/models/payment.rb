@@ -7,6 +7,7 @@ module KillBillClient
       KILLBILL_API_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/payments"
 
       has_many :transactions, KillBillClient::Model::Transaction
+      has_many :payment_attempts, KillBillClient::Model::PaymentAttemptAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_custom_fields KILLBILL_API_PAYMENTS_PREFIX, :payment_id

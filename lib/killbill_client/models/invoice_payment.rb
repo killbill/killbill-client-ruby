@@ -4,12 +4,14 @@ module KillBillClient
       KILLBILL_API_INVOICE_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/invoicePayments"
 
       has_many :transactions, KillBillClient::Model::Transaction
+      has_many :payment_attempts, KillBillClient::Model::PaymentAttemptAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       class << self
-        def find_by_id(payment_id, with_plugin_info = false, options = {})
+        def find_by_id(payment_id, with_attempts = false, with_plugin_info = false, options = {})
           get "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}",
               {
+                  :withAttempts => with_attempts,
                   :withPluginInfo => with_plugin_info
               },
               options
