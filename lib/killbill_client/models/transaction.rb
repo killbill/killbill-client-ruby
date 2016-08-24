@@ -118,6 +118,24 @@ module KillBillClient
         created_transaction.refresh(options, Payment)
       end
 
+
+      def cancel_scheduled_payment(user = nil, reason = nil, comment = nil, options = {})
+
+        uri = transaction_external_key ? "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/cancelScheduledPaymentTransaction" :
+            "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/#{transaction_id}/cancelScheduledPaymentTransaction"
+
+        query_map = {}
+        query_map[:transactionExternalKey] = transaction_external_key if transaction_external_key
+        self.class.delete uri,
+                          {},
+                          query_map,
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+      end
+
       private
 
 
