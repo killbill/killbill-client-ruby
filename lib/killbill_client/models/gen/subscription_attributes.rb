@@ -38,6 +38,7 @@ module KillBillClient
       attribute :billing_period
       attribute :phase_type
       attribute :price_list
+      attribute :plan_name
       attribute :state
       attribute :source_type
       attribute :cancelled_date

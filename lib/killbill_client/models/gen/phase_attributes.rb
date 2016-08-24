@@ -32,6 +32,7 @@ module KillBillClient
       attribute :prices
       attribute :fixed_prices
       attribute :duration
+      attribute :usages
     end
   end
 end
