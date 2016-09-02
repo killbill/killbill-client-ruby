@@ -37,6 +37,25 @@ module KillBillClient
                }.merge(options)
           get_tenant_overdue_config('xml', options)
         end
+
+      end
+
+      def modify_overdue_config(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.require_multi_tenant_options!(options, "Uploading an overdue config is only supported in multi-tenant mode")
+
+        self.class.post KILLBILL_API_OVERDUE_PREFIX,
+             to_json,
+             {
+             },
+             {
+                 :head => {'Accept' => 'application/json'},
+                 :content_type => 'application/json',
+                 :user => user,
+                 :reason => reason,
+                 :comment => comment,
+             }.merge(options)
+        self.class.get_tenant_overdue_config('json', options)
       end
     end
   end
