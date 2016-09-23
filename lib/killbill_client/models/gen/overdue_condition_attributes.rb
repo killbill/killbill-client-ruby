@@ -31,6 +31,9 @@ module KillBillClient
       attribute :time_since_earliest_unpaid_invoice_equals_or_exceeds
       attribute :control_tag_inclusion
       attribute :control_tag_exclusion
+      attribute :number_of_unpaid_invoices_equals_or_exceeds
+      attribute :response_for_last_failed_payment
+      attribute :total_unpaid_invoice_balance_equals_or_exceeds
     end
   end
 end
