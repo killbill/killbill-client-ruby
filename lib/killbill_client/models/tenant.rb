@@ -43,6 +43,19 @@ module KillBillClient
           delete_tenant_user_key_value(key_name, "userKeyValue", "tenant key/value", user, reason, comment, options)
         end
 
+        def search_tenant_config(key_prefix, options = {})
+
+          require_multi_tenant_options!(options, "Searching for plugin config is only supported in multi-tenant mode")
+
+          uri =  KILLBILL_API_TENANTS_PREFIX + "/uploadPerTenantConfig/" + key_prefix + "/search"
+           get uri,
+              {},
+              {
+              }.merge(options),
+              KillBillClient::Model::TenantKeyAttributes
+        end
+
+
         def get_tenant_key_value(key_name, key_path, error_id_str, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a #{error_id_str} is only supported in multi-tenant mode")
