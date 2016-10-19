@@ -27,7 +27,7 @@ module KillBillClient
         end
 
         def delete_tenant_plugin_config(plugin_name, user = nil, reason = nil, comment = nil, options = {})
-          delete_tenant_user_key_value(plugin_name, "uploadPluginConfig", "plugin config", user, reason, comment, options)
+          delete_tenant_key_value(plugin_name, "uploadPluginConfig", "plugin config", user, reason, comment, options)
         end
 
         def get_tenant_user_key_value(key_name, options = {})
@@ -40,7 +40,7 @@ module KillBillClient
 
 
         def delete_tenant_user_key_value(key_name, user = nil, reason = nil, comment = nil, options = {})
-          delete_tenant_user_key_value(key_name, "userKeyValue", "tenant key/value", user, reason, comment, options)
+          delete_tenant_key_value(key_name, "userKeyValue", "tenant key/value", user, reason, comment, options)
         end
 
         def get_tenant_key_value(key_name, key_path, error_id_str, options = {})
@@ -75,7 +75,7 @@ module KillBillClient
         end
 
 
-        def delete_tenant_user_key_value(key_name, key_path, error_id_str, user = nil, reason = nil, comment = nil, options = {})
+        def delete_tenant_key_value(key_name, key_path, error_id_str, user = nil, reason = nil, comment = nil, options = {})
 
           require_multi_tenant_options!(options, "Deleting a #{error_id_str} is only supported in multi-tenant mode")
 

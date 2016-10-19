@@ -7,8 +7,8 @@ module KillBillClient
                   :session_id,
                   :pagination_max_nb_records,
                   :pagination_total_nb_records,
-                  :pagination_next_page
-                  :response
+                  :pagination_next_page,
+		  :response
 
       # Same as .each, but fetch remaining pages as we go
       def each_in_batches(&block)
