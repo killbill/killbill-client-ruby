@@ -164,9 +164,9 @@ module KillBillClient
           created_transaction = yield
         rescue KillBillClient::API::ResponseError => error
           response = error.response
-          if response.header['location']
+          if response['location']
             created_transaction = Transaction.new
-            created_transaction.uri = response.header['location']
+            created_transaction.uri = response['location']
           else
             raise error
           end
