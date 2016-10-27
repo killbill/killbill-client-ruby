@@ -65,8 +65,8 @@ module KillBillClient
 
         def create_http_client(uri, options = {})
           http = ::Net::HTTP.new uri.host, uri.port
-          http.read_timeout = options[:read_timeout] if options[:read_timeout].is_a? Numeric
-          http.open_timeout = options[:connection_timeout] if options[:connection_timeout].is_a? Numeric
+          http.read_timeout = options[:read_timeout].to_f / 1000 if options[:read_timeout].is_a? Numeric
+          http.open_timeout = options[:connection_timeout].to_f / 1000 if options[:connection_timeout].is_a? Numeric
           http.use_ssl = uri.scheme == 'https'
           http
         end
