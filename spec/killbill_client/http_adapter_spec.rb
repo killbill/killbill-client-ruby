@@ -8,6 +8,10 @@ describe KillBillClient::API do
     ]
   }
 
+  let (:ssl_uri) {URI.parse 'https://killbill.io'}
+  let (:uri) {URI.parse 'http://killbill.io'}
+  let (:timeouts) {{:read_timeout => 10, :connection_timeout => 5}}
+
   it 'should send double-encoded uri' do
     contract_property = KillBillClient::Model::PluginPropertyAttributes.new
     contract_property.key = :contractId
@@ -46,6 +50,23 @@ describe KillBillClient::API do
     # also ensure the undecoded value is different so that it was indeed encocded twice
     expect(output_info_property[1]).not_to eq(CGI.unescape output_info_property[1])
   end
+
+  it 'should use the default parameters for http client' do
+    http_adapter = DummyForHTTPAdapter.new
+    http_client = http_adapter.send(:create_http_client, uri)
+    expect(http_client.read_timeout).to eq(60)
+    expect(http_client.open_timeout).to be_nil
+    expect(http_client.use_ssl?).to be false
+  end
+
+  it 'should set the correct parameters for http client' do
+    http_adapter = DummyForHTTPAdapter.new
+    http_client = http_adapter.send(:create_http_client, ssl_uri, timeouts)
+    expect(http_client.read_timeout).to eq(timeouts[:read_timeout])
+    expect(http_client.open_timeout).to eq(timeouts[:connection_timeout])
+    expect(http_client.use_ssl?).to be true
+  end
+
 end
 
 class DummyForHTTPAdapter

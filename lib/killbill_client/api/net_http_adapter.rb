@@ -63,6 +63,14 @@ module KillBillClient
           "?#{pairs.join '&'}"
         end
 
+        def create_http_client(uri, options = {})
+          http = ::Net::HTTP.new uri.host, uri.port
+          http.read_timeout = options[:read_timeout] if options[:read_timeout].is_a? Numeric
+          http.open_timeout = options[:connection_timeout] if options[:connection_timeout].is_a? Numeric
+          http.use_ssl = uri.scheme == 'https'
+          http
+        end
+
         def request(method, relative_uri, options = {})
           head = headers.dup
           head.update options[:head] if options[:head]
@@ -140,8 +148,7 @@ module KillBillClient
             request['X-Request-Id'] = options[:request_id]
           end
 
-          http = ::Net::HTTP.new uri.host, uri.port
-          http.use_ssl = uri.scheme == 'https'
+          http = create_http_client uri, options
           net_http.each_pair { |key, value| http.send "#{key}=", value }
 
           if KillBillClient.logger
