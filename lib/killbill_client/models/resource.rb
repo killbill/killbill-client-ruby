@@ -15,6 +15,7 @@ module KillBillClient
       @@attribute_names = {}
 
       def initialize(hash = nil)
+	@uri = nil
         # Make sure we support ActiveSupport::HashWithIndifferentAccess for Kaui
         if hash.respond_to?(:each)
           hash.each do |key, value|
@@ -75,8 +76,8 @@ module KillBillClient
             when %r{text/plain}
               response.body
             when %r{application/xml}
-              if response.header['location']
-                response.header['location']
+              if response['location']
+                response['location']
               else
                 response.body
               end
@@ -84,7 +85,7 @@ module KillBillClient
               record = from_json resource_class, response.body
               if record.nil?
                 record = resource_class.new
-                record.uri = response.header['location']
+                record.uri = response['location']
               end
 
               session_id = extract_session_id(response)
@@ -170,26 +171,22 @@ module KillBillClient
         end
 
         def attribute(name)
-          self.send('attr_accessor', name.to_sym)
-
-          self.instance_variable_set('@json_attributes', []) unless self.instance_variable_get('@json_attributes')
-          self.instance_variable_get('@json_attributes') << name.to_s
-
-          attributes = self.instance_variable_get('@json_attributes')
-
-          (
-          class << self;
-            self
-          end).send(:define_method, :json_attributes) do
-            attributes
-          end
-        end
+          send('attr_accessor', name.to_sym)
+	  attributes = @json_attributes ||= []
+	  begin
+	    json_attributes.push(name.to_s)
+	  rescue NameError
+	    (class << self; self; end).
+	      send(:define_method, :json_attributes) { attributes }
+	    retry
+	  end
+	end
 
         def has_many(attr_name, type = nil)
           send("attr_accessor", attr_name.to_sym)
 
           #add it to attribute_names
-          @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
+          @@attribute_names[self.name] ||= {}
           @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :many}
         end
 
@@ -197,7 +194,7 @@ module KillBillClient
           send("attr_accessor", attr_name.to_sym)
 
           #add it to attribute_names
-          @@attribute_names[self.name] = {} unless @@attribute_names[self.name]
+          @@attribute_names[self.name] ||= {}
           @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :one}
         end
 

@@ -74,7 +74,7 @@ module KillBillClient
             # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
             # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
             base_path = uri.request_uri == '/' ? '' : uri.request_uri
-            uri += (base_path + URI.escape(relative_uri))
+            uri += (base_path + URI::DEFAULT_PARSER.escape(relative_uri))
           else
             uri = relative_uri
             uri = URI.parse(uri) unless uri.is_a?(URI)
