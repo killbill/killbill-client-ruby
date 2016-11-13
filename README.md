@@ -1,18 +1,15 @@
-[![Build Status](https://travis-ci.org/killbill/killbill-client-ruby.png)](https://travis-ci.org/killbill/killbill-client-ruby)
-[![Code Climate](https://codeclimate.com/github/killbill/killbill-client-ruby.png)](https://codeclimate.com/github/killbill/killbill-client-ruby)
-
-------------------------------------------------
-| Ruby client              | Kill Bill version |
-| -----------------------: | ----------------: |
-| 0.x.y                    | 0.16.z            |
-| -----------------------: | ----------------: |
-| 1.x.y                    | 0.18.z            |
-
-
 killbill-client-ruby
 ====================
 
 Kill Bill Ruby client library.
+
+Kill Bill compatibility
+-----------------------
+
+| Client version | Kill Bill version |
+| -------------: | ----------------: |
+| 0.x.y          | 0.16.z            |
+| 1.x.y          | 0.18.z            |
 
 Installation
 ------------
@@ -26,7 +23,7 @@ gem install killbill-client
 Alternatively, add the dependency in your Gemfile:
 
 ```
-gem 'killbill-client', '~> 0.24'
+gem 'killbill-client', '~> 1.0'
 ```
 
 Examples
