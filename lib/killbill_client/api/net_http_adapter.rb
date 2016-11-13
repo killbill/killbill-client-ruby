@@ -63,6 +63,14 @@ module KillBillClient
           "?#{pairs.join '&'}"
         end
 
+        def create_http_client(uri, options = {})
+          http = ::Net::HTTP.new uri.host, uri.port
+          http.read_timeout = options[:read_timeout].to_f / 1000 if options[:read_timeout].is_a? Numeric
+          http.open_timeout = options[:connection_timeout].to_f / 1000 if options[:connection_timeout].is_a? Numeric
+          http.use_ssl = uri.scheme == 'https'
+          http
+        end
+
         def request(method, relative_uri, options = {})
           head = headers.dup
           head.update options[:head] if options[:head]
@@ -74,7 +82,7 @@ module KillBillClient
             # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
             # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
             base_path = uri.request_uri == '/' ? '' : uri.request_uri
-            uri += (base_path + URI.escape(relative_uri))
+            uri += (base_path + URI::DEFAULT_PARSER.escape(relative_uri))
           else
             uri = relative_uri
             uri = URI.parse(uri) unless uri.is_a?(URI)
@@ -140,8 +148,7 @@ module KillBillClient
             request['X-Request-Id'] = options[:request_id]
           end
 
-          http = ::Net::HTTP.new uri.host, uri.port
-          http.use_ssl = uri.scheme == 'https'
+          http = create_http_client uri, options
           net_http.each_pair { |key, value| http.send "#{key}=", value }
 
           if KillBillClient.logger

@@ -92,9 +92,6 @@ module KillBillClient
         created_pm.refresh(options)
       end
 
-      def destroy(set_auto_pay_off = false, user = nil, reason = nil, comment = nil, options = {})
-        self.class.destroy(payment_method_id, set_auto_pay_off, user, reason, comment, options)
-      end
 
       def plugin_info=(info)
         @plugin_info = PaymentMethodPluginDetailAttributes.new

@@ -68,7 +68,7 @@ module KillBillClient
 
             res.refresh(options)
 
-          rescue KillBillClient::API::BadRequest => e
+          rescue KillBillClient::API::BadRequest
             # No invoice to generate : TODO parse json to verify this is indeed the case
           end
         end
@@ -94,7 +94,7 @@ module KillBillClient
 
             res.refresh(options)
 
-          rescue KillBillClient::API::NotFound => e
+          rescue KillBillClient::API::NotFound
             nil
           end
         end
@@ -126,7 +126,7 @@ module KillBillClient
                        Invoice
 
             res.refresh(options)
-          rescue KillBillClient::API::NotFound => e
+          rescue KillBillClient::API::NotFound
             nil
           end
         end
@@ -160,7 +160,7 @@ module KillBillClient
                        Invoice
 
             res.refresh(options)
-          rescue KillBillClient::API::NotFound => e
+          rescue KillBillClient::API::NotFound
             nil
           end
         end
@@ -193,7 +193,7 @@ module KillBillClient
 
             res.refresh(options)
 
-          rescue KillBillClient::API::NotFound => e
+          rescue KillBillClient::API::NotFound
             nil
           end
         end
@@ -298,6 +298,19 @@ module KillBillClient
         end
 
 
+
+      end
+
+      def commit(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/commitInvoice",
+                       nil,
+                       {},
+                       {
+                           :user => user,
+                           :reason => reason,
+                           :comment => comment,
+                       }.merge(options)
 
       end
 

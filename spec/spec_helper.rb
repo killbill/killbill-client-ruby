@@ -26,7 +26,7 @@ RSpec.configure do |config|
     tenant = KillBillClient::Model::Tenant.new
     tenant.api_key = KillBillClient.api_key
     tenant.api_secret = KillBillClient.api_secret
-    tenant.create('KillBill Spec test')
+    tenant.create(true, 'KillBill Spec test')
   end
 end
 

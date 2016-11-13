@@ -135,16 +135,20 @@ describe KillBillClient::Model do
     invoice_item.currency = account.currency
     invoice_item.amount = 123.98
 
-    invoice_item = invoice_item.create 'KillBill Spec test'
+    invoice_item = invoice_item.create false, true, 'KillBill Spec test'
     invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_item.invoice_id
 
-    expect(invoice.balance).to eq(123.98)
+    expect(invoice.amount).to eq(123.98)
+    expect(invoice.balance).to eq(0)
+
+    invoice.commit 'KillBill Spec test'
 
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
-    expect(account.account_balance).to eq(123.98)
+    expect(account.account_balance).to eq(0)
 
-    pm.destroy(true, 'KillBill Spec test')
+
+    KillBillClient::Model::PaymentMethod.destroy(pm.payment_method_id, true, true, 'KillBill Spec test')
 
     account = KillBillClient::Model::Account.find_by_id account.account_id
     expect(account.payment_method_id).to be_nil
@@ -222,17 +226,13 @@ describe KillBillClient::Model do
     item = KillBillClient::Model::InvoiceItem.new
     item.invoice_item_id = invoice_item.invoice_item_id
     item.amount = invoice_item.amount
-    refund = KillBillClient::Model::InvoicePayment.refund invoice_payment.payment_id, invoice_payment.purchased_amount, [item], 'KillBill Spec test'
 
     # Verify the refund
     timeline = KillBillClient::Model::AccountTimeline.find_by_account_id account.account_id
     expect(timeline.payments).not_to be_empty
     expect(timeline.payments.size).to eq(1)
-    expect(timeline.payments.first.transactions.size).to eq(2)
+    expect(timeline.payments.first.transactions.size).to eq(1)
     expect(timeline.payments.first.transactions.first.transaction_type).to eq('PURCHASE')
-    refund = timeline.payments.first.transactions.last
-    expect(refund.transaction_type).to eq('REFUND')
-    expect(refund.amount).to eq(invoice_item.amount)
 
     # Create a credit for invoice
     new_credit = KillBillClient::Model::Credit.new
@@ -240,19 +240,16 @@ describe KillBillClient::Model do
     new_credit.invoice_id = invoice_id
     new_credit.effective_date = "2013-09-30"
     new_credit.account_id = account.account_id
-    new_credit.create 'KillBill Spec test'
+
+    expect { new_credit.create 'KillBill Spec test'   }.to raise_error(KillBillClient::API::BadRequest)
 
     # Verify the invoice item of the credit
     invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
     expect(invoice.items).not_to be_empty
     item = invoice.items.last
     expect(item.invoice_id).to eq(invoice_id)
-    expect(item.amount).to eq(10.1)
+    expect(item.amount).to eq(123.98)
     expect(item.account_id).to eq(account.account_id)
-
-    # Verify the credit
-    account = KillBillClient::Model::Account.find_by_id account.account_id, true
-    expect(account.account_balance).to eq(-10.1)
 
     # Create a subscription
     sub = KillBillClient::Model::Subscription.new
@@ -265,16 +262,17 @@ describe KillBillClient::Model do
     sub = sub.create 'KillBill Spec test'
 
     # Verify we can retrieve it
-    expect(account.bundles.size).to eq(1)
-    expect(account.bundles[0].subscriptions.size).to eq(1)
-    expect(account.bundles[0].subscriptions[0].subscription_id).to eq(sub.subscription_id)
-    bundle = account.bundles[0]
+    account_bundles = account.bundles
+    expect(account_bundles.size).to eq(1)
+    expect(account_bundles[0].subscriptions.size).to eq(1)
+    expect(account_bundles[0].subscriptions[0].subscription_id).to eq(sub.subscription_id)
+    bundle = account_bundles[0]
 
     # Verify we can retrieve it by id
     expect(KillBillClient::Model::Bundle.find_by_id(bundle.bundle_id)).to eq(bundle)
 
     # Verify we can retrieve it by external key
-    expect(KillBillClient::Model::Bundle.find_by_external_key(bundle.external_key)).to eq(bundle)
+    expect(KillBillClient::Model::Bundle.find_by_external_key(bundle.external_key, true).first).to eq(bundle)
 
     # Verify we can retrieve it by account id and external key
     bundles = KillBillClient::Model::Bundle.find_all_by_account_id_and_external_key(account.account_id, bundle.external_key)
@@ -309,7 +307,7 @@ describe KillBillClient::Model do
     tenant.api_secret = api_secret
 
     # Create and verify the tenant
-    tenant = tenant.create('KillBill Spec test')
+    tenant = tenant.create(true, 'KillBill Spec test')
     expect(tenant.api_key).to eq(api_key)
     expect(tenant.tenant_id).not_to be_nil
 
