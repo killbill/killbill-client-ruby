@@ -90,10 +90,10 @@ module KillBillClient
               raw_node_res = info.plugins_info.find do |e|
                 if e.plugin_key == plugin_key
                   if KillBillClient.logger
-                    KillBillClient.log :info, 'NodesInfo  -> check for plugin command completion version_check=%s, state_check=%s' % [(plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version, state.nil? || e.state == state]
+                    KillBillClient.log :info, 'NodesInfo  -> check for plugin command completion version_check=%s, state_check=%s' % [(plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.version, state.nil? || e.state == state]
                   end
                 end
-                e.plugin_key == plugin_key && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.plugin_version) && (state.nil? ||  e.state == state)
+                e.plugin_key == plugin_key && ((plugin_version.nil? && e.is_selected_for_start) || plugin_version == e.version) && (state.nil? ||  e.state == state)
               end
               node_res = is_negate ? !raw_node_res : raw_node_res
               res = res & node_res
