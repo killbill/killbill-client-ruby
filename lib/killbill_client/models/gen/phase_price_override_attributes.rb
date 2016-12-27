@@ -28,6 +28,7 @@
 module KillBillClient
   module Model
     class PhasePriceOverrideAttributes < Resource
+      attribute :plan_name
       attribute :phase_name
       attribute :phase_type
       attribute :fixed_price

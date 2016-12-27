@@ -31,6 +31,7 @@ module KillBillClient
       attribute :event_id
       attribute :billing_period
       attribute :effective_dt
+      attribute :plan
       attribute :product
       attribute :price_list
       attribute :event_type
