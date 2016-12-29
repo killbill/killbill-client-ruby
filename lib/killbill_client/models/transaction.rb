@@ -4,6 +4,8 @@ module KillBillClient
   module Model
     class Transaction < PaymentTransactionAttributes
 
+      KILLBILL_API_TRANSACTIONS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentTransactions"
+
       has_many :properties, KillBillClient::Model::PluginPropertyAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
 

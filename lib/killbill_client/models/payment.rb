@@ -32,6 +32,15 @@ module KillBillClient
               options
         end
 
+        def find_by_transaction_id(transaction_id, with_plugin_info = false, with_attempts = false, options = {})
+          get "#{Transaction::KILLBILL_API_TRANSACTIONS_PREFIX}/#{transaction_id}",
+              {
+                  :withAttempts => with_attempts,
+                  :withPluginInfo => with_plugin_info
+              },
+              options
+        end
+
         def find_in_batches(offset = 0, limit = 100, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
