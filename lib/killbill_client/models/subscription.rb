@@ -21,11 +21,15 @@ module KillBillClient
       #
       # Create a new entitlement
       #
+      #
+      #
       def create(user = nil, reason = nil, comment = nil, requested_date = nil, call_completion = false, options = {})
 
         params                  = {}
         params[:callCompletion] = call_completion
-        params[:requestedDate]  = requested_date unless requested_date.nil?
+        params[:entitlementDate]  = requested_date unless requested_date.nil?
+        params[:billingDate]  = requested_date unless requested_date.nil?
+
 
         created_entitlement = self.class.post KILLBILL_API_ENTITLEMENT_PREFIX,
                                               to_json,
