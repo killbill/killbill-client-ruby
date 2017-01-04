@@ -110,6 +110,25 @@ module KillBillClient
                        }.merge(options)
       end
 
+      #
+      # Update Subscription BCD
+      #
+      def update_bcd(user = nil, reason = nil, comment = nil, effective_from_date = nil, options = {})
+
+        params                  = {}
+        params[:effectiveFromDate]  = effective_from_date unless effective_from_date.nil?
+
+        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}/bcd",
+                              self.to_json,
+                              params,
+                              {
+                                  :user    => user,
+                                  :reason  => reason,
+                                  :comment => comment,
+                              }.merge(options)
+      end
+
+
     end
   end
 end
