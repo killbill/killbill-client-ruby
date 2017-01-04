@@ -118,7 +118,7 @@ module KillBillClient
         params                  = {}
         params[:effectiveFromDate]  = effective_from_date unless effective_from_date.nil?
 
-        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}/bcd",
+        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/bcd",
                               self.to_json,
                               params,
                               {
