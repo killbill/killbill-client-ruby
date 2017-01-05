@@ -113,10 +113,11 @@ module KillBillClient
       #
       # Update Subscription BCD
       #
-      def update_bcd(user = nil, reason = nil, comment = nil, effective_from_date = nil, options = {})
+      def update_bcd(user = nil, reason = nil, comment = nil, effective_from_date = nil, force_past_effective_date = nil, options = {})
 
         params                  = {}
-        params[:effectiveFromDate]  = effective_from_date unless effective_from_date.nil?
+        params[:effectiveFromDate] = effective_from_date unless effective_from_date.nil?
+        params[:forceNewBcdWithPastEffectiveDate] = force_past_effective_date unless force_past_effective_date.nil?
 
         return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/bcd",
                               self.to_json,
