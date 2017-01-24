@@ -79,6 +79,22 @@ module KillBillClient
         updated_account.refresh(options)
       end
 
+      def update(treat_null_as_reset = false, user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        params[:treatNullAsReset] = treat_null_as_reset
+
+        updated_account = self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}",
+                                         to_json,
+                                         params,
+                                         {
+                                             :user    => user,
+                                             :reason  => reason,
+                                             :comment => comment,
+                                         }.merge(options)
+        updated_account.refresh(options)
+      end
+
 
       def transfer_child_credit(user = nil, reason = nil, comment = nil, options = {})
         self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/transferCredit",
