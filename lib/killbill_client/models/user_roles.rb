@@ -37,6 +37,12 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
       end
+
+      def list(options = {})
+        self.class.get "#{Security::KILLBILL_API_SECURITY_PREFIX}/users/#{username}/roles",
+                       {},
+                       {}.merge(options)
+      end
     end
   end
 end

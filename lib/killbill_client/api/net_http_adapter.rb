@@ -76,7 +76,9 @@ module KillBillClient
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
 
-          if URI(relative_uri).scheme.nil?
+          # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
+          encoded_relative_uri = URI.encode(relative_uri)
+          if URI(encoded_relative_uri).scheme.nil?
             uri = (options[:base_uri] || base_uri)
             uri = URI.parse(uri) unless uri.is_a?(URI)
             # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
@@ -84,7 +86,7 @@ module KillBillClient
             base_path = uri.request_uri == '/' ? '' : uri.request_uri
             uri += (base_path + URI::DEFAULT_PARSER.escape(relative_uri))
           else
-            uri = relative_uri
+            uri = encoded_relative_uri
             uri = URI.parse(uri) unless uri.is_a?(URI)
           end
           uri += encode_params(options).to_s
