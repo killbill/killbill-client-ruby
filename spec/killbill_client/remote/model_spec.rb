@@ -143,10 +143,19 @@ describe KillBillClient::Model do
 
     invoice.commit 'KillBill Spec test'
 
-    # Check the account balance
-    account = KillBillClient::Model::Account.find_by_id account.account_id, true
-    expect(account.account_balance).to eq(0)
-
+    # Check the account balance (need to wait a bit for the payment to happen)
+    begin
+      retries ||= 0
+      sleep(0.1) if retries > 0
+      account = KillBillClient::Model::Account.find_by_id account.account_id, true
+      expect(account.account_balance).to eq(0)
+    rescue => e
+      if (retries += 1) < 3
+        retry
+      else
+        raise e
+      end
+    end
 
     KillBillClient::Model::PaymentMethod.destroy(pm.payment_method_id, true, true, 'KillBill Spec test')
 
