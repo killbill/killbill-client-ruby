@@ -35,6 +35,10 @@ describe KillBillClient::Model do
     expect(account.external_key).to eq(external_key)
     expect(account.payment_method_id).to be_nil
 
+    # Update account
+    account.name = 'Kill Bill Client'
+    account.update(false, 'KillBill Spec test')
+
     # Try to retrieve it
     account = KillBillClient::Model::Account.find_by_external_key external_key
     expect(account.account_id).to eq(account_id)

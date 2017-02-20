@@ -67,18 +67,6 @@ module KillBillClient
         created_account.refresh(options)
       end
 
-      def update(user = nil, reason = nil, comment = nil, options = {})
-        updated_account = self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}",
-                                         to_json,
-                                         {},
-                                         {
-                                             :user    => user,
-                                             :reason  => reason,
-                                             :comment => comment,
-                                         }.merge(options)
-        updated_account.refresh(options)
-      end
-
       def update(treat_null_as_reset = false, user = nil, reason = nil, comment = nil, options = {})
 
         params = {}
