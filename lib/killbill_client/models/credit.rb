@@ -2,12 +2,14 @@ module KillBillClient
   module Model
     class Credit < CreditAttributes
       KILLBILL_API_CREDITS_PREFIX = "#{KILLBILL_API_PREFIX}/credits"
-      has_many :audit_logs, KillBillClient::Model::AuditLog      
+      has_many :audit_logs, KillBillClient::Model::AuditLog
 
-      def create(user = nil, reason = nil, comment = nil, options = {})
+      def create(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
         created_credit = self.class.post KILLBILL_API_CREDITS_PREFIX,
                                               to_json,
-                                              {},
+                                              {
+                                                  :autoCommit => auto_commit
+                                              },
                                               {
                                                   :user => user,
                                                   :reason => reason,
