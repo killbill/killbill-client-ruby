@@ -201,7 +201,10 @@ module KillBillClient
         if follow_location
           return created_transaction.refresh(refresh_options, Payment)
         end
-        created_transaction
+
+        created_payment = Payment.new
+        created_payment.uri = created_transaction.uri
+        created_payment
       end
     end
   end
