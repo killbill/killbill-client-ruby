@@ -77,7 +77,7 @@ module KillBillClient
           head.delete_if { |_, value| value.nil? }
 
           # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
-          encoded_relative_uri = URI.encode(relative_uri)
+          encoded_relative_uri = URI::DEFAULT_PARSER.escape(relative_uri)
           if URI(encoded_relative_uri).scheme.nil?
             uri = (options[:base_uri] || base_uri)
             uri = URI.parse(uri) unless uri.is_a?(URI)
