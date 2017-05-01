@@ -291,6 +291,10 @@ describe KillBillClient::Model do
     bundles = KillBillClient::Model::Bundle.find_all_by_account_id_and_external_key(account.account_id, bundle.external_key)
     expect(bundles.size).to eq(1)
     expect(bundles[0]).to eq(bundle)
+    
+    # Try to export it
+    export = KillBillClient::Model::Export.find_by_account_id(account.account_id, 'KillBill Spec test')
+    expect(export).to include(account.account_id)
   end
 
   it 'should manipulate tag definitions' do
