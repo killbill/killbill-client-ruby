@@ -42,6 +42,8 @@ require 'killbill_client/models/rolled_up_usage'
 require 'killbill_client/models/account_timeline'
 require 'killbill_client/models/nodes_info'
 
+require 'killbill_client/models/export'
+
 module KillBillClient
   module Model
   end
