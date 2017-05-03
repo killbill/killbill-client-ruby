@@ -84,6 +84,24 @@ module KillBillClient
       end
 
 
+      def close(cancel_subscriptions, writeoff_unpaid_invoices,  item_adjust_unpaid_invoices, user = nil, reason = nil, comment = nil, options = {})
+        created_account = self.class.delete "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}",
+                                          {},
+                                          {
+                                              :cancelAllSubscriptions => cancel_subscriptions,
+                                              :writeOffUnpaidInvoices => writeoff_unpaid_invoices,
+                                              :itemAdjustUnpaidInvoices => item_adjust_unpaid_invoices
+                                          },
+                                          {
+                                              :user    => user,
+                                              :reason  => reason,
+                                              :comment => comment,
+                                          }.merge(options)
+        created_account.refresh(options)
+      end
+
+
+
       def transfer_child_credit(user = nil, reason = nil, comment = nil, options = {})
         self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/transferCredit",
                                          {},
