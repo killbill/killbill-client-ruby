@@ -158,9 +158,6 @@ module KillBillClient
             headers = request.to_hash
             headers['authorization'] &&= ['Basic [FILTERED]']
             KillBillClient.log :debug, headers.keys.map { |k| "#{k}='#{headers[k].join(',')}'" }.join(', ')
-            if request.body && !request.body.empty? && request['Content-Type'].include?('application/json')
-              KillBillClient.log :debug, "requestBody='#{request.body}'"
-            end
             start_time = Time.now
           end
 
