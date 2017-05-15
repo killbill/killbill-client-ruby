@@ -30,7 +30,7 @@ module KillBillClient
     class EventSubscriptionAttributes < Resource
       attribute :event_id
       attribute :billing_period
-      attribute :effective_dt
+      attribute :effective_date
       attribute :plan
       attribute :product
       attribute :price_list
