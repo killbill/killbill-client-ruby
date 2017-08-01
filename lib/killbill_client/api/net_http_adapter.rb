@@ -68,6 +68,7 @@ module KillBillClient
           http.read_timeout = options[:read_timeout].to_f / 1000 if options[:read_timeout].is_a? Numeric
           http.open_timeout = options[:connection_timeout].to_f / 1000 if options[:connection_timeout].is_a? Numeric
           http.use_ssl = uri.scheme == 'https'
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if (options[:disable_ssl_verification] || KillBillClient.disable_ssl_verification)
           http
         end
 

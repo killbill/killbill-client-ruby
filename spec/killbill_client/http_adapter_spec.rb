@@ -10,7 +10,7 @@ describe KillBillClient::API do
 
   let (:ssl_uri) {URI.parse 'https://killbill.io'}
   let (:uri) {URI.parse 'http://killbill.io'}
-  let (:timeouts) {{:read_timeout => 10000, :connection_timeout => 5000}}
+  let (:options) {{:read_timeout => 10000, :connection_timeout => 5000, :disable_ssl_verification => true}}
 
   it 'should send double-encoded uri' do
     contract_property = KillBillClient::Model::PluginPropertyAttributes.new
@@ -57,14 +57,16 @@ describe KillBillClient::API do
     expect(http_client.read_timeout).to eq(60)
     expect(http_client.open_timeout).to be_nil
     expect(http_client.use_ssl?).to be false
+    expect(http_client.verify_mode).to be_nil
   end
 
   it 'should set the correct parameters for http client' do
     http_adapter = DummyForHTTPAdapter.new
-    http_client = http_adapter.send(:create_http_client, ssl_uri, timeouts)
-    expect(http_client.read_timeout).to eq(timeouts[:read_timeout] / 1000)
-    expect(http_client.open_timeout).to eq(timeouts[:connection_timeout] / 1000)
+    http_client = http_adapter.send(:create_http_client, ssl_uri, options)
+    expect(http_client.read_timeout).to eq(options[:read_timeout] / 1000)
+    expect(http_client.open_timeout).to eq(options[:connection_timeout] / 1000)
     expect(http_client.use_ssl?).to be true
+    expect(http_client.verify_mode).to eq(OpenSSL::SSL::VERIFY_NONE)
   end
 
 end

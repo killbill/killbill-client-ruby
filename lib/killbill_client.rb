@@ -41,6 +41,8 @@ module KillBillClient
 
     attr_writer :url
 
+    attr_accessor :disable_ssl_verification
+
     # Tenant key/secret. Optional.
     attr_accessor :api_key
     attr_accessor :api_secret
