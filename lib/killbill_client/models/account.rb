@@ -273,6 +273,16 @@ module KillBillClient
                        options,
                        Tag
       end
+
+      def all_custom_fields(object_type, audit = 'NONE', options = {})
+        params = {}
+        params[:objectType] = object_type if object_type
+        params[:audit] = audit
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/allCustomFields",
+                       params,
+                       options,
+                       CustomField
+      end
     end
   end
 end
