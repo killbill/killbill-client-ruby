@@ -39,7 +39,7 @@ module KillBillClient
       attribute :invoice_number
       attribute :balance
       attribute :account_id
-      attribute :external_bundle_keys
+      attribute :bundle_keys
       attribute :credits
       attribute :items
       attribute :is_parent_invoice

@@ -59,7 +59,7 @@ describe KillBillClient::Model::Resource do
   end
 
   it 'should create alias attr accessors' do
-    KillBillClient::Model::EventSubscription.create_alias :alias_date, :effective_dt
+    KillBillClient::Model::EventSubscription.create_alias :alias_date, :effective_date
 
     methods = KillBillClient::Model::EventSubscription.instance_methods
     expect(methods.map(&:to_sym)).to include :alias_date
@@ -67,7 +67,7 @@ describe KillBillClient::Model::Resource do
 
     evt = KillBillClient::Model::EventSubscription.new
     evt.alias_date = "devaroop"
-    expect(evt.effective_dt).to eq("devaroop")
+    expect(evt.effective_date).to eq("devaroop")
     expect(evt.alias_date).to eq("devaroop")
   end
 end

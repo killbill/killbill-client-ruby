@@ -68,6 +68,7 @@ module KillBillClient
           http.read_timeout = options[:read_timeout].to_f / 1000 if options[:read_timeout].is_a? Numeric
           http.open_timeout = options[:connection_timeout].to_f / 1000 if options[:connection_timeout].is_a? Numeric
           http.use_ssl = uri.scheme == 'https'
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if (options[:disable_ssl_verification] || KillBillClient.disable_ssl_verification)
           http
         end
 
@@ -77,7 +78,7 @@ module KillBillClient
           head.delete_if { |_, value| value.nil? }
 
           # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
-          encoded_relative_uri = URI.encode(relative_uri)
+          encoded_relative_uri = URI::DEFAULT_PARSER.escape(relative_uri)
           if URI(encoded_relative_uri).scheme.nil?
             uri = (options[:base_uri] || base_uri)
             uri = URI.parse(uri) unless uri.is_a?(URI)
