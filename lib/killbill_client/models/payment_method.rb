@@ -41,6 +41,18 @@ module KillBillClient
               options
         end
 
+        def find_by_external_key(external_key, plugin_property = nil, included_deleted = false, with_plugin_info = false, audit='NONE', options = {})
+          get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}",
+              {
+                  :externalKey => external_key,
+                  :pluginProperty => plugin_property,
+                  :includedDeleted => included_deleted,
+                  :audit => audit,
+                  :withPluginInfo => with_plugin_info
+              },
+              options
+        end
+
         def set_default(payment_method_id, account_id, user = nil, reason = nil, comment = nil, options = {})
           put "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/#{payment_method_id}/setDefault",
               nil,
