@@ -41,11 +41,10 @@ module KillBillClient
               options
         end
 
-        def find_by_external_key(external_key, plugin_property = nil, included_deleted = false, with_plugin_info = false, audit='NONE', options = {})
+        def find_by_external_key(external_key, included_deleted = false, with_plugin_info = false, audit='NONE', options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}",
               {
                   :externalKey => external_key,
-                  :pluginProperty => plugin_property,
                   :includedDeleted => included_deleted,
                   :audit => audit,
                   :withPluginInfo => with_plugin_info
