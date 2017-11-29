@@ -218,6 +218,19 @@ describe KillBillClient::Model do
     expect(payments.size).to eq(1)
     expect(payments.first.account_id).to eq(account.account_id)
 
+    # Add/Remove an invoice payment custom field
+    expect(invoice_payment.custom_fields.size).to eq(0)
+    custom_field = KillBillClient::Model::CustomField.new
+    custom_field.name = Time.now.to_i.to_s
+    custom_field.value = Time.now.to_i.to_s
+    invoice_payment.add_custom_field(custom_field, 'KillBill Spec test')
+    custom_fields = invoice_payment.custom_fields
+    expect(custom_fields.size).to eq(1)
+    expect(custom_fields.first.name).to eq(custom_field.name)
+    expect(custom_fields.first.value).to eq(custom_field.value)
+    invoice_payment.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
+    expect(invoice_payment.custom_fields.size).to eq(0)
+
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
     expect(account.account_balance).to eq(0)
