@@ -20,7 +20,7 @@ RSpec.configure do |config|
 
   config.before(:each, :integration => true) do
     # Setup a tenant for that test
-    KillBillClient.api_key = Time.now.to_i.to_s + Random.rand(100).to_s
+    KillBillClient.api_key = Time.now.to_i.to_s + rand(100).to_s
     KillBillClient.api_secret = 'S4cr3333333t!!!!!!lolz'
 
     tenant = KillBillClient::Model::Tenant.new
