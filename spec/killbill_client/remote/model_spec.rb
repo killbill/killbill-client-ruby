@@ -304,7 +304,7 @@ describe KillBillClient::Model do
     bundles = KillBillClient::Model::Bundle.find_all_by_account_id_and_external_key(account.account_id, bundle.external_key)
     expect(bundles.size).to eq(1)
     expect(bundles[0]).to eq(bundle)
-    
+
     # Try to export it
     export = KillBillClient::Model::Export.find_by_account_id(account.account_id, 'KillBill Spec test')
     expect(export).to include(account.account_id)
@@ -329,7 +329,7 @@ describe KillBillClient::Model do
   end
 
   it 'should manipulate tenants', :integration => true  do
-    api_key = Time.now.to_i.to_s + Random.rand(100).to_s
+    api_key = Time.now.to_i.to_s + rand(100).to_s
     api_secret = 'S4cr3333333t!!!!!!lolz'
 
     tenant = KillBillClient::Model::Tenant.new
