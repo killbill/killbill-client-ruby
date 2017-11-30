@@ -53,6 +53,16 @@ module KillBillClient
               },
               options
         end
+
+        def find_children(account_id, with_balance = false, with_balance_and_cba = false, audit='NONE', options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/children",
+              {
+                :audit                    => audit,
+                :accountWithBalance       => with_balance,
+                :accountWithBalanceAndCBA => with_balance_and_cba
+              },
+           options
+        end
       end
 
       def create(user = nil, reason = nil, comment = nil, options = {})
@@ -142,6 +152,10 @@ module KillBillClient
                        {},
                        options,
                        OverdueStateAttributes
+      end
+
+      def children(with_balance = false, with_balance_and_cba = false, audit='NONE', options = {})
+        Account::find_children(self.account_id, with_balance, with_balance_and_cba, audit, options)
       end
 
       def auto_pay_off?(options = {})
@@ -272,6 +286,16 @@ module KillBillClient
                        params,
                        options,
                        Tag
+      end
+
+      def all_custom_fields(object_type, audit = 'NONE', options = {})
+        params = {}
+        params[:objectType] = object_type if object_type
+        params[:audit] = audit
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/allCustomFields",
+                       params,
+                       options,
+                       CustomField
       end
     end
   end
