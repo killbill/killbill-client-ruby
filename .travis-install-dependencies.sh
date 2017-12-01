@@ -27,13 +27,13 @@ kpm-0.6.0-linux-x86_64/kpm install
 
 if [ "$DB_ADAPTER" = 'mysql2' ] || [ "$DB_ADAPTER" = 'mariadb' ]; then
   cat<<EOS >> conf/catalina.properties
-org.killbill.dao.url=jdbc:mysql://localhost:$DB_PORT/killbill
-org.killbill.billing.osgi.dao.url=jdbc:mysql://localhost:$DB_PORT/killbill
+org.killbill.dao.url=jdbc:mysql://127.0.0.1:$DB_PORT/killbill
+org.killbill.billing.osgi.dao.url=jdbc:mysql://127.0.0.1:$DB_PORT/killbill
 EOS
 elif [ "$DB_ADAPTER" = 'postgresql' ]; then
   cat<<EOS >> conf/catalina.properties
-org.killbill.dao.url=jdbc:postgresql://localhost:$DB_PORT/killbill
-org.killbill.billing.osgi.dao.url=jdbc:postgresql://localhost:$DB_PORT/killbill
+org.killbill.dao.url=jdbc:postgresql://127.0.0.1:$DB_PORT/killbill
+org.killbill.billing.osgi.dao.url=jdbc:postgresql://127.0.0.1:$DB_PORT/killbill
 EOS
 fi
 

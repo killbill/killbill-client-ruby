@@ -150,7 +150,7 @@ describe KillBillClient::Model do
     # Check the account balance (need to wait a bit for the payment to happen)
     begin
       retries ||= 0
-      sleep(0.1) if retries > 0
+      sleep(1) if retries > 0
       account = KillBillClient::Model::Account.find_by_id account.account_id, true
       expect(account.account_balance).to eq(0)
     rescue => e
