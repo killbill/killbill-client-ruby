@@ -154,7 +154,7 @@ describe KillBillClient::Model do
       account = KillBillClient::Model::Account.find_by_id account.account_id, true
       expect(account.account_balance).to eq(0)
     rescue => e
-      if (retries += 1) < 3
+      if (retries += 1) < 6
         retry
       else
         raise e

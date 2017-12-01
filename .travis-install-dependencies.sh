@@ -21,7 +21,7 @@ else
   bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
 fi
 
-curl -L -O https://search.maven.org/remotecontent?filepath=org/kill-bill/billing/installer/kpm/0.6.0/kpm-0.6.0-linux-x86_64.tar.gz
+travis_retry curl -L -O https://search.maven.org/remotecontent?filepath=org/kill-bill/billing/installer/kpm/0.6.0/kpm-0.6.0-linux-x86_64.tar.gz
 tar zxf kpm-0.6.0-linux-x86_64.tar.gz
 kpm-0.6.0-linux-x86_64/kpm install
 
