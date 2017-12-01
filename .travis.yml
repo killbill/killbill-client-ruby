@@ -3,20 +3,19 @@ language: ruby
 sudo: required
 cache: bundler
 
+services:
+ - mysql
+
 dist: trusty
 
 before_install:
-  - sudo sysctl -w net.ipv4.tcp_fin_timeout=15
-  - sudo sysctl -w net.ipv4.tcp_tw_reuse=1
-  - travis_retry gem install bundler
-  - travis_retry curl -LO 'https://search.maven.org/remotecontent?filepath=org/kill-bill/billing/killbill-profiles-killbill/0.18.8/killbill-profiles-killbill-0.18.8-jetty-console.war' && java -Dorg.killbill.catalog.uri=SpyCarAdvanced.xml -Djava.security.egd=file:/dev/./urandom -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -jar killbill-profiles-killbill-0.18.8-jetty-console.war --port 8080 --headless 2>&1 | egrep -v "lvl='INFO'| < | > |[ \t]*at [ \ta-zA-Z0-9\.\:\(\)]+" & sleep 80 && travis_retry curl -v -X POST -u 'admin:password' -H 'Content-Type:application/json' -H 'X-Killbill-CreatedBy:admin' -d '{"apiKey":"bob", "apiSecret":"lazar"}' "http://127.0.0.1:8080/1.0/kb/tenants"
+  - jdk_switcher use openjdk8
+  - ./.travis-install-dependencies.sh
 
 before_script:
   - jdk_switcher use $JDK
 
-# Need Kill Bill 0.18.9
-#script: 'bundle exec rake test:spec test:remote:spec'
-script: 'bundle exec rake test:spec'
+script: 'bundle exec rake test:spec test:remote:spec'
 
 notifications:
   email:
@@ -24,7 +23,7 @@ notifications:
 
 env:
   global:
-    - JRUBY_OPTS='--2.0 -J-Xmx1024M'
+    - DB_ADAPTER=mariadb DB_USER='root' DB_PORT=3306 JRUBY_OPTS='-J-Xmx1024m --debug -J-Djava.security.egd=file:/dev/./urandom'
 
 matrix:
   include:
@@ -32,16 +31,17 @@ matrix:
     - rvm: 1.8.7
     - rvm: 1.9.3
     - rvm: 2.2.0
+    - rvm: 2.4.2
     - rvm: ruby-head
     - rvm: jruby-1.7.26
-      env: JDK=oraclejdk8
-    - rvm: jruby-1.7.26
       env: JDK=openjdk8
-    - rvm: jruby-head
-      env: JDK=oraclejdk8
     - rvm: jruby-head
       env: JDK=openjdk8
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
+    - rvm: 1.8.7
+    - rvm: 1.9.3
+    - rvm: 2.2.0
+    - rvm: jruby-1.7.26
   fast_finish: true

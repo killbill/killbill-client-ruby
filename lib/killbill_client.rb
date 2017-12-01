@@ -123,4 +123,13 @@ rescue LoadError, NoMethodError
   end
 end
 
+# URI::DEFAULT_PARSER is NOT compatible with ree 1.8.3
+module URI
+  module DEFAULT_PARSER
+    def self.escape(*args)
+      URI.escape(*args)
+    end
+  end
+end unless defined? URI::DEFAULT_PARSER
+
 require 'rails/killbill_client' if defined? Rails::Railtie

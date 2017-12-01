@@ -150,11 +150,11 @@ describe KillBillClient::Model do
     # Check the account balance (need to wait a bit for the payment to happen)
     begin
       retries ||= 0
-      sleep(0.1) if retries > 0
+      sleep(1) if retries > 0
       account = KillBillClient::Model::Account.find_by_id account.account_id, true
       expect(account.account_balance).to eq(0)
     rescue => e
-      if (retries += 1) < 3
+      if (retries += 1) < 6
         retry
       else
         raise e
@@ -217,6 +217,19 @@ describe KillBillClient::Model do
     payments = invoice.payments
     expect(payments.size).to eq(1)
     expect(payments.first.account_id).to eq(account.account_id)
+
+    # Add/Remove an invoice payment custom field
+    expect(invoice_payment.custom_fields.size).to eq(0)
+    custom_field = KillBillClient::Model::CustomField.new
+    custom_field.name = Time.now.to_i.to_s
+    custom_field.value = Time.now.to_i.to_s
+    invoice_payment.add_custom_field(custom_field, 'KillBill Spec test')
+    custom_fields = invoice_payment.custom_fields
+    expect(custom_fields.size).to eq(1)
+    expect(custom_fields.first.name).to eq(custom_field.name)
+    expect(custom_fields.first.value).to eq(custom_field.value)
+    invoice_payment.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
+    expect(invoice_payment.custom_fields.size).to eq(0)
 
     # Check the account balance
     account = KillBillClient::Model::Account.find_by_id account.account_id, true
@@ -291,7 +304,7 @@ describe KillBillClient::Model do
     bundles = KillBillClient::Model::Bundle.find_all_by_account_id_and_external_key(account.account_id, bundle.external_key)
     expect(bundles.size).to eq(1)
     expect(bundles[0]).to eq(bundle)
-    
+
     # Try to export it
     export = KillBillClient::Model::Export.find_by_account_id(account.account_id, 'KillBill Spec test')
     expect(export).to include(account.account_id)
@@ -316,7 +329,7 @@ describe KillBillClient::Model do
   end
 
   it 'should manipulate tenants', :integration => true  do
-    api_key = Time.now.to_i.to_s + Random.rand(100).to_s
+    api_key = Time.now.to_i.to_s + rand(100).to_s
     api_secret = 'S4cr3333333t!!!!!!lolz'
 
     tenant = KillBillClient::Model::Tenant.new

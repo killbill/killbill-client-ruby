@@ -55,7 +55,6 @@ describe KillBillClient::API do
     http_adapter = DummyForHTTPAdapter.new
     http_client = http_adapter.send(:create_http_client, uri)
     expect(http_client.read_timeout).to eq(60)
-    expect(http_client.open_timeout).to be_nil
     expect(http_client.use_ssl?).to be false
     expect(http_client.verify_mode).to be_nil
   end

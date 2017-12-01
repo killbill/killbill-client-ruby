@@ -46,7 +46,7 @@ module KillBillClient
             comment = args[3]
             options = args[4] || {}
 
-            custom_fields_param = custom_fields.is_a?(Enumerable) ? custom_fields.join(",") : custom_fields
+            custom_fields_param = custom_fields.respond_to?(:join) ? custom_fields.join(",") : custom_fields
             self.class.delete "#{url_prefix}/#{send(id_alias)}/customFields",
                               {},
                               {
