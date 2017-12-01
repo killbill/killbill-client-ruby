@@ -19,12 +19,11 @@ if $(ruby -e'require "java"'); then
   bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
 else
   bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
-  bundle exec rake db:migrate
 fi
 
-gem install kpm
-
-kpm install
+curl -L -O https://search.maven.org/remotecontent?filepath=org/kill-bill/billing/installer/kpm/0.6.0/kpm-0.6.0-linux-x86_64.tar.gz
+tar zxf kpm-0.6.0-linux-x86_64.tar.gz
+kpm-0.6.0-linux-x86_64/kpm install
 
 if [ "$DB_ADAPTER" = 'mysql2' ] || [ "$DB_ADAPTER" = 'mariadb' ]; then
   cat<<EOS >> conf/catalina.properties
