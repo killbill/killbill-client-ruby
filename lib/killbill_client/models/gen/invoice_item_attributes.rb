@@ -38,6 +38,9 @@ module KillBillClient
       attribute :plan_name
       attribute :phase_name
       attribute :usage_name
+      attribute :pretty_plan_name
+      attribute :pretty_phase_name
+      attribute :pretty_usage_name
       attribute :item_type
       attribute :description
       attribute :start_date

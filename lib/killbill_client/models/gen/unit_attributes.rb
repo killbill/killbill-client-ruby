@@ -27,13 +27,9 @@
 
 module KillBillClient
   module Model
-    class CatalogAttributes < Resource
+    class UnitAttributes < Resource
       attribute :name
-      attribute :effective_date
-      attribute :currencies
-      attribute :units
-      attribute :products
-      attribute :price_lists
+      attribute :pretty_name
     end
   end
 end

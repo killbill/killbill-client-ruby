@@ -30,6 +30,7 @@ module KillBillClient
     class ProductAttributes < Resource
       attribute :type
       attribute :name
+      attribute :pretty_name
       attribute :plans
       attribute :included
       attribute :available
