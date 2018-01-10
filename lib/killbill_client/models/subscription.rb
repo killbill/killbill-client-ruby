@@ -2,6 +2,7 @@ module KillBillClient
   module Model
     class Subscription < SubscriptionAttributes
 
+      include KillBillClient::Model::TagHelper
       include KillBillClient::Model::CustomFieldHelper
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
@@ -10,6 +11,7 @@ module KillBillClient
       has_many :price_overrides, KillBillClient::Model::PhasePriceOverrideAttributes
 
       has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
+      has_tags KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
 
       class << self
         def find_by_id(subscription_id, options = {})
