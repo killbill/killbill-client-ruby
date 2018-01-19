@@ -79,6 +79,18 @@ module KillBillClient
                    :comment => comment,
                }.merge(options)
         end
+
+        def delete_catalog(user = nil, reason = nil, comment = nil, options = {})
+
+          delete "#{KILLBILL_API_CATALOG_PREFIX}",
+                 {},
+                 {},
+                 {
+                     :user => user,
+                     :reason => reason,
+                     :comment => comment,
+                 }.merge(options)
+        end
       end
     end
   end

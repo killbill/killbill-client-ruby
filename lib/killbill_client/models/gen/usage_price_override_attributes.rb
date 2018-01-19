@@ -27,13 +27,12 @@
 
 module KillBillClient
   module Model
-    class CatalogAttributes < Resource
-      attribute :name
-      attribute :effective_date
-      attribute :currencies
-      attribute :units
-      attribute :products
-      attribute :price_lists
+    class UsagePriceOverrideAttributes < Resource
+      attribute :usage_name
+      attribute :usage_type
+      attribute :billing_mode
+      attribute :tier_block_policy
+      attribute :tier_price_overrides
     end
   end
 end

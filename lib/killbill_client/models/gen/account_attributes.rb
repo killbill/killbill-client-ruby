@@ -38,6 +38,7 @@ module KillBillClient
       attribute :parent_account_id
       attribute :is_payment_delegated_to_parent
       attribute :payment_method_id
+      attribute :reference_time
       attribute :time_zone
       attribute :address1
       attribute :address2

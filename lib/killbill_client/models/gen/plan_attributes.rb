@@ -29,6 +29,7 @@ module KillBillClient
   module Model
     class PlanAttributes < Resource
       attribute :name
+      attribute :pretty_name
       attribute :billing_period
       attribute :phases
     end
