@@ -147,6 +147,28 @@ describe KillBillClient::Model do
 
     invoice.commit 'KillBill Spec test'
 
+    # Add/Remove a invoice item tag
+    expect(invoice_item.tags.size).to eq(0)
+    invoice_item.add_tag('TEST', 'KillBill Spec test')
+    tags = invoice_item.tags
+    expect(tags.size).to eq(1)
+    expect(tags.first.tag_definition_name).to eq('TEST')
+    invoice_item.remove_tag('TEST', 'KillBill Spec test')
+    expect(invoice_item.tags.size).to eq(0)
+
+    # Add/Remove a invoice item custom field
+    expect(invoice_item.custom_fields.size).to eq(0)
+    custom_field = KillBillClient::Model::CustomField.new
+    custom_field.name = Time.now.to_i.to_s
+    custom_field.value = Time.now.to_i.to_s
+    invoice_item.add_custom_field(custom_field, 'KillBill Spec test')
+    custom_fields = invoice_item.custom_fields
+    expect(custom_fields.size).to eq(1)
+    expect(custom_fields.first.name).to eq(custom_field.name)
+    expect(custom_fields.first.value).to eq(custom_field.value)
+    invoice_item.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
+    expect(invoice_item.custom_fields.size).to eq(0)
+
     # Check the account balance (need to wait a bit for the payment to happen)
     begin
       retries ||= 0
