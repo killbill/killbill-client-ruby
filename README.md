@@ -10,6 +10,7 @@ Kill Bill compatibility
 | -------------: | ----------------: |
 | 0.x.y          | 0.16.z            |
 | 1.x.y          | 0.18.z            |
+| 2.x.y          | 0.19.z            |
 
 Installation
 ------------
