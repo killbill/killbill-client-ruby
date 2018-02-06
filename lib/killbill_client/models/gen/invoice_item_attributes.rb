@@ -46,7 +46,10 @@ module KillBillClient
       attribute :start_date
       attribute :end_date
       attribute :amount
+      attribute :rate
       attribute :currency
+      attribute :quantity
+      attribute :item_details
       attribute :child_items
       attribute :audit_logs
     end
