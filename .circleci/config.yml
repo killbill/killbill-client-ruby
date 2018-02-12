@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Install gem dependencies
           command: |
-            bundle install --jobs=4 --retry=3 --gemfile=$BUNDLE_GEMFILE --path=vendor/bundle
+            bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
           paths:
             - Gemfile.lock
@@ -98,7 +98,7 @@ jobs:
           command: |
             source /usr/share/rvm/scripts/rvm
             rvm use ruby-2.2.2
-            bundle install --jobs=4 --retry=3 --gemfile=$BUNDLE_GEMFILE --path=vendor/bundle
+            bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
           paths:
             - Gemfile.lock
@@ -182,7 +182,7 @@ jobs:
           command: |
             source /usr/share/rvm/scripts/rvm
             rvm use ruby-2.4.2
-            bundle install --jobs=4 --retry=3 --gemfile=$BUNDLE_GEMFILE --path=vendor/bundle
+            bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
           paths:
             - Gemfile.lock
@@ -266,7 +266,7 @@ jobs:
           command: |
             source /usr/share/rvm/scripts/rvm
             rvm use jruby-9.1.14.0
-            bundle install --jobs=4 --retry=3 --gemfile=$BUNDLE_GEMFILE --path=vendor/bundle
+            bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
           paths:
             - Gemfile.lock
