@@ -16,6 +16,11 @@ describe KillBillClient::Model::Resource do
     expect(payment2.purchased_amount).to eq(12.42)
   end
 
+  before do
+    KillBillClient.api_key = nil
+    KillBillClient.api_secret = nil
+  end
+
   describe '#require_multi_tenant_options!' do
     let(:message) { 'nothing' }
 
