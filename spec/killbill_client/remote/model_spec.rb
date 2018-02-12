@@ -314,7 +314,7 @@ describe KillBillClient::Model do
     expect(KillBillClient::Model::TagDefinition.all.size).to be > 0
     expect(KillBillClient::Model::TagDefinition.find_by_name('TEST').is_control_tag).to be_truthy
 
-    tag_definition_name = SecureRandom.uuid.to_s
+    tag_definition_name = SecureRandom.uuid.to_s[0..9]
     expect(KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)).to be_nil
 
     tag_definition = KillBillClient::Model::TagDefinition.new
