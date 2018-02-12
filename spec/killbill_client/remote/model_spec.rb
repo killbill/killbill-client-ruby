@@ -1,6 +1,16 @@
 require 'spec_helper'
 
 describe KillBillClient::Model do
+  before do
+    KillBillClient.api_key = Time.now.to_i.to_s + rand(100).to_s
+    KillBillClient.api_secret = KillBillClient.api_key
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = KillBillClient.api_key
+    tenant.api_secret = KillBillClient.api_secret
+    tenant.create(true, 'KillBill Spec test')
+  end
+
   it 'should manipulate accounts', :integration => true  do
     # In case the remote server has lots of data
     search_limit = 100000
