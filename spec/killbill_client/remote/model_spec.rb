@@ -153,7 +153,7 @@ describe KillBillClient::Model do
       sleep(1) if retries > 0
       account = KillBillClient::Model::Account.find_by_id account.account_id, true
       expect(account.account_balance).to eq(0)
-    rescue => e
+    rescue Exception => e
       if (retries += 1) < 15
         retry
       else
