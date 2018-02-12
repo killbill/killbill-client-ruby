@@ -299,7 +299,7 @@ describe KillBillClient::Model do
     new_credit.effective_date = "2013-09-30"
     new_credit.account_id = account.account_id
 
-    expect { new_credit.create 'KillBill Spec test'   }.to raise_error(KillBillClient::API::BadRequest)
+    expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)
 
     # Verify the invoice item of the credit
     invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
@@ -352,6 +352,7 @@ describe KillBillClient::Model do
     tag_definition = KillBillClient::Model::TagDefinition.new
     tag_definition.name = tag_definition_name
     tag_definition.description = 'Tag for unit test'
+    tag_definition.applicable_object_types = [:ACCOUNT]
     expect(tag_definition.create('KillBill Spec test').id).not_to be_nil
 
     found_tag_definition = KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)
