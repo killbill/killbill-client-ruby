@@ -312,6 +312,19 @@ module KillBillClient
 
       end
 
+      def void(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/voidInvoice",
+                       nil,
+                       {},
+                       {
+                           :user => user,
+                           :reason => reason,
+                           :comment => comment,
+                       }.merge(options)
+
+      end
+
       def payments(with_plugin_info = false, with_attempts = false, audit = 'NONE', options = {})
         self.class.get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/payments",
                        {
