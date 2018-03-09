@@ -297,6 +297,65 @@ module KillBillClient
                        options,
                        CustomField
       end
+      def blocking_states(blocking_state_types, blocking_state_svcs, audit = 'NONE', options = {})
+        params = {}
+        params[:blockingStateTypes] = blocking_state_types if blocking_state_types
+        params[:blockingStateSvcs] = blocking_state_svcs if blocking_state_svcs
+        params[:audit] = audit
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
+                       params,
+                       options
+      end
+
+      def block_account(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        params[:requestedDate] = requested_date if requested_date
+
+        body = KillBillClient::Model::BlockingStateAttributes.new
+        body.state_name = state_name
+        body.service = service
+        body.block_change = block_change
+        body.block_entitlement = block_entitlement
+        body.block_billing = block_billing
+
+        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
+                       body.to_json,
+                       params,
+                       {
+                           :user => user,
+                           :reason => reason,
+                           :comment => comment,
+                       }.merge(options)
+
+      end
+
+      def cba_rebalancing(user = nil, reason = nil, comment = nil, options = {})
+        self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/cbaRebalancing",
+                        {},
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
+
+      def email_notifications(options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
+                       {},
+                       options
+      end
+
+      def invoice_payments(audit='NONE', with_plugin_info = false, with_attempts = false, options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoicePayments",
+                       {
+                           :audit                    => audit,
+                           :withPluginInfo       => with_plugin_info,
+                           :withAttempts => with_attempts
+                       },
+                       options
+      end
     end
   end
 end
