@@ -18,6 +18,13 @@ module KillBillClient
         created_credit.refresh(options)
       end
 
+      def retrieve_credit(credit_id, options = {})
+        self.class.get "#{KILLBILL_API_CREDITS_PREFIX}/#{credit_id}",
+            {},
+            options
+      end
+
+
     end
   end
 end
