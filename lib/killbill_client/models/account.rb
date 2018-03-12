@@ -265,6 +265,12 @@ module KillBillClient
                        AccountEmailAttributes
       end
 
+      def email_notifications(options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
+                       {},
+                       options
+      end
+
       def update_email_notifications(user = nil, reason = nil, comment = nil, options = {})
         self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
                        to_json,
@@ -307,7 +313,7 @@ module KillBillClient
                        options
       end
 
-      def block_account(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+      def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
         params = {}
         params[:requestedDate] = requested_date if requested_date
@@ -339,12 +345,6 @@ module KillBillClient
                             :reason  => reason,
                             :comment => comment,
                         }.merge(options)
-      end
-
-      def email_notifications(options = {})
-        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
-                       {},
-                       options
       end
 
       def invoice_payments(audit='NONE', with_plugin_info = false, with_attempts = false, options = {})
