@@ -268,7 +268,8 @@ module KillBillClient
       def email_notifications(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
                        {},
-                       options
+                       options,
+                       InvoiceEmailAttributes
       end
 
       def update_email_notifications(user = nil, reason = nil, comment = nil, options = {})
@@ -310,7 +311,9 @@ module KillBillClient
         params[:audit] = audit
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
                        params,
-                       options
+                       options,
+                       BlockingStateAttributes
+
       end
 
       def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
@@ -325,7 +328,7 @@ module KillBillClient
         body.block_entitlement = block_entitlement
         body.block_billing = block_billing
 
-        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
+        blocking_state = self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
                        body.to_json,
                        params,
                        {
@@ -333,7 +336,7 @@ module KillBillClient
                            :reason => reason,
                            :comment => comment,
                        }.merge(options)
-
+        blocking_states(nil, nil, 'NONE', options)
       end
 
       def cba_rebalancing(user = nil, reason = nil, comment = nil, options = {})
@@ -354,7 +357,8 @@ module KillBillClient
                            :withPluginInfo       => with_plugin_info,
                            :withAttempts => with_attempts
                        },
-                       options
+                       options,
+                       InvoicePayment
       end
     end
   end
