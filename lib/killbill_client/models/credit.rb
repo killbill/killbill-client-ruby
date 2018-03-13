@@ -21,7 +21,8 @@ module KillBillClient
       def retrieve_credit(credit_id, options = {})
         self.class.get "#{KILLBILL_API_CREDITS_PREFIX}/#{credit_id}",
             {},
-            options
+            options,
+            CreditAttributes
       end
 
 
