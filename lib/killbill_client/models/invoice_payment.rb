@@ -3,6 +3,7 @@ module KillBillClient
     class InvoicePayment < InvoicePaymentAttributes
 
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::TagHelper
 
       KILLBILL_API_INVOICE_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/invoicePayments"
 
@@ -11,6 +12,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_custom_fields KILLBILL_API_INVOICE_PAYMENTS_PREFIX, :payment_id
+      has_tags KILLBILL_API_INVOICE_PAYMENTS_PREFIX, :payment_id
 
       class << self
         def find_by_id(payment_id, with_plugin_info = false, with_attempts = false, options = {})
@@ -68,6 +70,22 @@ module KillBillClient
                             :reason  => reason,
                             :comment => comment,
                         }.merge(options)
+      end
+
+      def chargeback_reversal(payment_id, amount, adjustments = nil, user = nil, reason = nil, comment = nil, options = {})
+        payload             = InvoicePaymentTransactionAttributes.new
+        payload.amount      = amount
+        payload.is_adjusted = !adjustments.nil?
+        payload.adjustments = adjustments
+        invoice_payment = self.class.post "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}/chargebackReversals",
+                        to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+        invoice_payment.refresh(options)
       end
     end
   end
