@@ -304,6 +304,7 @@ module KillBillClient
                        options,
                        CustomField
       end
+
       def blocking_states(blocking_state_types, blocking_state_svcs, audit = 'NONE', options = {})
         params = {}
         params[:blockingStateTypes] = blocking_state_types if blocking_state_types
