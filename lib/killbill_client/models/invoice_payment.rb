@@ -41,6 +41,22 @@ module KillBillClient
 
           invoice_payment.refresh(options)
         end
+
+        def chargeback_reversal(payment_id, transaction_external_key, effective_date = nil, user = nil, reason = nil, comment = nil, options = {})
+          payload                          = InvoicePaymentTransactionAttributes.new
+          payload.transaction_external_key = transaction_external_key
+          payload.effective_date           = effective_date
+
+          invoice_payment = post "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}/chargebackReversals",
+                                 payload.to_json,
+                                 {},
+                                 {
+                                     :user    => user,
+                                     :reason  => reason,
+                                     :comment => comment,
+                                 }.merge(options)
+          invoice_payment.refresh(options)
+        end
       end
 
       def create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
@@ -72,21 +88,6 @@ module KillBillClient
                         }.merge(options)
       end
 
-      def chargeback_reversal(payment_id, amount, adjustments = nil, user = nil, reason = nil, comment = nil, options = {})
-        payload             = InvoicePaymentTransactionAttributes.new
-        payload.amount      = amount
-        payload.is_adjusted = !adjustments.nil?
-        payload.adjustments = adjustments
-        invoice_payment = self.class.post "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}/chargebackReversals",
-                        to_json,
-                        {},
-                        {
-                            :user    => user,
-                            :reason  => reason,
-                            :comment => comment,
-                        }.merge(options)
-        invoice_payment.refresh(options)
-      end
     end
   end
 end
