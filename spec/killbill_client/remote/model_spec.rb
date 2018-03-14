@@ -1,11 +1,21 @@
 require 'spec_helper'
 
 describe KillBillClient::Model do
+  before do
+    KillBillClient.api_key = Time.now.to_i.to_s + rand(100).to_s
+    KillBillClient.api_secret = KillBillClient.api_key
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = KillBillClient.api_key
+    tenant.api_secret = KillBillClient.api_secret
+    tenant.create(true, 'KillBill Spec test')
+  end
+
   it 'should manipulate accounts', :integration => true  do
     # In case the remote server has lots of data
     search_limit = 100000
 
-    external_key = Time.now.to_i.to_s
+    external_key = SecureRandom.uuid.to_s
 
     account = KillBillClient::Model::Account.new
     account.name = 'KillBillClient'
@@ -84,8 +94,8 @@ describe KillBillClient::Model do
     # Add/Remove a custom field
     expect(account.custom_fields.size).to eq(0)
     custom_field = KillBillClient::Model::CustomField.new
-    custom_field.name = Time.now.to_i.to_s
-    custom_field.value = Time.now.to_i.to_s
+    custom_field.name = SecureRandom.uuid.to_s
+    custom_field.value = SecureRandom.uuid.to_s
     account.add_custom_field(custom_field, 'KillBill Spec test')
     custom_fields = account.custom_fields
     expect(custom_fields.size).to eq(1)
@@ -175,8 +185,8 @@ describe KillBillClient::Model do
       sleep(1) if retries > 0
       account = KillBillClient::Model::Account.find_by_id account.account_id, true
       expect(account.account_balance).to eq(0)
-    rescue => e
-      if (retries += 1) < 6
+    rescue Exception => e
+      if (retries += 1) < 15
         retry
       else
         raise e
@@ -243,8 +253,8 @@ describe KillBillClient::Model do
     # Add/Remove an invoice payment custom field
     expect(invoice_payment.custom_fields.size).to eq(0)
     custom_field = KillBillClient::Model::CustomField.new
-    custom_field.name = Time.now.to_i.to_s
-    custom_field.value = Time.now.to_i.to_s
+    custom_field.name = SecureRandom.uuid.to_s
+    custom_field.value = SecureRandom.uuid.to_s
     invoice_payment.add_custom_field(custom_field, 'KillBill Spec test')
     custom_fields = invoice_payment.custom_fields
     expect(custom_fields.size).to eq(1)
@@ -289,7 +299,7 @@ describe KillBillClient::Model do
     new_credit.effective_date = "2013-09-30"
     new_credit.account_id = account.account_id
 
-    expect { new_credit.create 'KillBill Spec test'   }.to raise_error(KillBillClient::API::BadRequest)
+    expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)
 
     # Verify the invoice item of the credit
     invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
@@ -302,7 +312,7 @@ describe KillBillClient::Model do
     # Create a subscription
     sub = KillBillClient::Model::Subscription.new
     sub.account_id = account.account_id
-    sub.external_key = Time.now.to_i.to_s
+    sub.external_key = SecureRandom.uuid.to_s
     sub.product_name = 'Sports'
     sub.product_category = 'BASE'
     sub.billing_period = 'MONTHLY'
@@ -336,12 +346,13 @@ describe KillBillClient::Model do
     expect(KillBillClient::Model::TagDefinition.all.size).to be > 0
     expect(KillBillClient::Model::TagDefinition.find_by_name('TEST').is_control_tag).to be_truthy
 
-    tag_definition_name = Time.now.to_i.to_s
+    tag_definition_name = SecureRandom.uuid.to_s[0..9]
     expect(KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)).to be_nil
 
     tag_definition = KillBillClient::Model::TagDefinition.new
     tag_definition.name = tag_definition_name
     tag_definition.description = 'Tag for unit test'
+    tag_definition.applicable_object_types = [:ACCOUNT]
     expect(tag_definition.create('KillBill Spec test').id).not_to be_nil
 
     found_tag_definition = KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)
@@ -351,8 +362,8 @@ describe KillBillClient::Model do
   end
 
   it 'should manipulate tenants', :integration => true  do
-    api_key = Time.now.to_i.to_s + rand(100).to_s
-    api_secret = 'S4cr3333333t!!!!!!lolz'
+    api_key = SecureRandom.uuid.to_s + rand(100).to_s
+    api_secret = api_key
 
     tenant = KillBillClient::Model::Tenant.new
     tenant.api_key = api_key
