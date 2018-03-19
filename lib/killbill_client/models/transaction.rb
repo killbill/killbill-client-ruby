@@ -106,7 +106,7 @@ module KillBillClient
         end
       end
 
-      def chargeback(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+      def chargeback(payment_id, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         follow_location = delete_follow_location(options)
         refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
           self.class.post "#{follow_up_path(payment_id)}/chargebacks",
@@ -136,6 +136,59 @@ module KillBillClient
                               :reason  => reason,
                               :comment => comment,
                           }.merge(options)
+      end
+
+      def chargerback_by_external_key(payment_external_key, amount, currency, effective_date = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        payload                          = PaymentTransactionAttributes.new
+        payload.payment_external_key     = payment_external_key
+        payload.amount                   = amount
+        payload.currency                 = currency
+        payload.effective_date           = effective_date
+        self.class.post "#{follow_up_path(payment_id)}/chargebacks",
+                        payload.to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
+      end
+
+      def chargerback_reversals_by_payment_id(payment_id, transaction_external_key, effective_date = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        payload                          = PaymentTransactionAttributes.new
+        payload.transaction_external_key = transaction_external_key
+        payload.effective_date           = effective_date
+        self.class.post "#{follow_up_path(payment_id)}/chargebackReversals",
+                        payload.to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
+      end
+
+      def refund_by_external_key(payment_external_key, amount,user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        payload                          = PaymentTransactionAttributes.new
+        payload.payment_external_key     = payment_external_key
+        payload.amount                   = amount
+        self.class.post "#{follow_up_path(payment_id)}/refunds",
+                        payload.to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
       end
 
       private
