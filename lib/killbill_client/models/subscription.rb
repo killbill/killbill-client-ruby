@@ -135,7 +135,7 @@ module KillBillClient
       #
       # Block a Subscription
       #
-      def block_subscription(subscription_id, state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+      def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
         body = KillBillClient::Model::BlockingStateAttributes.new
         body.state_name = state_name
