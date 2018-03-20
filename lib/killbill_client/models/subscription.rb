@@ -132,6 +132,55 @@ module KillBillClient
       end
 
 
+      #
+      # Block a Subscription
+      #
+      def block_subscription(subscription_id, state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        body = KillBillClient::Model::BlockingStateAttributes.new
+        body.state_name = state_name
+        body.service = service
+        body.block_change = block_change
+        body.block_entitlement = block_entitlement
+        body.block_billing = block_billing
+        body.type = "SUBSCRIPTION"
+
+        params = {}
+        params[:requestedDate] = requested_date unless requested_date.nil?
+
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/block",
+                       body.to_json,
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
+
+      #
+      # Create an entitlement with addOn products
+      #
+      def create_entitlement_with_addOn(entitlements,requested_date, entitlement_date, billing_date, migrated = false, call_completion = false, callTimeoutSec = 3, user = nil, reason = nil, comment = nil, options = {})
+
+        params = {}
+        params[:requestedDate] = requested_date if requested_date
+        params[:entitlementDate] = entitlement_date if entitlement_date
+        params[:billingDate] = billing_date if billing_date
+        params[:migrated] = migrated
+        params[:callCompletion] = call_completion
+        params[:callTimeoutSec] = callTimeoutSec
+        self.class.post "#{KILLBILL_API_ENTITLEMENT_PREFIX}/createEntitlementWithAddOns",
+                        entitlements.to_json,
+                        params,
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
+
+
     end
   end
 end
