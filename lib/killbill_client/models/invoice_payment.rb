@@ -42,7 +42,7 @@ module KillBillClient
           invoice_payment.refresh(options)
         end
 
-        def create_chargeback(payment_id, amount, currency, effective_date = nil, user = nil, reason = nil, comment = nil, options = {})
+        def chargeback(payment_id, amount, currency, effective_date = nil, user = nil, reason = nil, comment = nil, options = {})
           payload                          = InvoicePaymentTransactionAttributes.new
           payload.amount                   = amount
           payload.currency                 = currency
