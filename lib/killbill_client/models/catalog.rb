@@ -29,6 +29,15 @@ module KillBillClient
               PlanDetail
         end
 
+        def get_tenant_catalog_versions(options = {})
+
+          require_multi_tenant_options!(options, "Retrieving catalog versions is only supported in multi-tenant mode")
+
+          get "#{KILLBILL_API_CATALOG_PREFIX}/versions",
+              {},
+              options
+        end
+
         def get_tenant_catalog(format, requested_date=nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
