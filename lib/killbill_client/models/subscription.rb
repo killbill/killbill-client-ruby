@@ -161,15 +161,15 @@ module KillBillClient
       #
       # Create an entitlement with addOn products
       #
-      def create_entitlement_with_addOn(entitlements,requested_date, entitlement_date, billing_date, migrated = false, call_completion = false, callTimeoutSec = 3, user = nil, reason = nil, comment = nil, options = {})
-
+      def create_entitlement_with_add_on(entitlements, requested_date, entitlement_date, billing_date, migrated = false, call_completion_sec = nil, user = nil, reason = nil, comment = nil, options = {})
         params = {}
         params[:requestedDate] = requested_date if requested_date
         params[:entitlementDate] = entitlement_date if entitlement_date
         params[:billingDate] = billing_date if billing_date
         params[:migrated] = migrated
-        params[:callCompletion] = call_completion
-        params[:callTimeoutSec] = callTimeoutSec
+        params[:callCompletion] = true unless call_completion_sec.nil?
+        params[:callTimeoutSec] = call_completion_sec unless call_completion_sec.nil?
+
         self.class.post "#{KILLBILL_API_ENTITLEMENT_PREFIX}/createEntitlementWithAddOns",
                         entitlements.to_json,
                         params,
@@ -179,8 +179,6 @@ module KillBillClient
                             :comment => comment,
                         }.merge(options)
       end
-
-
     end
   end
 end
