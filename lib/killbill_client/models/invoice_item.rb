@@ -12,33 +12,6 @@ module KillBillClient
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
-      def tags(included_deleted = false, audit = 'NONE', options = {})
-        params = {}
-        params[:accountId] = account_id
-        params[:includedDeleted] = included_deleted if included_deleted
-        params[:audit] = audit
-        self.class.get "#{KILLBILL_API_INVOICE_ITEMS_PREFIX}/#{invoice_item_id}/tags",
-                       params,
-                       options,
-                       Tag
-      end
-
-      def add_tags_from_definition_ids(tag_definition_ids, user, reason, comment, options)
-
-        created_tag = self.class.post "#{KILLBILL_API_INVOICE_ITEMS_PREFIX}/#{invoice_item_id}/tags",
-                                      {},
-                                      {
-                                          :tagList => tag_definition_ids.join(',')
-                                      },
-                                      {
-                                          :user    => user,
-                                          :reason  => reason,
-                                          :comment => comment,
-                                      }.merge(options),
-                                      Tag
-        tags(false, 'NONE', options) unless created_tag.nil?
-      end
-
       def create(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
         created_invoice_item = self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/charges/#{account_id}",
                                                [to_hash].to_json,
