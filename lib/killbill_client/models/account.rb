@@ -339,7 +339,7 @@ module KillBillClient
         body.block_entitlement = block_entitlement
         body.block_billing = block_billing
 
-        blocking_state = self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
+        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/block",
                        body.to_json,
                        params,
                        {
