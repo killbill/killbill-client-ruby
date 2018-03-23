@@ -48,6 +48,8 @@ module KillBillClient
 
           return nil unless (options[:params] && !options[:params].empty?)
 
+          options[:params][:withStackTrace] = true if (options[:return_full_stacktraces] || KillBillClient.return_full_stacktraces)
+
           pairs = options[:params].map { |key, value|
             # If the value is an array, we 'demultiplex' into several
             if value.is_a? Array

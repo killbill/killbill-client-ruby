@@ -7,4 +7,47 @@ describe KillBillClient::API do
     tag_definitions = KillBillClient::Model::Resource.from_response KillBillClient::Model::TagDefinition, response
     expect(tag_definitions.size).to be > 1
   end
+
+  it 'requests stacktraces on demand', :integration => true do
+    KillBillClient.api_key = Time.now.to_i.to_s + rand(100).to_s
+    KillBillClient.api_secret = KillBillClient.api_key
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = KillBillClient.api_key
+    tenant.api_secret = KillBillClient.api_secret
+    tenant.create(true, 'KillBill Spec test')
+
+    begin
+      KillBillClient.return_full_stacktraces = true
+      tenant.create(true, 'KillBill Spec test')
+      fail
+    rescue KillBillClient::API::InternalServerError => e
+      billing_exception = JSON.parse(e.response.body)
+      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
+      expect(billing_exception['causeClassName']).to eq('java.sql.SQLIntegrityConstraintViolationException')
+      expect(billing_exception['stackTrace'].size).to be >= 90
+    ensure
+      KillBillClient.return_full_stacktraces = false
+    end
+
+    begin
+      tenant.create(true, 'KillBill Spec test')
+      fail
+    rescue KillBillClient::API::InternalServerError => e
+      billing_exception = JSON.parse(e.response.body)
+      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
+      expect(billing_exception['causeClassName']).to eq('java.sql.SQLIntegrityConstraintViolationException')
+      expect(billing_exception['stackTrace'].size).to be == 0
+    end
+
+    begin
+      tenant.create(true, 'KillBill Spec test', nil, nil, {:return_full_stacktraces => true})
+      fail
+    rescue KillBillClient::API::InternalServerError => e
+      billing_exception = JSON.parse(e.response.body)
+      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
+      expect(billing_exception['causeClassName']).to eq('java.sql.SQLIntegrityConstraintViolationException')
+      expect(billing_exception['stackTrace'].size).to be >= 90
+    end
+  end
 end
