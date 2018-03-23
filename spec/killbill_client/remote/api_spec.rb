@@ -46,8 +46,7 @@ describe KillBillClient::API do
     rescue KillBillClient::API::InternalServerError => e
       billing_exception = JSON.parse(e.response.body)
       expect(billing_exception['className']).to eq('java.lang.RuntimeException')
-      expect(billing_exception['causeClassName']).to eq('java.sql.SQLIntegrityConstraintViolationException')
-      expect(billing_exception['stackTrace'].size).to be >= 90
+      expect(billing_exception['stackTrace'].size).to be >= 50
     end
   end
 end
