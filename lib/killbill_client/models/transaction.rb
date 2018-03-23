@@ -92,6 +92,20 @@ module KillBillClient
         end
       end
 
+      def refund_by_external_key(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+          self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/refunds",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+        end
+      end
+
       def void(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         follow_location = delete_follow_location(options)
         refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
@@ -136,6 +150,34 @@ module KillBillClient
                               :reason  => reason,
                               :comment => comment,
                           }.merge(options)
+      end
+
+      def chargeback_by_external_key(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        self.class.post "#{follow_up_path(payment_id)}/chargebacks",
+                        to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
+      end
+
+      def chargeback_reversals(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        self.class.post "#{follow_up_path(payment_id)}/chargebackReversals",
+                        to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
       end
 
       private
