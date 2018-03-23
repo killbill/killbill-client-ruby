@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe KillBillClient::Model do
   before do
+    KillBillClient.return_full_stacktraces = true
+
     KillBillClient.api_key = Time.now.to_i.to_s + rand(100).to_s
     KillBillClient.api_secret = KillBillClient.api_key
 
@@ -9,6 +11,10 @@ describe KillBillClient::Model do
     tenant.api_key = KillBillClient.api_key
     tenant.api_secret = KillBillClient.api_secret
     tenant.create(true, 'KillBill Spec test')
+  end
+
+  after do
+    KillBillClient.return_full_stacktraces = false
   end
 
   it 'should manipulate accounts', :integration => true  do
