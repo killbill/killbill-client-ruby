@@ -28,7 +28,7 @@ jobs:
     <<: *defaults
     docker:
       - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.19.2
+      - image: killbill/killbill:0.19.6
       - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
@@ -110,7 +110,7 @@ jobs:
     <<: *defaults
     docker:
       - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.19.2
+      - image: killbill/killbill:0.19.6
       - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
@@ -194,7 +194,7 @@ jobs:
     <<: *defaults
     docker:
       - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.19.2
+      - image: killbill/killbill:0.19.6
       - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
@@ -278,7 +278,7 @@ jobs:
     <<: *defaults
     docker:
       - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.19.2
+      - image: killbill/killbill:0.19.6
       - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
