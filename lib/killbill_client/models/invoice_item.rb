@@ -12,8 +12,10 @@ module KillBillClient
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
+      # DO NOT DELETE THIS METHOD
       def tags(included_deleted = false, audit = 'NONE', options = {})
         params = {}
+        # Non-standard, required, parameter
         params[:accountId] = account_id
         params[:includedDeleted] = included_deleted if included_deleted
         params[:audit] = audit
@@ -23,8 +25,8 @@ module KillBillClient
                        Tag
       end
 
+      # DO NOT DELETE THIS METHOD
       def add_tags_from_definition_ids(tag_definition_ids, user, reason, comment, options)
-
         created_tag = self.class.post "#{KILLBILL_API_INVOICE_ITEMS_PREFIX}/#{invoice_item_id}/tags",
                                       {},
                                       {

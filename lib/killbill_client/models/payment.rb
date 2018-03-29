@@ -3,6 +3,7 @@ module KillBillClient
     class Payment < PaymentAttributes
 
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::TagHelper
 
       KILLBILL_API_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/payments"
 
@@ -11,6 +12,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_custom_fields KILLBILL_API_PAYMENTS_PREFIX, :payment_id
+      has_tags KILLBILL_API_PAYMENTS_PREFIX, :payment_id
 
       class << self
         def find_by_id(payment_id, with_plugin_info = false, with_attempts = false, options = {})
