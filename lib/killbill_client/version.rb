@@ -1,8 +1,8 @@
 module KillBillClient
   module Version
     MAJOR = 2
-    MINOR = 1
-    PATCH = 0
+    MINOR = 2
+    PATCH = 1
     PRE = nil
 
     VERSION = [MAJOR, MINOR, PATCH, PRE].compact.join('.').freeze
