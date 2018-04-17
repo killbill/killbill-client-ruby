@@ -179,6 +179,21 @@ module KillBillClient
                             :comment => comment,
                         }.merge(options)
       end
+
+      #
+      # Undo a pending change plan on an entitlement
+      #
+      def undo_change_plan(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/undoChangePlan",
+                       {},
+                       {},
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
     end
   end
 end
