@@ -371,6 +371,13 @@ module KillBillClient
                        options,
                        InvoicePayment
       end
+
+      def audit(options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/auditLogs",
+                       {},
+                       options,
+                       AuditLog
+      end
     end
   end
 end
