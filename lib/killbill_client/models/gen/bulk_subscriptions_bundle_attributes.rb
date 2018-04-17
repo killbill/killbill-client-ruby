@@ -27,7 +27,7 @@
 
 module KillBillClient
   module Model
-    class BulkBaseSubscriptionAndAddOnsAttributes < Resource
+    class BulkSubscriptionsBundleAttributes < Resource
       attribute :base_entitlement_and_add_ons
     end
   end
