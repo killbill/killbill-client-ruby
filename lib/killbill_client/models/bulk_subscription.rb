@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class BulkSubscription < BulkBaseSubscriptionAndAddOnsAttributes
+    class BulkSubscription < BulkSubscriptionsBundleAttributes
 
       include KillBillClient::Model::CustomFieldHelper
 
