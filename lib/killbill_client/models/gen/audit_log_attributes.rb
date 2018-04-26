@@ -36,6 +36,7 @@ module KillBillClient
       attribute :reason_code
       attribute :comments
       attribute :user_token
+      attribute :history
     end
   end
 end
