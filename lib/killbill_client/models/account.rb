@@ -6,9 +6,11 @@ module KillBillClient
 
       include KillBillClient::Model::TagHelper
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       has_custom_fields KILLBILL_API_ACCOUNTS_PREFIX, :account_id
       has_tags KILLBILL_API_ACCOUNTS_PREFIX, :account_id
+      has_audit_logs_with_history KILLBILL_API_ACCOUNTS_PREFIX, :account_id
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
