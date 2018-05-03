@@ -63,11 +63,9 @@ module KillBillClient
               options
         end
 
-        def attempt_audit_logs_with_history(account_id, payment_attempt_id, options = {})
+        def attempt_audit_logs_with_history(payment_attempt_id, options = {})
           get "#{KILLBILL_API_PAYMENTS_PREFIX}/attempts/#{payment_attempt_id}/auditLogsWithHistory",
-                         {
-                             :accountId => account_id
-                         },
+                         {},
                          options,
                          AuditLog
         end
