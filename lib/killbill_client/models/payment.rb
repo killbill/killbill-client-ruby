@@ -4,6 +4,7 @@ module KillBillClient
 
       include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::TagHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_PAYMENTS_PREFIX = "#{KILLBILL_API_PREFIX}/payments"
 
@@ -13,6 +14,7 @@ module KillBillClient
 
       has_custom_fields KILLBILL_API_PAYMENTS_PREFIX, :payment_id
       has_tags KILLBILL_API_PAYMENTS_PREFIX, :payment_id
+      has_audit_logs_with_history KILLBILL_API_PAYMENTS_PREFIX, :payment_id
 
       class << self
         def find_by_id(payment_id, with_plugin_info = false, with_attempts = false, options = {})
@@ -59,6 +61,13 @@ module KillBillClient
                   :limit  => limit
               },
               options
+        end
+
+        def attempt_audit_logs_with_history(payment_attempt_id, options = {})
+          get "#{KILLBILL_API_PAYMENTS_PREFIX}/attempts/#{payment_attempt_id}/auditLogsWithHistory",
+                         {},
+                         options,
+                         AuditLog
         end
       end
     end

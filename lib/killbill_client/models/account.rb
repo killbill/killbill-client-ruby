@@ -277,6 +277,13 @@ module KillBillClient
                        AccountEmailAttributes
       end
 
+      def email_audit_logs_with_history(account_email_id, options = {})
+        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emails/#{account_email_id}/auditLogsWithHistory",
+                       {},
+                       options,
+                       AuditLog
+      end
+
       def email_notifications(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
                        {},
