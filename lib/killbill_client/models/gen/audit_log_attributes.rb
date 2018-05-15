@@ -30,10 +30,13 @@ module KillBillClient
     class AuditLogAttributes < Resource
       attribute :change_type
       attribute :change_date
+      attribute :object_type
+      attribute :object_id
       attribute :changed_by
       attribute :reason_code
       attribute :comments
       attribute :user_token
+      attribute :history
     end
   end
 end

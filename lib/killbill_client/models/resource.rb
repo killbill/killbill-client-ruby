@@ -75,7 +75,7 @@ module KillBillClient
               response.body
             when %r{text/plain}
               response.body
-            when %r{application/xml}
+            when %r{text/xml}
               if response['location']
                 response['location']
               else
