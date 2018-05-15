@@ -41,7 +41,7 @@ module KillBillClient
                {
                },
                {
-                   :head => {'Accept' => 'application/json'},
+                   :head => {'Accept' => 'text/xml'},
                    :content_type => 'text/xml',
                    :user => user,
                    :reason => reason,
