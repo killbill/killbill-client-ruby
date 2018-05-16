@@ -65,7 +65,7 @@ module KillBillClient
         params[:requestedDate] = requested_date unless requested_date.nil?
         params[:billingPolicy] = billing_policy unless billing_policy.nil?
 
-        result                 = self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
+        result                 = self.class.post "#{KILLBILL_API_BUNDLES_PREFIX}/#{bundle_id}",
                                                 to_json,
                                                 params,
                                                 {
@@ -110,7 +110,7 @@ module KillBillClient
 
 
       # Low level api to block/unblock a given subscription/bundle/account
-      def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+      def set_blocking_state(state_name, service, is_block_change, is_block_entitlement, is_block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
         params                 = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
@@ -118,13 +118,25 @@ module KillBillClient
         body = KillBillClient::Model::BlockingStateAttributes.new
         body.state_name = state_name
         body.service = service
-        body.block_change = block_change
-        body.block_entitlement = block_entitlement
-        body.block_billing = block_billing
+        body.is_block_change = is_block_change
+        body.is_block_entitlement = is_block_entitlement
+        body.is_block_billing = is_block_billing
 
-        self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/block",
+        self.class.post "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/block",
                        body.to_json,
                        params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
+
+      def rename_external_key(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{KILLBILL_API_BUNDLES_PREFIX}/#{@bundle_id}/renameKey",
+                       to_json,
+                       {},
                        {
                            :user    => user,
                            :reason  => reason,

@@ -64,14 +64,15 @@ module KillBillClient
         input[:accountId] = @account_id
         input[:productCategory] = @product_category
 
-        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
-                              input.to_json,
-                              params,
-                              {
-                                  :user    => user,
-                                  :reason  => reason,
-                                  :comment => comment,
-                              }.merge(options)
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
+                       input.to_json,
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+        self.class.find_by_id(@subscription_id, options)
       end
 
       #
@@ -135,20 +136,20 @@ module KillBillClient
       #
       # Block a Subscription
       #
-      def set_blocking_state(state_name, service, block_change, block_entitlement, block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+      def set_blocking_state(state_name, service, is_block_change, is_block_entitlement, is_block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
 
         body = KillBillClient::Model::BlockingStateAttributes.new
         body.state_name = state_name
         body.service = service
-        body.block_change = block_change
-        body.block_entitlement = block_entitlement
-        body.block_billing = block_billing
+        body.is_block_change = is_block_change
+        body.is_block_entitlement = is_block_entitlement
+        body.is_block_billing = is_block_billing
         body.type = "SUBSCRIPTION"
 
         params = {}
         params[:requestedDate] = requested_date unless requested_date.nil?
 
-        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/block",
+        self.class.post "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/block",
                        body.to_json,
                        params,
                        {
