@@ -115,7 +115,7 @@ module KillBillClient
 
 
       def transfer_child_credit(user = nil, reason = nil, comment = nil, options = {})
-        self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/transferCredit",
+        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/transferCredit",
                         {},
                         {},
                         {
@@ -353,7 +353,7 @@ module KillBillClient
       end
 
       def cba_rebalancing(user = nil, reason = nil, comment = nil, options = {})
-        self.class.post "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/cbaRebalancing",
+        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/cbaRebalancing",
                         {},
                         {},
                         {
