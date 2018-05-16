@@ -156,7 +156,7 @@ describe KillBillClient::Model do
     invoice_item.amount = 123.98
 
     invoice_item = invoice_item.create false, true, 'KillBill Spec test'
-    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_item.invoice_id
+    invoice = KillBillClient::Model::Invoice.find_by_id invoice_item.invoice_id
 
     expect(invoice.amount).to eq(123.98)
     expect(invoice.balance).to eq(0)
@@ -220,8 +220,8 @@ describe KillBillClient::Model do
     invoice_id = invoice.invoice_id
     invoice_number = invoice.invoice_number
 
-    invoice_with_id = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
-    invoice_with_number = KillBillClient::Model::Invoice.find_by_id_or_number invoice_number
+    invoice_with_id = KillBillClient::Model::Invoice.find_by_id invoice_id
+    invoice_with_number = KillBillClient::Model::Invoice.find_by_number invoice_number
 
     expect(invoice_with_id.invoice_id).to eq(invoice_with_number.invoice_id)
     expect(invoice_with_id.invoice_number).to eq(invoice_with_number.invoice_number)
@@ -286,7 +286,7 @@ describe KillBillClient::Model do
     expect(invoice_payment.credited_amount).to eq(0)
 
     # Refund the payment (with item adjustment)
-    invoice_item = KillBillClient::Model::Invoice.find_by_id_or_number(invoice_number, true).items.first
+    invoice_item = KillBillClient::Model::Invoice.find_by_number(invoice_number, true).items.first
     item = KillBillClient::Model::InvoiceItem.new
     item.invoice_item_id = invoice_item.invoice_item_id
     item.amount = invoice_item.amount
@@ -308,7 +308,7 @@ describe KillBillClient::Model do
     expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)
 
     # Verify the invoice item of the credit
-    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
+    invoice = KillBillClient::Model::Invoice.find_by_id invoice_id
     expect(invoice.items).not_to be_empty
     item = invoice.items.last
     expect(item.invoice_id).to eq(invoice_id)
