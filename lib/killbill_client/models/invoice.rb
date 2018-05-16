@@ -16,8 +16,17 @@ module KillBillClient
       has_tags KILLBILL_API_INVOICES_PREFIX, :invoice_id
 
       class << self
-        def find_by_id_or_number(id_or_number, with_items = true, audit = "NONE", options = {})
-          get "#{KILLBILL_API_INVOICES_PREFIX}/#{id_or_number}",
+        def find_by_id(invoice_id, with_items = true, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}",
+              {
+                  :withItems => with_items,
+                  :audit     => audit
+              },
+              options
+        end
+
+        def find_by_number(number, with_items = true, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/byNumber/#{number}",
               {
                   :withItems => with_items,
                   :audit     => audit
