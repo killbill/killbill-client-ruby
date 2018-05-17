@@ -100,7 +100,6 @@ module KillBillClient
                      }.merge(options),
                      Invoice
 
-          res.refresh(options)
 
           nothing_to_generate?(res) ? nil : res.refresh(options)
 
@@ -130,8 +129,6 @@ module KillBillClient
                          :comment => '',
                      }.merge(options),
                      Invoice
-
-          res.refresh(options)
 
           nothing_to_generate?(res) ? nil : res.refresh(options)
 
@@ -165,8 +162,6 @@ module KillBillClient
                      }.merge(options),
                      Invoice
 
-          res.refresh(options)
-
           nothing_to_generate?(res) ? nil : res.refresh(options)
 
         end
@@ -195,8 +190,6 @@ module KillBillClient
                          :comment => '',
                      }.merge(options),
                      Invoice
-
-          res.refresh(options)
 
           nothing_to_generate?(res) ? nil : res.refresh(options)
 
@@ -315,11 +308,6 @@ module KillBillClient
                }.merge(options)
         end
 
-        def nothing_to_generate?(invoice)
-          return true if invoice.nil? || invoice.response.nil?
-          invoice.response.code.to_i == 204
-        end
-
       end
 
       def commit(user = nil, reason = nil, comment = nil, options = {})
@@ -369,7 +357,12 @@ module KillBillClient
                             :comment => comment,
                         }.merge(options)
       end
+      private
 
+      def nothing_to_generate?(invoice)
+        return true if invoice.nil? || invoice.response.nil?
+        invoice.response.code.to_i == 204
+      end
     end
   end
 end
