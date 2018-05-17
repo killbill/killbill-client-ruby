@@ -203,12 +203,12 @@ module KillBillClient
         end
 
 
-        def get_invoice_template(is_manual_pay, options = {})
+        def get_invoice_template(is_manual_pay, locale = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving an invoice template supported in multi-tenant mode")
 
 
-          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate" : "template"}",
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate/#{locale}" : "template"}",
               {},
               {
                   :head => {'Accept' => 'text/html'},
