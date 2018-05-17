@@ -90,22 +90,20 @@ module KillBillClient
           query_map = {:accountId => account_id}
           query_map[:targetDate] = target_date if target_date != nil
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user => 'trigger_invoice_dry_run',
-                           :reason => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user => 'trigger_invoice_dry_run',
+                         :reason => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
+          res.refresh(options)
 
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
 
@@ -123,21 +121,20 @@ module KillBillClient
           dry_run.price_list_name = price_list_name
           dry_run.bundle_id = bundle_id
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'create_subscription_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'create_subscription_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          res.refresh(options)
+
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
         def change_plan_dry_run(account_id, bundle_id, subscription_id, target_date, product_name, product_category, billing_period, price_list_name,
@@ -157,21 +154,21 @@ module KillBillClient
           dry_run.bundle_id = bundle_id
           dry_run.subscription_id = subscription_id
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'change_plan_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
 
-            res.refresh(options)
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'change_plan_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
+
+          res.refresh(options)
+
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
 
@@ -189,22 +186,20 @@ module KillBillClient
           dry_run.subscription_id = subscription_id
 
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'cancel_subscription_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'cancel_subscription_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
+          res.refresh(options)
 
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
 
@@ -318,6 +313,11 @@ module KillBillClient
                    :reason  => reason,
                    :comment => comment,
                }.merge(options)
+        end
+
+        def nothing_to_generate?(invoice)
+          return true if invoice.nil? || invoice.response.nil?
+          invoice.response.code.to_i == 204
         end
 
       end
