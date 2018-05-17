@@ -226,7 +226,7 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_invoice_template(is_manual_pay, options)
+          get_invoice_template(is_manual_pay, nil, options)
         end
 
         def get_invoice_translation(locale, options = {})
