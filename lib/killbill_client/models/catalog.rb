@@ -72,6 +72,58 @@ module KillBillClient
 
         end
 
+        def get_catalog_phase(subscription_id, requested_date, options = {})
+
+          require_multi_tenant_options!(options, "Retrieving catalog phase is only supported in multi-tenant mode")
+
+          params = {}
+          params[:subscriptionId] = subscription_id if subscription_id
+          params[:requestedDate] = requested_date if requested_date
+
+          get "#{KILLBILL_API_CATALOG_PREFIX}/phase",
+              params,
+              options
+        end
+
+        def get_catalog_plan(subscription_id, requested_date, options = {})
+
+          require_multi_tenant_options!(options, "Retrieving catalog plan is only supported in multi-tenant mode")
+
+          params = {}
+          params[:subscriptionId] = subscription_id if subscription_id
+          params[:requestedDate] = requested_date if requested_date
+
+          get "#{KILLBILL_API_CATALOG_PREFIX}/plan",
+              params,
+              options
+        end
+
+        def get_catalog_price_list(subscription_id, requested_date, options = {})
+
+          require_multi_tenant_options!(options, "Retrieving catalog price list is only supported in multi-tenant mode")
+
+          params = {}
+          params[:subscriptionId] = subscription_id if subscription_id
+          params[:requestedDate] = requested_date if requested_date
+
+          get "#{KILLBILL_API_CATALOG_PREFIX}/priceList",
+              params,
+              options
+        end
+
+        def get_catalog_product(subscription_id, requested_date, options = {})
+
+          require_multi_tenant_options!(options, "Retrieving catalog product list is only supported in multi-tenant mode")
+
+          params = {}
+          params[:subscriptionId] = subscription_id if subscription_id
+          params[:requestedDate] = requested_date if requested_date
+
+          get "#{KILLBILL_API_CATALOG_PREFIX}/product",
+              params,
+              options
+        end
+
         def upload_tenant_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
 
           require_multi_tenant_options!(options, "Uploading a catalog is only supported in multi-tenant mode")
