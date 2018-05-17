@@ -359,7 +359,7 @@ module KillBillClient
       end
       private
 
-      def nothing_to_generate?(invoice)
+      def self.nothing_to_generate?(invoice)
         return true if invoice.nil? || invoice.response.nil?
         invoice.response.code.to_i == 204
       end
