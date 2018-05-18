@@ -67,7 +67,7 @@ module KillBillClient
           return res if res
 
           node_command = KillBillClient::Model::NodeCommandAttributes.new
-          node_command.system_command_type = true
+          node_command.is_system_command_type = true
           node_command.node_command_type = node_command_type
           node_command.node_command_properties = []
           node_command.node_command_properties << {:key => 'pluginKey', :value => plugin_key} if plugin_key

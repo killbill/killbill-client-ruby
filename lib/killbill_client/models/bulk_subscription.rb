@@ -1,10 +1,10 @@
 module KillBillClient
   module Model
-    class BulkSubscription < BulkBaseSubscriptionAndAddOnsAttributes
+    class BulkSubscription < BulkSubscriptionsBundleAttributes
 
       include KillBillClient::Model::CustomFieldHelper
 
-      KILLBILL_API_BULK_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions/createEntitlementsWithAddOns"
+      KILLBILL_API_BULK_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions/createSubscriptionsWithAddOns"
 
       has_many :base_entitlement_and_add_ons, KillBillClient::Model::SubscriptionAttributes
 

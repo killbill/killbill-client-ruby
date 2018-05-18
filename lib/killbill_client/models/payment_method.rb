@@ -78,7 +78,7 @@ module KillBillClient
         end
 
         def refresh(account_id, user = nil, reason = nil, comment = nil, options = {})
-          post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/refresh",
+          put "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/refresh",
                nil,
                {},
                {

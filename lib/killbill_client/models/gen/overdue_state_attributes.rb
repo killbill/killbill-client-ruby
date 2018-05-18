@@ -31,9 +31,9 @@ module KillBillClient
       attribute :name
       attribute :external_message
       attribute :days_between_payment_retries
-      attribute :disable_entitlement_and_changes_blocked
-      attribute :block_changes
-      attribute :clear_state
+      attribute :is_disable_entitlement_and_changes_blocked
+      attribute :is_block_changes
+      attribute :is_clear_state
       attribute :reevaluation_interval_days
     end
   end
