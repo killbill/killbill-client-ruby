@@ -121,6 +121,7 @@ module KillBillClient
                                 :reason  => reason,
                                 :comment => comment,
                             }.merge(options)
+          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
         end
       end
 
@@ -220,6 +221,7 @@ module KillBillClient
                              :reason => reason,
                              :comment => comment
                          }.merge(options)
+          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
         end
       end
 

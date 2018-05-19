@@ -32,7 +32,7 @@ module KillBillClient
       attribute :file_name
       attribute :line_number
       attribute :method_name
-      attribute :native_method
+      attribute :is_native_method
     end
   end
 end

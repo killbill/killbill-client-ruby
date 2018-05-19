@@ -28,6 +28,7 @@
 module KillBillClient
   module Model
     class CreditAttributes < Resource
+      attribute :credit_id
       attribute :credit_amount
       attribute :currency
       attribute :invoice_id

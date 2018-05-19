@@ -24,7 +24,7 @@ describe KillBillClient::API do
     rescue KillBillClient::API::Conflict => e
       billing_exception = JSON.parse(e.response.body)
       expect(billing_exception['className']).to eq('org.killbill.billing.tenant.api.TenantApiException')
-      expect(billing_exception['stackTrace'].size).to be >= 70
+      expect(billing_exception['stackTrace'].size).to be >= 71
     ensure
       KillBillClient.return_full_stacktraces = false
     end
