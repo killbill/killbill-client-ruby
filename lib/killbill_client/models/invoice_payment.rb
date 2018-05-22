@@ -74,6 +74,20 @@ module KillBillClient
                                  }.merge(options)
           invoice_payment.refresh(options)
         end
+
+        def complete_invoice_payment_transaction(payment_id, user, reason, comment, options)
+          invoice_payment = PaymentTransactionAttributes.new
+          invoice_payment.payment_id = payment_id
+
+          put "#{KILLBILL_API_INVOICE_PAYMENTS_PREFIX}/#{payment_id}",
+              invoice_payment.to_json,
+              {},
+              {
+                  :user => user,
+                  :reason => reason,
+                  :comment => comment
+              }.merge(options)
+        end
       end
 
       def create(external_payment = false, user = nil, reason = nil, comment = nil, options = {})
@@ -104,7 +118,6 @@ module KillBillClient
                             :comment => comment,
                         }.merge(options)
       end
-
     end
   end
 end

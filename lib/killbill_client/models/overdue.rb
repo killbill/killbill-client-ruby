@@ -15,8 +15,7 @@ module KillBillClient
           get "#{KILLBILL_API_OVERDUE_PREFIX}/xml",
               {},
               {
-                  :head => {'Accept' => "text/xml"},
-                  :content_type => "application/json",
+                  :head => {'Accept' => "text/xml"}
               }.merge(options)
         end
 
@@ -27,8 +26,7 @@ module KillBillClient
           get KILLBILL_API_OVERDUE_PREFIX,
               {},
               {
-                  :head => {'Accept' => "application/json"},
-                  :content_type => "application/json",
+                  :head => {'Accept' => "application/json"}
               }.merge(options)
         end
 
