@@ -31,9 +31,9 @@ module KillBillClient
       attribute :blocked_id
       attribute :state_name
       attribute :service
-      attribute :block_change
-      attribute :block_entitlement
-      attribute :block_billing
+      attribute :is_block_change
+      attribute :is_block_entitlement
+      attribute :is_block_billing
       attribute :effective_date
       attribute :type
       attribute :audit_logs
