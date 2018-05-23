@@ -1,7 +1,12 @@
 module KillBillClient
   module Model
     class TagDefinition < TagDefinitionAttributes
+
+      include KillBillClient::Model::AuditLogWithHistoryHelper
+
       KILLBILL_API_TAG_DEFINITIONS_PREFIX = "#{KILLBILL_API_PREFIX}/tagDefinitions"
+
+      has_audit_logs_with_history KILLBILL_API_TAG_DEFINITIONS_PREFIX, :id
 
       class << self
         def all(audit = 'NONE', options = {})

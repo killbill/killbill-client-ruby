@@ -38,6 +38,27 @@ module KillBillClient
             custom_field.refresh(options)
           end
 
+          define_method('modify_custom_field') do |*args|
+
+            custom_fields = args[0]
+            user = args[1]
+            reason = args[2]
+            comment = args[3]
+            options = args[4] || {}
+
+            body         = custom_fields.is_a?(Enumerable) ? custom_fields : [custom_fields]
+            custom_field = self.class.put "#{url_prefix}/#{send(id_alias)}/customFields",
+                                           body.to_json,
+                                           {},
+                                           {
+                                               :user    => user,
+                                               :reason  => reason,
+                                               :comment => comment,
+                                           }.merge(options),
+                                           CustomField
+            custom_field.refresh(options)
+          end
+
           define_method('remove_custom_field') do |*args|
 
             custom_fields = args[0]

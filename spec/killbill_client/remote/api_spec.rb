@@ -21,10 +21,10 @@ describe KillBillClient::API do
       KillBillClient.return_full_stacktraces = true
       tenant.create(true, 'KillBill Spec test')
       fail
-    rescue KillBillClient::API::InternalServerError => e
+    rescue KillBillClient::API::Conflict => e
       billing_exception = JSON.parse(e.response.body)
-      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
-      expect(billing_exception['stackTrace'].size).to be >= 90
+      expect(billing_exception['className']).to eq('org.killbill.billing.tenant.api.TenantApiException')
+      expect(billing_exception['stackTrace'].size).to be >= 71
     ensure
       KillBillClient.return_full_stacktraces = false
     end
@@ -32,18 +32,18 @@ describe KillBillClient::API do
     begin
       tenant.create(true, 'KillBill Spec test')
       fail
-    rescue KillBillClient::API::InternalServerError => e
+    rescue KillBillClient::API::Conflict => e
       billing_exception = JSON.parse(e.response.body)
-      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
+      expect(billing_exception['className']).to eq('org.killbill.billing.tenant.api.TenantApiException')
       expect(billing_exception['stackTrace'].size).to be == 0
     end
 
     begin
       tenant.create(true, 'KillBill Spec test', nil, nil, {:return_full_stacktraces => true})
       fail
-    rescue KillBillClient::API::InternalServerError => e
+    rescue KillBillClient::API::Conflict => e
       billing_exception = JSON.parse(e.response.body)
-      expect(billing_exception['className']).to eq('java.lang.RuntimeException')
+      expect(billing_exception['className']).to eq('org.killbill.billing.tenant.api.TenantApiException')
       expect(billing_exception['stackTrace'].size).to be >= 50
     end
   end
