@@ -53,7 +53,7 @@ module KillBillClient
       # @ call_completion : whether the call should wait for invoice/payment to be completed before calls return
       #
       def change_plan(input, user = nil, reason = nil, comment = nil,
-                      requested_date = nil, billing_policy = nil, call_completion = false, options = {})
+                      requested_date = nil, billing_policy = nil, target_phase_type = nil, call_completion = false, options = {})
 
         params                  = {}
         params[:callCompletion] = call_completion
@@ -63,6 +63,7 @@ module KillBillClient
         # Make sure account_id is set
         input[:accountId] = @account_id
         input[:productCategory] = @product_category
+        input[:phaseType] = target_phase_type
 
         self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
                        input.to_json,
