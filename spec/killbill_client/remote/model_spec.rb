@@ -229,7 +229,7 @@ describe KillBillClient::Model do
     # Create an external payment for each unpaid invoice
     invoice_payment = KillBillClient::Model::InvoicePayment.new
     invoice_payment.account_id = account.account_id
-    invoice_payment.bulk_create true, 'KillBill Spec test'
+    invoice_payment.bulk_create true, nil, nil, 'KillBill Spec test'
 
     # Try to retrieve it
     payments = KillBillClient::Model::Payment.find_in_batches(0, search_limit)
