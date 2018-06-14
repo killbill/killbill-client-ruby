@@ -3,7 +3,7 @@ module KillBillClient
     class UserRoles < UserRolesAttributes
 
       def create(user = nil, reason = nil, comment = nil, options = {})
-        created_user = self.class.post "#{Security::KILLBILL_API_SECURITY_PREFIX}/users",
+        self.class.post "#{Security::KILLBILL_API_SECURITY_PREFIX}/users",
                                        to_json,
                                        {},
                                        {
@@ -11,7 +11,6 @@ module KillBillClient
                                            :reason => reason,
                                            :comment => comment,
                                        }.merge(options)
-        created_user.refresh(options)
       end
 
       def update(user = nil, reason = nil, comment = nil, options = {})
