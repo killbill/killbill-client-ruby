@@ -253,7 +253,11 @@ module KillBillClient
 
       def refresh(options = {}, clazz=self.class)
         if @uri
-          self.class.get @uri, {}, options, clazz
+          # Need to decode in case an encoding is in place (e.g. /1.0/kb/security/users/Mad%20Max/roles) , since later on
+          # it will be encoded and can cause an undesired result on the call.
+          unecoded_uri = URI::DEFAULT_PARSER.unescape(@uri)
+
+          self.class.get unecoded_uri, {}, options, clazz
         else
           self
         end
