@@ -83,7 +83,7 @@ module KillBillClient
                           }.merge(options)
       end
 
-      def create_tax_items(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
+      def create_tax_item(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
         created_tax_item = self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/taxes/#{account_id}",
                                                [to_hash].to_json,
                                                {:autoCommit => auto_commit},
