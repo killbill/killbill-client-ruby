@@ -82,6 +82,18 @@ module KillBillClient
                               :comment => comment,
                           }.merge(options)
       end
+
+      def create_tax_item(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
+        created_tax_item = self.class.post "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/taxes/#{account_id}",
+                                               [to_hash].to_json,
+                                               {:autoCommit => auto_commit},
+                                               {
+                                                   :user    => user,
+                                                   :reason  => reason,
+                                                   :comment => comment,
+                                               }.merge(options)
+        created_tax_item.first.refresh(options, Invoice)
+      end
     end
   end
 end
