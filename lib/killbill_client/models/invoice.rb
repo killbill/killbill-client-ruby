@@ -34,6 +34,16 @@ module KillBillClient
               options
         end
 
+        def find_by_invoice_item_id(invoice_item_id, with_items = true, with_children_items = false, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/byItemId/#{invoice_item_id}",
+              {
+                  :withChildrenItems => with_children_items,
+                  :withItems => with_items,
+                  :audit     => audit
+              },
+              options
+        end
+
         def find_in_batches(offset = 0, limit = 100, options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
