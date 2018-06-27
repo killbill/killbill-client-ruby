@@ -51,7 +51,6 @@ module KillBillClient
       attribute :phone
       attribute :notes
       attribute :is_migrated
-      attribute :is_notified_for_invoices
       attribute :account_balance
       attribute :account_cba
       attribute :audit_logs

@@ -37,7 +37,6 @@ describe KillBillClient::Model do
     account.state = 'Awesome'
     account.country = 'LalaLand'
     account.locale = 'fr_FR'
-    account.is_notified_for_invoices = false
     expect(account.account_id).to be_nil
 
     # Create and verify the account
