@@ -9,7 +9,7 @@ module KillBillClient
                   :session_id,
                   :response
 
-      KILLBILL_API_PREFIX = '/1.0/kb/'
+      KILLBILL_API_PREFIX = '/1.0/kb'
       KILLBILL_API_PAGINATION_PREFIX = 'pagination'
 
       @@attribute_names = {}

@@ -35,6 +35,25 @@ module KillBillClient
             :delete => ::Net::HTTP::Delete
         }
 
+        def build_uri(relative_uri, options)
+          # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
+          encoded_relative_uri = URI::DEFAULT_PARSER.escape(relative_uri)
+          if URI(encoded_relative_uri).scheme.nil?
+            uri = (options[:base_uri] || KillBillClient::API.base_uri)
+            uri = URI.parse(uri) unless uri.is_a?(URI)
+            # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
+            # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
+            base_path = uri.request_uri == '/' ? '' : uri.request_uri
+            uri += (base_path + URI::DEFAULT_PARSER.escape(relative_uri))
+          else
+            uri = encoded_relative_uri
+            uri = URI.parse(uri) unless uri.is_a?(URI)
+          end
+          uri += encode_params(options).to_s
+
+          uri
+        end
+
         def encode_params(options = {})
           # Plugin properties and controlPluginNames are passed in the options but we want to send them as query parameters,
           # so remove with from global hash and insert them under :params
@@ -79,20 +98,7 @@ module KillBillClient
           head.update options[:head] if options[:head]
           head.delete_if { |_, value| value.nil? }
 
-          # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
-          encoded_relative_uri = URI::DEFAULT_PARSER.escape(relative_uri)
-          if URI(encoded_relative_uri).scheme.nil?
-            uri = (options[:base_uri] || base_uri)
-            uri = URI.parse(uri) unless uri.is_a?(URI)
-            # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
-            # See https://github.com/killbill/killbill/issues/221#issuecomment-151980263
-            base_path = uri.request_uri == '/' ? '' : uri.request_uri
-            uri += (base_path + URI::DEFAULT_PARSER.escape(relative_uri))
-          else
-            uri = encoded_relative_uri
-            uri = URI.parse(uri) unless uri.is_a?(URI)
-          end
-          uri += encode_params(options).to_s
+          uri = build_uri(relative_uri, options)
           request = METHODS[method].new uri.request_uri, head
 
           # Configure multi-tenancy headers, if enabled
