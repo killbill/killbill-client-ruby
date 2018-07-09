@@ -286,26 +286,7 @@ module KillBillClient
                        AuditLog
       end
 
-      def email_notifications(options = {})
-        self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
-                       {},
-                       options,
-                       InvoiceEmailAttributes
-      end
-
-      def update_email_notifications(user = nil, reason = nil, comment = nil, options = {})
-        self.class.put "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/emailNotifications",
-                       to_json,
-                       {},
-                       {
-                           :user => user,
-                           :reason => reason,
-                           :comment => comment,
-                       }.merge(options)
-      end
-
       def all_tags(object_type, included_deleted, audit = 'NONE', options = {})
-
         params = {}
         params[:objectType] = object_type if object_type
         params[:includedDeleted] = included_deleted if included_deleted
