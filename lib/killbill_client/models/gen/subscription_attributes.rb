@@ -48,6 +48,7 @@ module KillBillClient
       attribute :bill_cycle_day_local
       attribute :events
       attribute :price_overrides
+      attribute :prices
       attribute :audit_logs
     end
   end

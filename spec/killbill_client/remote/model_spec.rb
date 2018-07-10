@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe KillBillClient::Model do
+  before do
+    KillBillClient.return_full_stacktraces = true
+
+    KillBillClient.api_key = SecureRandom.uuid.to_s + rand(100).to_s
+    KillBillClient.api_secret = KillBillClient.api_key
+
+    tenant = KillBillClient::Model::Tenant.new
+    tenant.api_key = KillBillClient.api_key
+    tenant.api_secret = KillBillClient.api_secret
+    tenant.create(true, 'KillBill Spec test')
+  end
+
+  after do
+    KillBillClient.return_full_stacktraces = false
+  end
+
   it 'should manipulate accounts', :integration => true  do
     # In case the remote server has lots of data
     search_limit = 100000
@@ -21,7 +37,6 @@ describe KillBillClient::Model do
     account.state = 'Awesome'
     account.country = 'LalaLand'
     account.locale = 'fr_FR'
-    account.is_notified_for_invoices = false
     expect(account.account_id).to be_nil
 
     # Create and verify the account
@@ -140,12 +155,34 @@ describe KillBillClient::Model do
     invoice_item.amount = 123.98
 
     invoice_item = invoice_item.create false, true, 'KillBill Spec test'
-    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_item.invoice_id
+    invoice = KillBillClient::Model::Invoice.find_by_id invoice_item.invoice_id
 
     expect(invoice.amount).to eq(123.98)
     expect(invoice.balance).to eq(0)
 
     invoice.commit 'KillBill Spec test'
+
+    # Add/Remove a invoice item tag
+    expect(invoice_item.tags.size).to eq(0)
+    invoice_item.add_tag('TEST', 'KillBill Spec test')
+    tags = invoice_item.tags
+    expect(tags.size).to eq(1)
+    expect(tags.first.tag_definition_name).to eq('TEST')
+    invoice_item.remove_tag('TEST', 'KillBill Spec test')
+    expect(invoice_item.tags.size).to eq(0)
+
+    # Add/Remove a invoice item custom field
+    expect(invoice_item.custom_fields.size).to eq(0)
+    custom_field = KillBillClient::Model::CustomField.new
+    custom_field.name = Time.now.to_i.to_s
+    custom_field.value = Time.now.to_i.to_s
+    invoice_item.add_custom_field(custom_field, 'KillBill Spec test')
+    custom_fields = invoice_item.custom_fields
+    expect(custom_fields.size).to eq(1)
+    expect(custom_fields.first.name).to eq(custom_field.name)
+    expect(custom_fields.first.value).to eq(custom_field.value)
+    invoice_item.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
+    expect(invoice_item.custom_fields.size).to eq(0)
 
     # Check the account balance (need to wait a bit for the payment to happen)
     begin
@@ -182,8 +219,8 @@ describe KillBillClient::Model do
     invoice_id = invoice.invoice_id
     invoice_number = invoice.invoice_number
 
-    invoice_with_id = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
-    invoice_with_number = KillBillClient::Model::Invoice.find_by_id_or_number invoice_number
+    invoice_with_id = KillBillClient::Model::Invoice.find_by_id invoice_id
+    invoice_with_number = KillBillClient::Model::Invoice.find_by_number invoice_number
 
     expect(invoice_with_id.invoice_id).to eq(invoice_with_number.invoice_id)
     expect(invoice_with_id.invoice_number).to eq(invoice_with_number.invoice_number)
@@ -191,7 +228,7 @@ describe KillBillClient::Model do
     # Create an external payment for each unpaid invoice
     invoice_payment = KillBillClient::Model::InvoicePayment.new
     invoice_payment.account_id = account.account_id
-    invoice_payment.bulk_create true, 'KillBill Spec test'
+    invoice_payment.bulk_create true, nil, nil, 'KillBill Spec test'
 
     # Try to retrieve it
     payments = KillBillClient::Model::Payment.find_in_batches(0, search_limit)
@@ -248,7 +285,7 @@ describe KillBillClient::Model do
     expect(invoice_payment.credited_amount).to eq(0)
 
     # Refund the payment (with item adjustment)
-    invoice_item = KillBillClient::Model::Invoice.find_by_id_or_number(invoice_number, true).items.first
+    invoice_item = KillBillClient::Model::Invoice.find_by_number(invoice_number, true).items.first
     item = KillBillClient::Model::InvoiceItem.new
     item.invoice_item_id = invoice_item.invoice_item_id
     item.amount = invoice_item.amount
@@ -267,10 +304,10 @@ describe KillBillClient::Model do
     new_credit.effective_date = "2013-09-30"
     new_credit.account_id = account.account_id
 
-    expect { new_credit.create 'KillBill Spec test'   }.to raise_error(KillBillClient::API::BadRequest)
+    expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)
 
     # Verify the invoice item of the credit
-    invoice = KillBillClient::Model::Invoice.find_by_id_or_number invoice_id
+    invoice = KillBillClient::Model::Invoice.find_by_id invoice_id
     expect(invoice.items).not_to be_empty
     item = invoice.items.last
     expect(item.invoice_id).to eq(invoice_id)
@@ -320,6 +357,7 @@ describe KillBillClient::Model do
     tag_definition = KillBillClient::Model::TagDefinition.new
     tag_definition.name = tag_definition_name
     tag_definition.description = 'Tag for unit test'
+    tag_definition.applicable_object_types = [:ACCOUNT]
     expect(tag_definition.create('KillBill Spec test').id).not_to be_nil
 
     found_tag_definition = KillBillClient::Model::TagDefinition.find_by_name(tag_definition_name)

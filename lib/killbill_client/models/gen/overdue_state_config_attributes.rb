@@ -32,8 +32,8 @@ module KillBillClient
       attribute :is_clear_state
       attribute :condition
       attribute :external_message
-      attribute :block_changes
-      attribute :disable_entitlement
+      attribute :is_block_changes
+      attribute :is_disable_entitlement
       attribute :subscription_cancellation_policy
       attribute :auto_reevaluation_interval_days
     end

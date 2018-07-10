@@ -52,7 +52,7 @@ module KillBillClient
               {},
               {
               }.merge(options),
-              KillBillClient::Model::TenantKeyAttributes
+              KillBillClient::Model::TenantKeyValueAttributes
         end
 
 
@@ -65,7 +65,7 @@ module KillBillClient
               {},
               {
               }.merge(options),
-              KillBillClient::Model::TenantKeyAttributes
+              KillBillClient::Model::TenantKeyValueAttributes
         end
 
 

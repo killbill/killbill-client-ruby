@@ -35,15 +35,23 @@ module KillBillClient
       attribute :child_account_id
       attribute :bundle_id
       attribute :subscription_id
+      attribute :product_name
       attribute :plan_name
       attribute :phase_name
       attribute :usage_name
+      attribute :pretty_product_name
+      attribute :pretty_plan_name
+      attribute :pretty_phase_name
+      attribute :pretty_usage_name
       attribute :item_type
       attribute :description
       attribute :start_date
       attribute :end_date
       attribute :amount
+      attribute :rate
       attribute :currency
+      attribute :quantity
+      attribute :item_details
       attribute :child_items
       attribute :audit_logs
     end

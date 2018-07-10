@@ -1,10 +1,15 @@
 module KillBillClient
   module Model
     class PaymentMethod < PaymentMethodAttributes
+
+      include KillBillClient::Model::AuditLogWithHistoryHelper
+
       KILLBILL_API_PAYMENT_METHODS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentMethods"
       EXTERNAL_PAYMENT = '__EXTERNAL_PAYMENT__'.freeze
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
+
+      has_audit_logs_with_history KILLBILL_API_PAYMENT_METHODS_PREFIX, :payment_method_id
 
       class << self
         def find_by_id(payment_method_id, with_plugin_info = false, options = {})
@@ -78,7 +83,7 @@ module KillBillClient
         end
 
         def refresh(account_id, user = nil, reason = nil, comment = nil, options = {})
-          post "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/refresh",
+          put "#{Account::KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/paymentMethods/refresh",
                nil,
                {},
                {

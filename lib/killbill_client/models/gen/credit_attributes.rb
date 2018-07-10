@@ -28,6 +28,7 @@
 module KillBillClient
   module Model
     class CreditAttributes < Resource
+      attribute :credit_id
       attribute :credit_amount
       attribute :currency
       attribute :invoice_id
@@ -35,6 +36,7 @@ module KillBillClient
       attribute :effective_date
       attribute :account_id
       attribute :description
+      attribute :item_details
       attribute :audit_logs
     end
   end

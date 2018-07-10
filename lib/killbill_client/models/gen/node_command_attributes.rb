@@ -28,7 +28,7 @@
 module KillBillClient
   module Model
     class NodeCommandAttributes < Resource
-      attribute :system_command_type
+      attribute :is_system_command_type
       attribute :node_command_type
       attribute :node_command_properties
     end

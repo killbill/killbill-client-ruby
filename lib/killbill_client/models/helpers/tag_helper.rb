@@ -29,7 +29,11 @@ module KillBillClient
       end
 
       def set_tags(tag_definition_ids, user = nil, reason = nil, comment = nil, options = {})
-        current_tag_definition_ids = tags(false, 'NONE', options).map { |tag| tag.tag_definition_id }
+        begin
+          current_tag_definition_ids = tags(false, 'NONE', options).map { |tag| tag.tag_definition_id }
+        rescue KillBillClient::API::NotFound
+          current_tag_definition_ids = []
+        end
 
         tags_to_remove = current_tag_definition_ids - tag_definition_ids
         tags_to_add = tag_definition_ids - current_tag_definition_ids
@@ -78,10 +82,8 @@ module KillBillClient
             options = args[4] || {}
 
             created_tag = self.class.post "#{url_prefix}/#{send(id_alias)}/tags",
+                                          tag_definition_ids,
                                           {},
-                                          {
-                                              :tagList => tag_definition_ids.join(',')
-                                          },
                                           {
                                               :user    => user,
                                               :reason  => reason,
@@ -102,7 +104,7 @@ module KillBillClient
             self.class.delete "#{url_prefix}/#{send(id_alias)}/tags",
                               {},
                               {
-                                  :tagList => tag_definition_ids.join(',')
+                                  :tagDef => tag_definition_ids
                               },
                               {
                                   :user    => user,

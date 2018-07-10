@@ -8,7 +8,7 @@ module KillBillClient
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
 
       has_many :events, KillBillClient::Model::EventSubscription
-      has_many :price_overrides, KillBillClient::Model::PhasePriceOverrideAttributes
+      has_many :price_overrides, KillBillClient::Model::PhasePriceAttributes
 
       has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
       has_tags KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
@@ -53,7 +53,7 @@ module KillBillClient
       # @ call_completion : whether the call should wait for invoice/payment to be completed before calls return
       #
       def change_plan(input, user = nil, reason = nil, comment = nil,
-                      requested_date = nil, billing_policy = nil, call_completion = false, options = {})
+                      requested_date = nil, billing_policy = nil, target_phase_type = nil, call_completion = false, options = {})
 
         params                  = {}
         params[:callCompletion] = call_completion
@@ -63,15 +63,17 @@ module KillBillClient
         # Make sure account_id is set
         input[:accountId] = @account_id
         input[:productCategory] = @product_category
+        input[:phaseType] = target_phase_type
 
-        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
-                              input.to_json,
-                              params,
-                              {
-                                  :user    => user,
-                                  :reason  => reason,
-                                  :comment => comment,
-                              }.merge(options)
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{@subscription_id}",
+                       input.to_json,
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+        self.class.find_by_id(@subscription_id, options)
       end
 
       #
@@ -132,6 +134,68 @@ module KillBillClient
       end
 
 
+      #
+      # Block a Subscription
+      #
+      def set_blocking_state(state_name, service, is_block_change, is_block_entitlement, is_block_billing, requested_date = nil, user = nil, reason = nil, comment = nil, options = {})
+
+        body = KillBillClient::Model::BlockingStateAttributes.new
+        body.state_name = state_name
+        body.service = service
+        body.is_block_change = is_block_change
+        body.is_block_entitlement = is_block_entitlement
+        body.is_block_billing = is_block_billing
+        body.type = "SUBSCRIPTION"
+
+        params = {}
+        params[:requestedDate] = requested_date unless requested_date.nil?
+
+        self.class.post "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/block",
+                       body.to_json,
+                       params,
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
+
+      #
+      # Create an entitlement with addOn products
+      #
+      def create_entitlement_with_add_on(entitlements, entitlement_date, billing_date, migrated = false, rename_key_if_exists_and_unused = true, call_completion_sec = nil, user = nil, reason = nil, comment = nil, options = {})
+        params = {}
+        params[:entitlementDate] = entitlement_date if entitlement_date
+        params[:billingDate] = billing_date if billing_date
+        params[:migrated] = migrated
+        params[:renameKeyIfExistsAndUnused] = rename_key_if_exists_and_unused
+        params[:callCompletion] = true unless call_completion_sec.nil?
+        params[:callTimeoutSec] = call_completion_sec unless call_completion_sec.nil?
+
+        self.class.post "#{KILLBILL_API_ENTITLEMENT_PREFIX}/createSubscriptionWithAddOns",
+                        entitlements.to_json,
+                        params,
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
+
+      #
+      # Undo a pending change plan on an entitlement
+      #
+      def undo_change_plan(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/undoChangePlan",
+                       {},
+                       {},
+                       {
+                           :user    => user,
+                           :reason  => reason,
+                           :comment => comment,
+                       }.merge(options)
+      end
     end
   end
 end

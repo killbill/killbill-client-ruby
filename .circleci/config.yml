@@ -8,11 +8,11 @@ jobs:
   build-jruby-1.7.26:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
+      - image: killbill/kbbuild:0.5.0
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Install gem dependencies
           command: |
@@ -22,20 +22,20 @@ jobs:
             - Gemfile.lock
             - .bundle
             - vendor/bundle
-          key: v1-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
 
   test-mysql-jruby-1.7.26:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.18.16
-      - image: killbill/mariadb:0.18
+      - image: killbill/kbbuild:0.5.0
+      - image: killbill/killbill:0.19.18
+      - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-1.7.26-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Setup DDL
           command: |
@@ -88,11 +88,11 @@ jobs:
   build-ruby-2.2.2:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
+      - image: killbill/kbbuild:0.5.0
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Install gem dependencies
           command: |
@@ -104,20 +104,20 @@ jobs:
             - Gemfile.lock
             - .bundle
             - vendor/bundle
-          key: v1-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
 
   test-mysql-ruby-2.2.2:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.18.16
-      - image: killbill/mariadb:0.18
+      - image: killbill/kbbuild:0.5.0
+      - image: killbill/killbill:0.19.18
+      - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.2.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Setup DDL
           command: |
@@ -172,11 +172,11 @@ jobs:
   build-ruby-2.4.2:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
+      - image: killbill/kbbuild:0.5.0
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Install gem dependencies
           command: |
@@ -188,20 +188,20 @@ jobs:
             - Gemfile.lock
             - .bundle
             - vendor/bundle
-          key: v1-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
 
   test-mysql-ruby-2.4.2:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.18.16
-      - image: killbill/mariadb:0.18
+      - image: killbill/kbbuild:0.5.0
+      - image: killbill/killbill:0.19.18
+      - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-ruby-2.4.2-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Setup DDL
           command: |
@@ -256,11 +256,11 @@ jobs:
   build-jruby-9.1.14.0:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
+      - image: killbill/kbbuild:0.5.0
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Install gem dependencies
           command: |
@@ -272,20 +272,20 @@ jobs:
             - Gemfile.lock
             - .bundle
             - vendor/bundle
-          key: v1-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
 
   test-mysql-jruby-9.1.14.0:
     <<: *defaults
     docker:
-      - image: killbill/kbbuild:0.2.0
-      - image: killbill/killbill:0.18.16
-      - image: killbill/mariadb:0.18
+      - image: killbill/kbbuild:0.5.0
+      - image: killbill/killbill:0.19.18
+      - image: killbill/mariadb:0.19
         environment:
         - MYSQL_ROOT_PASSWORD=root
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
+          key: v2-dependencies-jruby-9.1.14.0-{{ .Branch }}-{{ checksum "killbill_client.gemspec" }}
       - run:
           name: Setup DDL
           command: |

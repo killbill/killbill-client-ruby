@@ -32,6 +32,7 @@ module KillBillClient
       attribute :account_id
       attribute :object_type
       attribute :object_id
+      attribute :meta_data
     end
   end
 end
