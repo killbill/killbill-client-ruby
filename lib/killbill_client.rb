@@ -42,6 +42,7 @@ module KillBillClient
     attr_writer :url
 
     attr_accessor :disable_ssl_verification
+    attr_accessor :return_full_stacktraces
 
     # Tenant key/secret. Optional.
     attr_accessor :api_key

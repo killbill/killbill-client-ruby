@@ -4,10 +4,14 @@ module KillBillClient
   module Model
     class Transaction < PaymentTransactionAttributes
 
+      include KillBillClient::Model::AuditLogWithHistoryHelper
+
       KILLBILL_API_TRANSACTIONS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentTransactions"
 
       has_many :properties, KillBillClient::Model::PluginPropertyAttributes
       has_many :audit_logs, KillBillClient::Model::AuditLog
+
+      has_audit_logs_with_history KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
 
       def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
@@ -92,6 +96,20 @@ module KillBillClient
         end
       end
 
+      def refund_by_external_key(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+          self.class.post "#{Payment::KILLBILL_API_PAYMENTS_PREFIX}/refunds",
+                          to_json,
+                          {},
+                          {
+                              :user    => user,
+                              :reason  => reason,
+                              :comment => comment,
+                          }.merge(options)
+        end
+      end
+
       def void(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         follow_location = delete_follow_location(options)
         refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
@@ -103,6 +121,7 @@ module KillBillClient
                                 :reason  => reason,
                                 :comment => comment,
                             }.merge(options)
+          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
         end
       end
 
@@ -136,6 +155,34 @@ module KillBillClient
                               :reason  => reason,
                               :comment => comment,
                           }.merge(options)
+      end
+
+      def chargeback_by_external_key(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        self.class.post "#{follow_up_path(payment_id)}/chargebacks",
+                        to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
+      end
+
+      def chargeback_reversals(user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
+        follow_location = delete_follow_location(options)
+        refresh_payment_with_failure_handling(follow_location, refresh_options || options) do
+        self.class.post "#{follow_up_path(payment_id)}/chargebackReversals",
+                        to_json,
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+          end
       end
 
       private
@@ -174,6 +221,7 @@ module KillBillClient
                              :reason => reason,
                              :comment => comment
                          }.merge(options)
+          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
         end
       end
 

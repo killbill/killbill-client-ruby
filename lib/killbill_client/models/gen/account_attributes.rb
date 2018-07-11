@@ -38,6 +38,7 @@ module KillBillClient
       attribute :parent_account_id
       attribute :is_payment_delegated_to_parent
       attribute :payment_method_id
+      attribute :reference_time
       attribute :time_zone
       attribute :address1
       attribute :address2
@@ -50,7 +51,6 @@ module KillBillClient
       attribute :phone
       attribute :notes
       attribute :is_migrated
-      attribute :is_notified_for_invoices
       attribute :account_balance
       attribute :account_cba
       attribute :audit_logs

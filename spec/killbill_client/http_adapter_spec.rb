@@ -68,6 +68,12 @@ describe KillBillClient::API do
     expect(http_client.verify_mode).to eq(OpenSSL::SSL::VERIFY_NONE)
   end
 
+  # See https://github.com/killbill/killbill-client-ruby/issues/69
+  it 'should construct URIs' do
+    http_adapter = DummyForHTTPAdapter.new
+    uri = http_adapter.send(:build_uri, KillBillClient::Model::Account::KILLBILL_API_ACCOUNTS_PREFIX, options)
+    expect(uri).to eq(URI.parse("#{KillBillClient::API.base_uri.to_s}/1.0/kb/accounts"))
+  end
 end
 
 class DummyForHTTPAdapter

@@ -27,8 +27,9 @@
 
 module KillBillClient
   module Model
-    class BulkBaseSubscriptionAndAddOnsAttributes < Resource
-      attribute :base_entitlement_and_add_ons
+    class TenantKeyValueAttributes < Resource
+      attribute :key
+      attribute :values
     end
   end
 end

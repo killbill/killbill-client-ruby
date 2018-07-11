@@ -27,9 +27,11 @@
 
 module KillBillClient
   module Model
-    class InvoiceEmailAttributes < Resource
-      attribute :account_id
-      attribute :is_notified_for_invoices
+    class BlockPriceOverrideAttributes < Resource
+      attribute :unit_name
+      attribute :size
+      attribute :price
+      attribute :max
     end
   end
 end

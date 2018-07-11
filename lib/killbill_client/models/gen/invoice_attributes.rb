@@ -43,6 +43,8 @@ module KillBillClient
       attribute :credits
       attribute :items
       attribute :is_parent_invoice
+      attribute :parent_invoice_id
+      attribute :parent_account_id
       attribute :audit_logs
     end
   end

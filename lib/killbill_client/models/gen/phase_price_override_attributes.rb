@@ -33,6 +33,7 @@ module KillBillClient
       attribute :phase_type
       attribute :fixed_price
       attribute :recurring_price
+      attribute :usage_overrides
     end
   end
 end

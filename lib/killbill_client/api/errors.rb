@@ -114,6 +114,16 @@ module KillBillClient
     class NotAcceptable < ClientError
     end
 
+    # === 409 Conflict
+    #
+    # The request content type was not acceptable.
+    #
+    # The resource was found. This may be returned if the given
+    # key exists. The response body will explain
+    # which resource was found.
+    class Conflict < ClientError
+    end
+
     # === 415 Unsupported Media Type
     #
     # The request body was not recognized as XML.
@@ -181,6 +191,7 @@ module KillBillClient
         403 => Forbidden,
         404 => NotFound,
         406 => NotAcceptable,
+        409 => Conflict,
         415 => UnsupportedMediaType,
         422 => UnprocessableEntity,
         500 => InternalServerError,

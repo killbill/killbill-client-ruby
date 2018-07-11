@@ -3,6 +3,7 @@ module KillBillClient
     class Invoice < InvoiceAttributes
 
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::TagHelper
 
       KILLBILL_API_INVOICES_PREFIX = "#{KILLBILL_API_PREFIX}/invoices"
       KILLBILL_API_DRY_RUN_INVOICES_PREFIX = "#{KILLBILL_API_INVOICES_PREFIX}/dryRun"
@@ -12,11 +13,31 @@ module KillBillClient
       has_many :credits, KillBillClient::Model::Credit
 
       has_custom_fields KILLBILL_API_INVOICES_PREFIX, :invoice_id
+      has_tags KILLBILL_API_INVOICES_PREFIX, :invoice_id
 
       class << self
-        def find_by_id_or_number(id_or_number, with_items = true, audit = "NONE", options = {})
-          get "#{KILLBILL_API_INVOICES_PREFIX}/#{id_or_number}",
+        def find_by_id(invoice_id, with_items = true, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}",
               {
+                  :withItems => with_items,
+                  :audit     => audit
+              },
+              options
+        end
+
+        def find_by_number(number, with_items = true, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/byNumber/#{number}",
+              {
+                  :withItems => with_items,
+                  :audit     => audit
+              },
+              options
+        end
+
+        def find_by_invoice_item_id(invoice_item_id, with_items = true, with_children_items = false, audit = "NONE", options = {})
+          get "#{KILLBILL_API_INVOICES_PREFIX}/byItemId/#{invoice_item_id}",
+              {
+                  :withChildrenItems => with_children_items,
                   :withItems => with_items,
                   :audit     => audit
               },
@@ -79,27 +100,24 @@ module KillBillClient
           query_map = {:accountId => account_id}
           query_map[:targetDate] = target_date if target_date != nil
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user => 'trigger_invoice_dry_run',
-                           :reason => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user => 'trigger_invoice_dry_run',
+                         :reason => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
 
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
 
         def create_subscription_dry_run(account_id, bundle_id, target_date, product_name, product_category,
-            billing_period, price_list_name,  options = {})
+                                        billing_period, price_list_name,  options = {})
           query_map              = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
 
@@ -112,25 +130,22 @@ module KillBillClient
           dry_run.price_list_name = price_list_name
           dry_run.bundle_id = bundle_id
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'create_subscription_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'create_subscription_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
         def change_plan_dry_run(account_id, bundle_id, subscription_id, target_date, product_name, product_category, billing_period, price_list_name,
-            effective_date, billing_policy, options = {})
+                                effective_date, billing_policy, options = {})
           query_map              = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
 
@@ -146,26 +161,24 @@ module KillBillClient
           dry_run.bundle_id = bundle_id
           dry_run.subscription_id = subscription_id
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'change_plan_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
 
-            res.refresh(options)
-          rescue KillBillClient::API::NotFound
-            nil
-          end
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'change_plan_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
+
+          nothing_to_generate?(res) ? nil : res.refresh(options)
+
         end
 
 
         def cancel_subscription_dry_run(account_id, bundle_id, subscription_id, target_date,
-            effective_date, billing_policy,  options = {})
+                                        effective_date, billing_policy,  options = {})
           query_map              = {:accountId => account_id}
           query_map[:targetDate] = target_date if !target_date.nil?
 
@@ -178,31 +191,27 @@ module KillBillClient
           dry_run.subscription_id = subscription_id
 
 
-          begin
-            res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
-                       dry_run.to_json,
-                       query_map,
-                       {
-                           :user    => 'cancel_subscription_dry_run',
-                           :reason  => '',
-                           :comment => '',
-                       }.merge(options),
-                       Invoice
+          res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
+                     dry_run.to_json,
+                     query_map,
+                     {
+                         :user    => 'cancel_subscription_dry_run',
+                         :reason  => '',
+                         :comment => '',
+                     }.merge(options),
+                     Invoice
 
-            res.refresh(options)
+          nothing_to_generate?(res) ? nil : res.refresh(options)
 
-          rescue KillBillClient::API::NotFound
-            nil
-          end
         end
 
 
-        def get_invoice_template(is_manual_pay, options = {})
+        def get_invoice_template(is_manual_pay, locale = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving an invoice template supported in multi-tenant mode")
 
 
-          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate" : "template"}",
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate/#{locale}" : "template"}",
               {},
               {
                   :head => {'Accept' => 'text/html'},
@@ -227,7 +236,7 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_invoice_template(is_manual_pay, options)
+          get_invoice_template(is_manual_pay, nil, options)
         end
 
         def get_invoice_translation(locale, options = {})
@@ -295,13 +304,38 @@ module KillBillClient
           get_catalog_translation(locale, options)
         end
 
+        def create_migration_invoice(account_id, invoices, target_date, user = nil, reason = nil, comment = nil, options = {})
 
+          params = {}
+          params[:targetDate] = target_date
+          post "#{KILLBILL_API_INVOICES_PREFIX}/migration/#{account_id}",
+               invoices.to_json,
+               params,
+               {
+                   :user    => user,
+                   :reason  => reason,
+                   :comment => comment,
+               }.merge(options)
+        end
 
       end
 
       def commit(user = nil, reason = nil, comment = nil, options = {})
 
         self.class.put "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/commitInvoice",
+                       nil,
+                       {},
+                       {
+                           :user => user,
+                           :reason => reason,
+                           :comment => comment,
+                       }.merge(options)
+
+      end
+
+      def void(user = nil, reason = nil, comment = nil, options = {})
+
+        self.class.put "#{Invoice::KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/voidInvoice",
                        nil,
                        {},
                        {
@@ -321,6 +355,23 @@ module KillBillClient
                        },
                        options,
                        InvoicePayment
+      end
+
+      def trigger_email_notifications(user = nil, reason = nil, comment = nil, options = {})
+        self.class.post "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/emailNotifications",
+                        {},
+                        {},
+                        {
+                            :user    => user,
+                            :reason  => reason,
+                            :comment => comment,
+                        }.merge(options)
+      end
+      private
+
+      def self.nothing_to_generate?(invoice)
+        return true if invoice.nil? || invoice.response.nil?
+        invoice.response.code.to_i == 204
       end
     end
   end

@@ -2,9 +2,13 @@ module KillBillClient
   module Model
     class Tag < TagAttributes
 
+      include KillBillClient::Model::AuditLogWithHistoryHelper
+
       KILLBILL_API_TAGS_PREFIX = "#{KILLBILL_API_PREFIX}/tags"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
+
+      has_audit_logs_with_history KILLBILL_API_TAGS_PREFIX, :tag_id
 
       class << self
         def find_in_batches(offset = 0, limit = 100, options = {})

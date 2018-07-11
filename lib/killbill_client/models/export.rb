@@ -11,7 +11,7 @@ module KillBillClient
           get "#{KILLBILL_API_EXPORT_PREFIX}/#{account_id}",
           {},
           {
-            :accept => 'text/plain',
+            :accept => 'application/octet-stream',
             :user    => user,
             :reason  => reason,
             :comment => comment      

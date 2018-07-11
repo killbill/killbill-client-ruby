@@ -27,14 +27,13 @@
 
 module KillBillClient
   module Model
-    class OverdueStateAttributes < Resource
-      attribute :name
-      attribute :external_message
-      attribute :days_between_payment_retries
-      attribute :is_disable_entitlement_and_changes_blocked
-      attribute :is_block_changes
-      attribute :is_clear_state
-      attribute :reevaluation_interval_days
+    class PhasePriceAttributes < Resource
+      attribute :plan_name
+      attribute :phase_name
+      attribute :phase_type
+      attribute :fixed_price
+      attribute :recurring_price
+      attribute :usage_prices
     end
   end
 end

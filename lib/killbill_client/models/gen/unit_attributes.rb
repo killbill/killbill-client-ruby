@@ -27,9 +27,9 @@
 
 module KillBillClient
   module Model
-    class TenantKeyAttributes < Resource
-      attribute :key
-      attribute :values
+    class UnitAttributes < Resource
+      attribute :name
+      attribute :pretty_name
     end
   end
 end
