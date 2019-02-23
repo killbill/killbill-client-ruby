@@ -6,11 +6,14 @@ module KillBillClient
 
       include KillBillClient::Model::TagHelper
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       has_custom_fields KILLBILL_API_INVOICE_ITEMS_PREFIX, :invoice_item_id
       has_tags KILLBILL_API_INVOICE_ITEMS_PREFIX, :invoice_item_id
-
       has_many :audit_logs, KillBillClient::Model::AuditLog
+
+      has_audit_logs_with_history KILLBILL_API_INVOICE_ITEMS_PREFIX, :invoice_item_id
+
 
       # DO NOT DELETE THIS METHOD
       def tags(included_deleted = false, audit = 'NONE', options = {})

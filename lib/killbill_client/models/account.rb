@@ -65,6 +65,14 @@ module KillBillClient
               },
               options
         end
+
+        def blocking_state_audit_logs_with_history(blocking_state_id, options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/block/#{blocking_state_id}/auditLogsWithHistory",
+              {},
+              options,
+              AuditLog
+        end
+
       end
 
       def create(user = nil, reason = nil, comment = nil, options = {})
@@ -370,6 +378,7 @@ module KillBillClient
                        options,
                        AuditLog
       end
+
     end
   end
 end

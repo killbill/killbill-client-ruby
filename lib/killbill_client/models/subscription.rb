@@ -4,6 +4,7 @@ module KillBillClient
 
       include KillBillClient::Model::TagHelper
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_ENTITLEMENT_PREFIX = "#{KILLBILL_API_PREFIX}/subscriptions"
 
@@ -13,12 +14,22 @@ module KillBillClient
       has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
       has_tags KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
 
+      has_audit_logs_with_history KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
+
       class << self
         def find_by_id(subscription_id, options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
               {},
               options
         end
+
+        def event_audit_logs_with_history(event_id, options = {})
+          get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/events/#{event_id}/auditLogsWithHistory",
+              {},
+              options,
+              AuditLog
+        end
+
       end
       #
       # Create a new entitlement
@@ -196,6 +207,7 @@ module KillBillClient
                            :comment => comment,
                        }.merge(options)
       end
+
     end
   end
 end

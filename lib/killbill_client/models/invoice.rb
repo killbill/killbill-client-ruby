@@ -4,6 +4,7 @@ module KillBillClient
 
       include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::TagHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_INVOICES_PREFIX = "#{KILLBILL_API_PREFIX}/invoices"
       KILLBILL_API_DRY_RUN_INVOICES_PREFIX = "#{KILLBILL_API_INVOICES_PREFIX}/dryRun"
@@ -14,6 +15,8 @@ module KillBillClient
 
       has_custom_fields KILLBILL_API_INVOICES_PREFIX, :invoice_id
       has_tags KILLBILL_API_INVOICES_PREFIX, :invoice_id
+      has_audit_logs_with_history KILLBILL_API_INVOICES_PREFIX, :invoice_id
+
 
       class << self
         def find_by_id(invoice_id, with_items = true, audit = "NONE", options = {})
