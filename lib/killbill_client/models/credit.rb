@@ -1,6 +1,6 @@
 module KillBillClient
   module Model
-    class Credit < CreditAttributes
+    class Credit < InvoiceItemAttributes
       KILLBILL_API_CREDITS_PREFIX = "#{KILLBILL_API_PREFIX}/credits"
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
@@ -9,7 +9,7 @@ module KillBillClient
           get "#{KILLBILL_API_CREDITS_PREFIX}/#{credit_id}",
               {},
               options,
-              CreditAttributes
+              InvoiceItemAttributes
         end
       end
 
