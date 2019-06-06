@@ -301,7 +301,7 @@ describe KillBillClient::Model do
     new_credit = KillBillClient::Model::Credit.new
     new_credit.amount = 10.1
     new_credit.invoice_id = invoice_id
-    new_credit.effective_date = "2013-09-30"
+    new_credit.start_date = "2013-09-30"
     new_credit.account_id = account.account_id
 
     expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)
