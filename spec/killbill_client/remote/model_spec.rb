@@ -299,7 +299,7 @@ describe KillBillClient::Model do
 
     # Create a credit for invoice
     new_credit = KillBillClient::Model::Credit.new
-    new_credit.credit_amount = 10.1
+    new_credit.amount = 10.1
     new_credit.invoice_id = invoice_id
     new_credit.effective_date = "2013-09-30"
     new_credit.account_id = account.account_id
