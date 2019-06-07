@@ -11,7 +11,7 @@ module KillBillClient
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
       has_many :items, KillBillClient::Model::InvoiceItem
-      has_many :credits, KillBillClient::Model::Credit
+      has_many :credits, KillBillClient::Model::InvoiceItem
 
       has_custom_fields KILLBILL_API_INVOICES_PREFIX, :invoice_id
       has_tags KILLBILL_API_INVOICES_PREFIX, :invoice_id
