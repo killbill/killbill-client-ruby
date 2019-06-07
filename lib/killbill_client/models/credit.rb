@@ -14,8 +14,8 @@ module KillBillClient
       end
 
       def create(auto_commit = false, user = nil, reason = nil, comment = nil, options = {})
-        created_credit = self.class.post KILLBILL_API_CREDITS_PREFIX,
-                                         to_json,
+        created_credits = self.class.post KILLBILL_API_CREDITS_PREFIX,
+                                         [to_hash].to_json,
                                          {
                                              :autoCommit => auto_commit
                                          },
@@ -24,7 +24,7 @@ module KillBillClient
                                              :reason => reason,
                                              :comment => comment,
                                          }.merge(options)
-        created_credit.refresh(options)
+        created_credits
       end
 
     end
