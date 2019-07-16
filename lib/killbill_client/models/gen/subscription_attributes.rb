@@ -30,6 +30,7 @@ module KillBillClient
     class SubscriptionAttributes < Resource
       attribute :account_id
       attribute :bundle_id
+      attribute :bundle_external_key
       attribute :subscription_id
       attribute :external_key
       attribute :start_date
