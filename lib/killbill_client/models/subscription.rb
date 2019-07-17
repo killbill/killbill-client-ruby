@@ -23,6 +23,16 @@ module KillBillClient
               options
         end
 
+        def find_by_external_key(external_key, options = {})
+          params = {}
+          params[:externalKey] = external_key
+
+          get "#{KILLBILL_API_ENTITLEMENT_PREFIX}",
+              params,
+              options
+        end
+
+
         def event_audit_logs_with_history(event_id, options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/events/#{event_id}/auditLogsWithHistory",
               {},
