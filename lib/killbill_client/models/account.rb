@@ -143,20 +143,18 @@ module KillBillClient
                        Bundle
       end
 
-      def invoices(with_items=false, options = {})
+      def invoices(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
-                           :withItems => with_items
                        },
                        options,
                        Invoice
       end
 
-      def migration_invoices(with_items=false, options = {})
+      def migration_invoices(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
-                           :withMigrationInvoices => true,
-                           :withItems => with_items
+                           :withMigrationInvoices => true
                        },
                        options,
                        Invoice
