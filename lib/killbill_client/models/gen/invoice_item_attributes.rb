@@ -52,6 +52,7 @@ module KillBillClient
       attribute :currency
       attribute :quantity
       attribute :item_details
+      attribute :catalog_effective_date
       attribute :child_items
       attribute :audit_logs
     end
