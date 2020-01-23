@@ -6,12 +6,14 @@ module KillBillClient
 
       include KillBillClient::Model::TagHelper
       include KillBillClient::Model::CustomFieldHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       has_custom_fields KILLBILL_API_BUNDLES_PREFIX, :bundle_id
       has_tags KILLBILL_API_BUNDLES_PREFIX, :bundle_id
 
       has_many :subscriptions, KillBillClient::Model::Subscription
       has_many :audit_logs, KillBillClient::Model::AuditLog
+      has_audit_logs_with_history KILLBILL_API_BUNDLES_PREFIX, :bundle_id
 
       class << self
         def find_in_batches(offset = 0, limit = 100, options = {})

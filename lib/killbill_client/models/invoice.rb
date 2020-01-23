@@ -4,41 +4,41 @@ module KillBillClient
 
       include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::TagHelper
+      include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_INVOICES_PREFIX = "#{KILLBILL_API_PREFIX}/invoices"
       KILLBILL_API_DRY_RUN_INVOICES_PREFIX = "#{KILLBILL_API_INVOICES_PREFIX}/dryRun"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
       has_many :items, KillBillClient::Model::InvoiceItem
-      has_many :credits, KillBillClient::Model::Credit
+      has_many :credits, KillBillClient::Model::InvoiceItem
 
       has_custom_fields KILLBILL_API_INVOICES_PREFIX, :invoice_id
       has_tags KILLBILL_API_INVOICES_PREFIX, :invoice_id
+      has_audit_logs_with_history KILLBILL_API_INVOICES_PREFIX, :invoice_id
+
 
       class << self
-        def find_by_id(invoice_id, with_items = true, audit = "NONE", options = {})
+        def find_by_id(invoice_id, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}",
               {
-                  :withItems => with_items,
                   :audit     => audit
               },
               options
         end
 
-        def find_by_number(number, with_items = true, audit = "NONE", options = {})
+        def find_by_number(number, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/byNumber/#{number}",
               {
-                  :withItems => with_items,
                   :audit     => audit
               },
               options
         end
 
-        def find_by_invoice_item_id(invoice_item_id, with_items = true, with_children_items = false, audit = "NONE", options = {})
+        def find_by_invoice_item_id(invoice_item_id, with_children_items = false, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/byItemId/#{invoice_item_id}",
               {
                   :withChildrenItems => with_children_items,
-                  :withItems => with_items,
                   :audit     => audit
               },
               options

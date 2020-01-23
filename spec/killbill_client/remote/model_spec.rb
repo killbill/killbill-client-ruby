@@ -163,13 +163,13 @@ describe KillBillClient::Model do
     invoice.commit 'KillBill Spec test'
 
     # Add/Remove a invoice item tag
-    expect(invoice_item.tags.size).to eq(0)
-    invoice_item.add_tag('TEST', 'KillBill Spec test')
-    tags = invoice_item.tags
+    expect(invoice.tags.size).to eq(0)
+    invoice.add_tag('WRITTEN_OFF', 'KillBill Spec test')
+    tags = invoice.tags
     expect(tags.size).to eq(1)
-    expect(tags.first.tag_definition_name).to eq('TEST')
-    invoice_item.remove_tag('TEST', 'KillBill Spec test')
-    expect(invoice_item.tags.size).to eq(0)
+    expect(tags.first.tag_definition_name).to eq('WRITTEN_OFF')
+    invoice.remove_tag('WRITTEN_OFF', 'KillBill Spec test')
+    expect(invoice.tags.size).to eq(0)
 
     # Add/Remove a invoice item custom field
     expect(invoice_item.custom_fields.size).to eq(0)
@@ -285,7 +285,7 @@ describe KillBillClient::Model do
     expect(invoice_payment.credited_amount).to eq(0)
 
     # Refund the payment (with item adjustment)
-    invoice_item = KillBillClient::Model::Invoice.find_by_number(invoice_number, true).items.first
+    invoice_item = KillBillClient::Model::Invoice.find_by_number(invoice_number).items.first
     item = KillBillClient::Model::InvoiceItem.new
     item.invoice_item_id = invoice_item.invoice_item_id
     item.amount = invoice_item.amount
@@ -299,9 +299,9 @@ describe KillBillClient::Model do
 
     # Create a credit for invoice
     new_credit = KillBillClient::Model::Credit.new
-    new_credit.credit_amount = 10.1
+    new_credit.amount = 10.1
     new_credit.invoice_id = invoice_id
-    new_credit.effective_date = "2013-09-30"
+    new_credit.start_date = "2013-09-30"
     new_credit.account_id = account.account_id
 
     expect { new_credit.create(true, 'KillBill Spec test') }.to raise_error(KillBillClient::API::BadRequest)

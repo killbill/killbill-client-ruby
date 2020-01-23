@@ -42,6 +42,7 @@ module KillBillClient
       attribute :bundle_keys
       attribute :credits
       attribute :items
+      attribute :tracking_ids
       attribute :is_parent_invoice
       attribute :parent_invoice_id
       attribute :parent_account_id

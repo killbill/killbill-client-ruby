@@ -28,6 +28,23 @@ module KillBillClient
               },
               options
         end
+
+        def find_in_batches_by_search_type_name(object_type, field_name, field_value, offset = 0, limit = 100, options = {})
+
+          query_fields = {
+              :objectType => object_type,
+              :fieldName => field_name,
+              :fieldValue => field_value,
+              :offset => offset,
+              :limit  => limit
+          }
+          query_fields[:fieldValue] = field_value if field_value
+
+          get "#{KILLBILL_API_CUSTOM_FIELDS_PREFIX}/search",
+              query_fields,
+              options
+        end
+
       end
     end
   end

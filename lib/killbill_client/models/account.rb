@@ -65,6 +65,14 @@ module KillBillClient
               },
               options
         end
+
+        def blocking_state_audit_logs_with_history(blocking_state_id, options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/block/#{blocking_state_id}/auditLogsWithHistory",
+              {},
+              options,
+              AuditLog
+        end
+
       end
 
       def create(user = nil, reason = nil, comment = nil, options = {})
@@ -135,20 +143,18 @@ module KillBillClient
                        Bundle
       end
 
-      def invoices(with_items=false, options = {})
+      def invoices(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
-                           :withItems => with_items
                        },
                        options,
                        Invoice
       end
 
-      def migration_invoices(with_items=false, options = {})
+      def migration_invoices(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
-                           :withMigrationInvoices => true,
-                           :withItems => with_items
+                           :withMigrationInvoices => true
                        },
                        options,
                        Invoice
@@ -370,6 +376,7 @@ module KillBillClient
                        options,
                        AuditLog
       end
+
     end
   end
 end
