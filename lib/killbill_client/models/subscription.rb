@@ -64,7 +64,35 @@ module KillBillClient
                                               }.merge(options)
         created_entitlement.refresh(options)
       end
+      #
+      # Create a new entitlement with different entitlement and billing date
+      #
+      #
+      #
+      def create_with_entitlement_date(user = nil, 
+                                  reason = nil, 
+                                  comment = nil, 
+                                  entitlement_date = nil,
+                                  billing_date = nil,
+                                  call_completion = false, 
+                                  options = {})
 
+        params                  = {}
+        params[:callCompletion] = call_completion
+        params[:entitlementDate]  = entitlement_date unless entitlement_date.nil?
+        params[:billingDate]  = billing_date unless billing_date.nil?
+
+
+        created_entitlement = self.class.post KILLBILL_API_ENTITLEMENT_PREFIX,
+                                              to_json,
+                                              params,
+                                              {
+                                                  :user    => user,
+                                                  :reason  => reason,
+                                                  :comment => comment,
+                                              }.merge(options)
+        created_entitlement.refresh(options)
+      end
       #
       # Change the plan of the existing Entitlement
       #
