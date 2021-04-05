@@ -71,7 +71,7 @@ module KillBillClient
             self.class.delete "#{url_prefix}/#{send(id_alias)}/customFields",
                               {},
                               {
-                                  :customFieldList => custom_fields_param
+                                  :customField => custom_fields_param
                               },
                               {
                                   :user    => user,
