@@ -101,13 +101,17 @@ describe KillBillClient::Model do
     custom_field = KillBillClient::Model::CustomField.new
     custom_field.name = SecureRandom.uuid.to_s
     custom_field.value = SecureRandom.uuid.to_s
+    custom_field_other = KillBillClient::Model::CustomField.new
+    custom_field_other.name = SecureRandom.uuid.to_s
+    custom_field_other.value = SecureRandom.uuid.to_s
     account.add_custom_field(custom_field, 'KillBill Spec test')
+    account.add_custom_field(custom_field_other, 'KillBill Spec test other')
     custom_fields = account.custom_fields
-    expect(custom_fields.size).to eq(1)
+    expect(custom_fields.size).to eq(2)
     expect(custom_fields.first.name).to eq(custom_field.name)
     expect(custom_fields.first.value).to eq(custom_field.value)
     account.remove_custom_field(custom_fields.first.custom_field_id, 'KillBill Spec test')
-    expect(account.custom_fields.size).to eq(0)
+    expect(account.custom_fields.size).to eq(1)
 
     # Add a payment method
     pm = KillBillClient::Model::PaymentMethod.new
