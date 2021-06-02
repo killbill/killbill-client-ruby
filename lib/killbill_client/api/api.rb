@@ -70,7 +70,7 @@ module KillBillClient
 
       # @return [String]
       def user_agent
-        "killbill/#{Version}; #{RUBY_DESCRIPTION}"
+        "killbill/#{VERSION}; #{RUBY_DESCRIPTION}"
       end
 
       private

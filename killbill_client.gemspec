@@ -19,7 +19,7 @@ require 'killbill_client/version'
 
 Gem::Specification.new do |s|
   s.name        = 'killbill-client'
-  s.version     = KillBillClient::Version.to_s
+  s.version     = KillBillClient::VERSION
   s.summary     = 'Kill Bill client library.'
   s.description = 'An API client library for Kill Bill.'
 
