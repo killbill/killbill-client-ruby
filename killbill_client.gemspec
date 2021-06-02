@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
     s.add_dependency 'json', '>= 1.2.0', '< 2.0.0'
   end
 
+  s.add_development_dependency 'gem-release', '~> 2.2'
   s.add_development_dependency 'rake', '>= 10.0.0', '< 11.0.0'
   s.add_development_dependency 'rspec', '~> 3.4'
 end

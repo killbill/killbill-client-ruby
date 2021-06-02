@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe KillBillClient::API do
+
+  before do
+    KillBillClient.url = nil
+    KillBillClient.disable_ssl_verification = nil
+    KillBillClient.read_timeout = nil
+    KillBillClient.connection_timeout = nil
+  end
+
   let(:expected_query_params) {
     [
         'controlPluginName=killbill-example-plugin',
@@ -55,11 +63,33 @@ describe KillBillClient::API do
     http_adapter = DummyForHTTPAdapter.new
     http_client = http_adapter.send(:create_http_client, uri)
     expect(http_client.read_timeout).to eq(60)
+    # The default value has changed from nil to 60 in 2.4
+    #expect(http_client.open_timeout).to eq(60)
     expect(http_client.use_ssl?).to be false
     expect(http_client.verify_mode).to be_nil
   end
 
+  it 'should set the global parameters for http client' do
+    KillBillClient.url = 'https://example.com'
+    KillBillClient.read_timeout = 123000
+    KillBillClient.connection_timeout = 456000
+    KillBillClient.disable_ssl_verification = true
+
+    http_adapter = DummyForHTTPAdapter.new
+    http_client = http_adapter.send(:create_http_client, ssl_uri, {})
+    expect(http_client.read_timeout).to eq(123)
+    expect(http_client.open_timeout).to eq(456)
+    expect(http_client.use_ssl?).to be true
+    expect(http_client.verify_mode).to eq(OpenSSL::SSL::VERIFY_NONE)
+  end
+
   it 'should set the correct parameters for http client' do
+    # These don't matter (overridden by options)
+    KillBillClient.url = 'https://example.com'
+    KillBillClient.read_timeout = 123000
+    KillBillClient.connection_timeout = 456000
+    KillBillClient.disable_ssl_verification = false
+
     http_adapter = DummyForHTTPAdapter.new
     http_client = http_adapter.send(:create_http_client, ssl_uri, options)
     expect(http_client.read_timeout).to eq(options[:read_timeout] / 1000)
@@ -70,6 +100,8 @@ describe KillBillClient::API do
 
   # See https://github.com/killbill/killbill-client-ruby/issues/69
   it 'should construct URIs' do
+    KillBillClient.url = 'http://example.com:8080'
+
     http_adapter = DummyForHTTPAdapter.new
     uri = http_adapter.send(:build_uri, KillBillClient::Model::Account::KILLBILL_API_ACCOUNTS_PREFIX, options)
     expect(uri).to eq(URI.parse("#{KillBillClient::API.base_uri.to_s}/1.0/kb/accounts"))

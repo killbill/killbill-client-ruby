@@ -41,6 +41,8 @@ module KillBillClient
 
     attr_writer :url
 
+    attr_accessor :read_timeout
+    attr_accessor :connection_timeout
     attr_accessor :disable_ssl_verification
     attr_accessor :return_full_stacktraces
 

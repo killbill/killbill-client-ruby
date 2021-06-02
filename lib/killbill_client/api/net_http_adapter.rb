@@ -86,8 +86,16 @@ module KillBillClient
 
         def create_http_client(uri, options = {})
           http = ::Net::HTTP.new uri.host, uri.port
-          http.read_timeout = options[:read_timeout].to_f / 1000 if options[:read_timeout].is_a? Numeric
-          http.open_timeout = options[:connection_timeout].to_f / 1000 if options[:connection_timeout].is_a? Numeric
+          if options[:read_timeout].is_a? Numeric
+            http.read_timeout = options[:read_timeout].to_f / 1000
+          elsif KillBillClient.read_timeout.is_a? Numeric
+            http.read_timeout = KillBillClient.read_timeout.to_f / 1000
+          end
+          if options[:connection_timeout].is_a? Numeric
+            http.open_timeout = options[:connection_timeout].to_f / 1000
+          elsif KillBillClient.connection_timeout.is_a? Numeric
+            http.open_timeout = KillBillClient.connection_timeout.to_f / 1000
+          end
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE if (options[:disable_ssl_verification] || KillBillClient.disable_ssl_verification)
           http
