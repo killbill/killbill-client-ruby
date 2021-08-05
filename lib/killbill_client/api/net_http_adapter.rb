@@ -118,8 +118,11 @@ module KillBillClient
           # Configure RBAC, if enabled
           username = options[:username] || KillBillClient.username
           password = options[:password] || KillBillClient.password
+          bearer = options[:bearer]
           if username and password
             request.basic_auth(*[username, password].flatten[0, 2])
+          elsif bearer
+            request['authorization'] = 'Bearer ' + bearer
           end
           session_id = options[:session_id]
           if session_id

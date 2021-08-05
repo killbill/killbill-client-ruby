@@ -28,6 +28,37 @@ Alternatively, add the dependency in your Gemfile:
 gem 'killbill-client', '~> 1.0'
 ```
 
+Authentication
+--------------
+
+A username and password can be set directly in the `options` hash (accepted by each API method):
+```ruby
+options = {
+  :username => 'admin',
+  :password => 'password'
+}
+```
+These credentials are validated by Kill Bill either directly (users managed by Kill Bill) or via a third-party (LDAP, Okta, Auth0, etc.).
+
+Alternatively, a bearer token can be passed as such:
+```ruby
+options = {
+  :bearer => 'token'
+}
+```
+The security token would be validated by Kill bill via a third-party (e.g. Auth0).
+
+By default, Kill Bill won't maintain sessions, except when calling the API `/1.0/kb/security/permissions` (`JSESSIONID`, present in the `Set-Cookie` response header).
+This session id can be passed instead:
+```ruby
+options = {
+  :session_id => 'JSESSIONID'
+}
+```
+Using this session mechanism is recommend for user interfaces or to minimize the runtime dependency with a third-party provider.
+
+Note: if a timed out session is re-used (`last_access_time` older than 60 minutes by default), a `HTTP/1.1 401 Unauthorized` is returned with `Set-Cookie: JSESSIONID=deleteMe`, and the session is deleted from the database (and cache) on the server side.
+
 Examples
 --------
 
