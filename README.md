@@ -25,7 +25,7 @@ gem install killbill-client
 Alternatively, add the dependency in your Gemfile:
 
 ```
-gem 'killbill-client', '~> 1.0'
+gem 'killbill-client'
 ```
 
 Authentication
