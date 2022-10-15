@@ -146,7 +146,7 @@ module KillBillClient
       def invoices(options = {})
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
-                           :withInvoiceItems => true
+                           :withInvoiceComponents => true
                        },
                        options,
                        Invoice
