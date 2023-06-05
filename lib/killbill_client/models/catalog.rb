@@ -7,43 +7,51 @@ module KillBillClient
       KILLBILL_API_CATALOG_PREFIX = "#{KILLBILL_API_PREFIX}/catalog"
 
       class << self
-        def simple_catalog(options = {})
+        def simple_catalog(account_id = nil, options = {})
           get "#{KILLBILL_API_CATALOG_PREFIX}",
-              {},
+              {
+                :accountId => account_id
+              },
               options
         end
 
-        def available_addons(base_product_name, options = {})
+        def available_addons(base_product_name, account_id = nil, options = {})
           get "#{KILLBILL_API_CATALOG_PREFIX}/availableAddons",
               {
-                  :baseProductName => base_product_name
+                  :baseProductName => base_product_name,
+                  :accountId => account_id
               },
               options,
               PlanDetail
         end
 
-        def available_base_plans(options = {})
+        def available_base_plans(account_id = nil, options = {})
           get "#{KILLBILL_API_CATALOG_PREFIX}/availableBasePlans",
-              {},
+              {
+                :accountId => account_id
+              },
               options,
               PlanDetail
         end
 
-        def get_tenant_catalog_versions(options = {})
+        def get_tenant_catalog_versions(account_id = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving catalog versions is only supported in multi-tenant mode")
 
           get "#{KILLBILL_API_CATALOG_PREFIX}/versions",
-              {},
+              {
+                :accountId => account_id
+              },
               options
         end
 
-        def get_tenant_catalog_xml(requested_date = nil, options = {})
+        def get_tenant_catalog_xml(requested_date = nil, account_id = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
 
           params = {}
           params[:requestedDate] = requested_date if requested_date
+          params[:account_id] = account_id if account_id
 
           get "#{KILLBILL_API_CATALOG_PREFIX}/xml",
               params,
@@ -55,12 +63,13 @@ module KillBillClient
 
         end
 
-        def get_tenant_catalog_json(requested_date = nil, options = {})
+        def get_tenant_catalog_json(requested_date = nil, account_id = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving a catalog is only supported in multi-tenant mode")
 
           params = {}
           params[:requestedDate] = requested_date if requested_date
+          params[:account_id] = account_id if account_id
 
           get KILLBILL_API_CATALOG_PREFIX,
               params,
