@@ -148,7 +148,7 @@ module KillBillClient
                    :reason => reason,
                    :comment => comment,
                }.merge(options)
-          get_tenant_catalog_json(nil, options)
+          get_tenant_catalog_json(nil, nil, options)
         end
 
 
