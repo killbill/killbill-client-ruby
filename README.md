@@ -12,6 +12,7 @@ Kill Bill compatibility
 | 1.x.y          | 0.18.z            |
 | 2.x.y          | 0.20.z            |
 | 3.x.y          | 0.22.z            |
+| 4.x.y          | 0.24.z            |
 
 Installation
 ------------

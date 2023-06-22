@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.8.6'
 
-  s.license = 'Apache License (2.0)'
+  s.license = 'Apache-2.0'
 
   s.author   = 'Killbill core team'
   s.email    = 'killbilling-users@googlegroups.com'
