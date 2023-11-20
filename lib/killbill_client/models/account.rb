@@ -147,7 +147,7 @@ module KillBillClient
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
                        {
                            :includeInvoiceComponents => true
-                       },
+                       }.merge(options.delete(:params)),
                        options,
                        Invoice
       end
