@@ -144,12 +144,13 @@ module KillBillClient
       end
 
       def invoices(options = {})
+        params_hash = options.delete(:params)
+        options_to_merge = params_hash.nil? ? {} : params_hash
+        merged_options = { :includeInvoiceComponents => true }.merge(options_to_merge)
         self.class.get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices",
-                       {
-                           :includeInvoiceComponents => true
-                       }.merge(options.delete(:params)),
-                       options,
-                       Invoice
+                 merged_options,
+                 options,
+                 Invoice
       end
 
       def migration_invoices(options = {})
