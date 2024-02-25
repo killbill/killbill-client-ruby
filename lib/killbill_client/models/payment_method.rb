@@ -2,6 +2,7 @@ module KillBillClient
   module Model
     class PaymentMethod < PaymentMethodAttributes
 
+      include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_PAYMENT_METHODS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentMethods"
@@ -10,6 +11,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_audit_logs_with_history KILLBILL_API_PAYMENT_METHODS_PREFIX, :payment_method_id
+      has_custom_fields KILLBILL_API_PAYMENT_METHODS_PREFIX, :payment_method_id
 
       class << self
         def find_by_id(payment_method_id, with_plugin_info = false, options = {})
