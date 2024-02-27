@@ -4,6 +4,7 @@ module KillBillClient
   module Model
     class Transaction < PaymentTransactionAttributes
 
+      include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::AuditLogWithHistoryHelper
 
       KILLBILL_API_TRANSACTIONS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentTransactions"
@@ -12,6 +13,7 @@ module KillBillClient
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_audit_logs_with_history KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
+      has_custom_fields KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
 
       def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
