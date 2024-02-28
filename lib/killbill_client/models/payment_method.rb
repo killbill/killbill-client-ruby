@@ -14,9 +14,12 @@ module KillBillClient
       has_custom_fields KILLBILL_API_PAYMENT_METHODS_PREFIX, :payment_method_id
 
       class << self
-        def find_by_id(payment_method_id, with_plugin_info = false, options = {})
+        def find_by_id(payment_method_id, included_deleted = false, with_plugin_info = false, plugin_property = [], audit = 'NONE', options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}/#{payment_method_id}",
               {
+                  :pluginProperty => plugin_property,
+                  :includedDeleted => included_deleted,
+                  :audit => audit,
                   :withPluginInfo => with_plugin_info
               },
               options
@@ -48,10 +51,11 @@ module KillBillClient
               options
         end
 
-        def find_by_external_key(external_key, included_deleted = false, with_plugin_info = false, audit='NONE', options = {})
+        def find_by_external_key(external_key, included_deleted = false, with_plugin_info = false, plugin_property = [], audit = 'NONE', options = {})
           get "#{KILLBILL_API_PAYMENT_METHODS_PREFIX}",
               {
                   :externalKey => external_key,
+                  :pluginProperty => plugin_property,
                   :includedDeleted => included_deleted,
                   :audit => audit,
                   :withPluginInfo => with_plugin_info

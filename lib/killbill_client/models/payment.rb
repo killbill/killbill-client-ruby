@@ -36,22 +36,25 @@ module KillBillClient
               options
         end
 
-        def find_by_transaction_id(transaction_id, with_plugin_info = false, with_attempts = false, options = {})
+        def find_by_transaction_id(transaction_id, with_plugin_info = false, with_attempts = false, plugin_property = [], audit = 'NONE', options = {})
           get "#{Transaction::KILLBILL_API_TRANSACTIONS_PREFIX}/#{transaction_id}",
               {
+                  :withPluginInfo => with_plugin_info,
                   :withAttempts => with_attempts,
-                  :withPluginInfo => with_plugin_info
+                  :pluginProperty => plugin_property,
+                  :audit => audit
               },
               options
         end
 
-        def find_by_transaction_external_key(external_key, with_plugin_info = false, with_attempts = false, audit='NONE', options = {})
+        def find_by_transaction_external_key(external_key, with_plugin_info = false, with_attempts = false, plugin_property = [], audit = 'NONE', options = {})
           get "#{Transaction::KILLBILL_API_TRANSACTIONS_PREFIX}",
               {
-                  :audit => audit,
                   :transactionExternalKey => external_key,
+                  :withPluginInfo => with_plugin_info,
                   :withAttempts => with_attempts,
-                  :withPluginInfo => with_plugin_info
+                  :pluginProperty => plugin_property,
+                  :audit => audit
               },
               options
         end

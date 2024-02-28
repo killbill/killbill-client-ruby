@@ -19,17 +19,19 @@ module KillBillClient
 
 
       class << self
-        def find_by_id(invoice_id, audit = "NONE", options = {})
+        def find_by_id(invoice_id, with_children_items = false, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}",
               {
+                  :withChildrenItems => with_children_items,
                   :audit     => audit
               },
               options
         end
 
-        def find_by_number(number, audit = "NONE", options = {})
+        def find_by_number(number, with_children_items = false, audit = "NONE", options = {})
           get "#{KILLBILL_API_INVOICES_PREFIX}/byNumber/#{number}",
               {
+                  :withChildrenItems => with_children_items,
                   :audit     => audit
               },
               options
