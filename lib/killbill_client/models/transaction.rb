@@ -14,6 +14,7 @@ module KillBillClient
 
       has_audit_logs_with_history KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
       has_custom_fields KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
+      has_tags KILLBILL_API_TRANSACTIONS_PREFIX, :transaction_id
 
       def auth(account_id, payment_method_id = nil, user = nil, reason = nil, comment = nil, options = {}, refresh_options = nil)
         @transaction_type = 'AUTHORIZE'
