@@ -6,6 +6,7 @@ module KillBillClient
 
       include KillBillClient::Model::CustomFieldHelper
       include KillBillClient::Model::AuditLogWithHistoryHelper
+      include KillBillClient::Model::TagHelper
 
       KILLBILL_API_TRANSACTIONS_PREFIX = "#{KILLBILL_API_PREFIX}/paymentTransactions"
 
