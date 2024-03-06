@@ -17,18 +17,20 @@ module KillBillClient
       has_audit_logs_with_history KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
 
       class << self
-        def find_by_id(subscription_id, options = {})
+        def find_by_id(subscription_id, audit = "NONE", options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
-              {},
+              {
+                :audit     => audit
+              },
               options
         end
 
-        def find_by_external_key(external_key, options = {})
-          params = {}
-          params[:externalKey] = external_key
-
+        def find_by_external_key(external_key, audit = "NONE", options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}",
-              params,
+              {
+                :externalKey     => external_key,
+                :audit     => audit
+              },
               options
         end
 
