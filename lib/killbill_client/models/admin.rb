@@ -8,22 +8,27 @@ module KillBillClient
       KILLBILL_API_CLOCK_PREFIX = "#{KILLBILL_API_PREFIX}/test/clock"
 
       class << self
-        def get_queues_entries(account_id, options = {})
+        def get_queues_entries(account_id, queue_name = '', service_name = '', with_history = true, min_date = '', max_date = '', with_in_processing = true, with_bus_events = true, with_notifications = true, options = {})
           get KILLBILL_API_QUEUES_PREFIX,
                     {
                         :accountId => account_id,
-                        :withHistory => options[:withHistory],
-                        :minDate => options[:minDate],
-                        :maxDate => options[:maxDate]
+                        :queueName => queue_name,
+                        :serviceName => service_name,
+                        :withHistory => with_history,
+                        :minDate => min_date,
+                        :maxDate => max_date,
+                        :withInProcessing => with_in_processing,
+                        :withBusEvents => with_bus_events,
+                        :withNotifications => with_notifications
                     },
                     {
                         :accept => 'application/octet-stream'
                     }.merge(options)
         end
 
-        def fix_transaction_state(payment_id, transaction_id, transaction_status, user = nil, reason = nil, comment = nil, options = {})
+        def fix_transaction_state(payment_id, transaction_id, transaction_status, payment_state_param = {}, user = nil, reason = nil, comment = nil, options = {})
           put "#{KILLBILL_API_ADMIN_PREFIX}/payments/#{payment_id}/transactions/#{transaction_id}",
-              {:transactionStatus => transaction_status}.to_json,
+              {:transactionStatus => transaction_status}.merge(payment_state_param).to_json,
               {},
               {
                   :user => user,
@@ -32,15 +37,18 @@ module KillBillClient
               }.merge(options)
         end
 
-        def trigger_invoice_generation_for_parked_accounts(offset = 0, limit = 100, user =nil, options = {})
+        def trigger_invoice_generation_for_parked_accounts(offset = 0, limit = 100, plugin_property = [], user = nil, reason = nil, comment = nil, options = {})
           post "#{KILLBILL_API_ADMIN_PREFIX}/invoices",
                {},
                {
                    :offset => offset,
-                   :limit => limit
+                   :limit => limit,
+                   :pluginProperty => plugin_property
                },
                {
-                   :user => user
+                  :user => user,
+                  :reason => reason,
+                  :comment => comment,
                }.merge(options)
         end
 
