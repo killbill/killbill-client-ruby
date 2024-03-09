@@ -94,21 +94,22 @@ module KillBillClient
           end
         end
 
-        def trigger_invoice_dry_run(account_id, target_date, upcoming_invoice_target_date, options = {})
+        def trigger_invoice_dry_run(account_id, target_date, upcoming_invoice_target_date, plugin_property = [], user = nil, reason = nil, comment = nil, options = {})
 
           dry_run = InvoiceDryRunAttributes.new
           dry_run.dry_run_type = upcoming_invoice_target_date ? 'UPCOMING_INVOICE' : 'TARGET_DATE'
 
           query_map = {:accountId => account_id}
           query_map[:targetDate] = target_date if target_date != nil
+          query_map[:pluginProperty] = plugin_property unless plugin_property.blank?
 
           res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
                      dry_run.to_json,
                      query_map,
                      {
-                         :user => 'trigger_invoice_dry_run',
-                         :reason => '',
-                         :comment => '',
+                         :user => user || 'trigger_invoice_dry_run',
+                         :reason => reason,
+                         :comment => comment,
                      }.merge(options),
                      Invoice
 
