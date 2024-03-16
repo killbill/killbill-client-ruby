@@ -96,7 +96,7 @@ module KillBillClient
                            :reason  => reason,
                            :comment => comment,
                        }.merge(options)
-        self.class.find_by_id(@subscription_id, options)
+        self.class.find_by_id(@subscription_id, "NONE", options)
       end
 
       #
