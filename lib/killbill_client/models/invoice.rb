@@ -101,7 +101,7 @@ module KillBillClient
 
           query_map = {:accountId => account_id}
           query_map[:targetDate] = target_date if target_date != nil
-          query_map[:pluginProperty] = plugin_property unless plugin_property.blank?
+          query_map[:pluginProperty] = plugin_property unless plugin_property.empty?
 
           res = post "#{KILLBILL_API_DRY_RUN_INVOICES_PREFIX}",
                      dry_run.to_json,
