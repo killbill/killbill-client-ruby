@@ -11,11 +11,12 @@ module KillBillClient
       has_audit_logs_with_history KILLBILL_API_CUSTOM_FIELDS_PREFIX, :custom_field_id
 
       class << self
-        def find_in_batches(offset = 0, limit = 100, options = {})
+        def find_in_batches(offset = 0, limit = 100, audit = 'NONE', options = {})
           get "#{KILLBILL_API_CUSTOM_FIELDS_PREFIX}/#{Resource::KILLBILL_API_PAGINATION_PREFIX}",
               {
                   :offset => offset,
-                  :limit  => limit
+                  :limit  => limit,
+                  :audit => audit
               },
               options
         end
