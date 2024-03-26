@@ -2,6 +2,9 @@ module KillBillClient
   module Model
     class Tenant < TenantAttributes
       KILLBILL_API_TENANTS_PREFIX = "#{KILLBILL_API_PREFIX}/tenants"
+      KILLBILL_API_TENANTS_NOTIFICATION = "#{KILLBILL_API_TENANTS_PREFIX}/registerNotificationCallback"
+      KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION = "#{KILLBILL_API_PREFIX}/uploadPerTenantConfig"
+      KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE = "#{KILLBILL_API_PREFIX}/uploadPluginPaymentStateMachineConfig"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
@@ -125,6 +128,42 @@ module KillBillClient
         options[:api_key] = @api_key
         options[:api_secret] = @api_secret
         created_tenant.refresh(options)
+      end
+
+      def register_push_notification(cb, options = {})
+        post "#{KILLBILL_API_TENANTS_NOTIFICATION}", {}, {:cb => cb}, options
+      end
+
+      def retrieve_push_notification(options = {})
+        get "#{KILLBILL_API_TENANTS_NOTIFICATION}", {}, options
+      end
+
+      def delete_push_notification(options = {})
+        delete "#{KILLBILL_API_TENANTS_NOTIFICATION}", {}, {}, options
+      end
+
+      def add_system_configuration(configuration, options = {})
+        post "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}", configuration, {}, options
+      end
+
+      def retrieve_system_configurations(options = {})
+        get "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}", {}, options
+      end
+
+      def delete_system_configurations(options = {})
+        delete "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}", {}, {}, options
+      end
+
+      def add_payment_state_machine(plugin_name, state_machine_config, options = {})
+        post "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}", configuration, {}, options
+      end
+
+      def retrieve_payment_state_machine(plugin_name, options = {})
+        get "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}", {}, options
+      end
+
+      def delete_payment_state_machine(plugin_name, options = {})
+        delete "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}", {}, {}, options
       end
     end
   end
