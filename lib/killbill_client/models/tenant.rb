@@ -2,6 +2,9 @@ module KillBillClient
   module Model
     class Tenant < TenantAttributes
       KILLBILL_API_TENANTS_PREFIX = "#{KILLBILL_API_PREFIX}/tenants"
+      KILLBILL_API_TENANTS_NOTIFICATION = "#{KILLBILL_API_TENANTS_PREFIX}/registerNotificationCallback"
+      KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION = "#{KILLBILL_API_TENANTS_PREFIX}/uploadPerTenantConfig"
+      KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE = "#{KILLBILL_API_TENANTS_PREFIX}/uploadPluginPaymentStateMachineConfig"
 
       has_many :audit_logs, KillBillClient::Model::AuditLog
 
@@ -87,7 +90,6 @@ module KillBillClient
           send(get_method.to_sym, key_name, options)
         end
 
-
         def delete_tenant_key_value(key_name, key_path, error_id_str, user = nil, reason = nil, comment = nil, options = {})
 
           require_multi_tenant_options!(options, "Deleting a #{error_id_str} is only supported in multi-tenant mode")
@@ -105,13 +107,102 @@ module KillBillClient
                  }.merge(options)
 
         end
+
+        def register_push_notification(cb, user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "Push notification is only supported in multi-tenant mode")
+          post "#{KILLBILL_API_TENANTS_NOTIFICATION}",
+                {},
+                {:cb => cb},
+                {
+                  :user => user,
+                  :reason => reason,
+                  :comment => comment,
+                }.merge(options)
+        end
+
+        def retrieve_push_notification(options = {})
+          require_multi_tenant_options!(options, "Push notification is only supported in multi-tenant mode")
+          get "#{KILLBILL_API_TENANTS_NOTIFICATION}", {}, options
+        end
+
+        def delete_push_notification(user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "Push notification is only supported in multi-tenant mode")
+          delete "#{KILLBILL_API_TENANTS_NOTIFICATION}",
+                  {},
+                  {},
+                  {
+                    :user => user,
+                    :reason => reason,
+                    :comment => comment,
+                  }.merge(options)
+        end
+
+        def add_system_configuration(configuration, user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "System configuration is only supported in multi-tenant mode")
+          post "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}",
+                configuration,
+                {},
+                {
+                  :content_type => 'text/plain',
+                  :user => user,
+                  :reason => reason,
+                  :comment => comment,
+                }.merge(options)
+        end
+
+        def retrieve_system_configurations(options = {})
+          require_multi_tenant_options!(options, "System configuration is only supported in multi-tenant mode")
+          get "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}", {}, options
+        end
+
+        def delete_system_configurations(user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "System configuration is only supported in multi-tenant mode")
+          delete "#{KILLBILL_API_TENANTS_SYSTEM_CONFIGURATION}",
+                  {},
+                  {},
+                  {
+                    :user => user,
+                    :reason => reason,
+                    :comment => comment,
+                  }.merge(options)
+        end
+
+        def add_payment_state_machine(plugin_name, state_machine_config, user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "Payment state machine is only supported in multi-tenant mode")
+          post "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}",
+                state_machine_config,
+                {},
+                {
+                  :content_type => 'text/plain',
+                  :user => user,
+                  :reason => reason,
+                  :comment => comment,
+                }.merge(options)
+        end
+
+        def retrieve_payment_state_machine(plugin_name, options = {})
+          require_multi_tenant_options!(options, "Payment state machine is only supported in multi-tenant mode")
+          get "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}", {}, options
+        end
+
+        def delete_payment_state_machine(plugin_name, user = nil, reason = nil, comment = nil, options = {})
+          require_multi_tenant_options!(options, "Payment state machine is only supported in multi-tenant mode")
+          delete "#{KILLBILL_API_TENANTS_PLUGIN_PAYMENT_STATE_MACHINE}/#{plugin_name}",
+                  {},
+                  {},
+                  {
+                    :user => user,
+                    :reason => reason,
+                    :comment => comment,
+                  }.merge(options)
+        end
       end
 
 
       def create(use_global_default=true, user = nil, reason = nil, comment = nil, options = {})
 
         created_tenant = self.class.post KILLBILL_API_TENANTS_PREFIX,
-                                         to_json,
+                                         to_json, 
                                          {:useGlobalDefault => use_global_default},
                                          {
                                              :user => user,
