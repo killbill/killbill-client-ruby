@@ -125,7 +125,11 @@ module KillBillClient
                                 :reason  => reason,
                                 :comment => comment,
                             }.merge(options)
-          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
+          if payment_external_key
+            KillBillClient::Model::Payment.find_by_external_key(payment_external_key, false, false, options)
+          else
+            KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
+          end
         end
       end
 
@@ -225,7 +229,11 @@ module KillBillClient
                              :reason => reason,
                              :comment => comment
                          }.merge(options)
-          KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
+          if payment_external_key
+            KillBillClient::Model::Payment.find_by_external_key(payment_external_key, false, false, options)
+          else
+            KillBillClient::Model::Payment.find_by_id(payment_id, false, false, options)
+          end
         end
       end
 
