@@ -51,6 +51,7 @@ module KillBillClient
       attribute :price_overrides
       attribute :prices
       attribute :audit_logs
+      attribute :quantity
     end
   end
 end
