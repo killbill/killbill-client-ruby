@@ -73,6 +73,27 @@ module KillBillClient
               AuditLog
         end
 
+        def paginated_bundles(account_id, offset = 0, limit = 100, audit = "NONE", options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/bundles/pagination",
+                          {
+                            :offset => offset,
+                            :limit => limit,
+                            :audit => audit
+                          },
+                          options,
+                          Bundle
+        end
+
+        def paginated_invoices(account_id, offset = 0, limit = 100, audit = "NONE", options = {})
+          get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices/pagination",
+                   {
+                    :offset => offset,
+                    :limit => limit,
+                    :audit => audit
+                   },
+                   options,
+                   Invoice
+        end
       end
 
       def create(user = nil, reason = nil, comment = nil, options = {})
