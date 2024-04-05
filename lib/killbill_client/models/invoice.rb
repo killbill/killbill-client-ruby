@@ -321,6 +321,40 @@ module KillBillClient
                }.merge(options)
         end
 
+        def trigger_invoice_group_run(account_id, target_date = nil, plugin_property = nil, user = nil, reason = nil, comment = nil, options = {})
+          query_map              = {:accountId => account_id}
+          query_map[:targetDate] = target_date if !target_date.nil?
+          query_map[:pluginProperty] = plugin_property if !plugin_property.nil?
+
+          res = post "#{KILLBILL_API_INVOICES_PREFIX}/group",
+                      {},
+                      query_map,
+                      {
+                          :user    => user,
+                          :reason  => reason,
+                          :comment => comment,
+                      }.merge(options)
+        end
+
+        def retrieve_invoice_group(account_id, group_id, with_children_items = false, audit = "NONE", options = {})
+          res = get "#{KILLBILL_API_INVOICES_PREFIX}/#{group_id}/group",
+                      {
+                        :accountId => account_id,
+                        :withChildrenItems => with_children_items,
+                        :audit => audit
+                      },
+                      options
+        end
+
+        def retrieve_payments_for_invoice(invoice_id, with_plugin_info = false, with_attempts = false, audit = "NONE", options = {})
+          res = get "#{KILLBILL_API_INVOICES_PREFIX}/#{invoice_id}/payments",
+                      {
+                        :withPluginInfo => with_plugin_info,
+                        :withAttempts => with_attempts,
+                        :audit => audit
+                      },
+                      options
+        end
       end
 
       def commit(user = nil, reason = nil, comment = nil, options = {})
