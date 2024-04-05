@@ -10,6 +10,7 @@ module KillBillClient
 
       has_many :events, KillBillClient::Model::EventSubscription
       has_many :price_overrides, KillBillClient::Model::PhasePriceAttributes
+      has_many :audit_logs, KillBillClient::Model::AuditLog
 
       has_custom_fields KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
       has_tags KILLBILL_API_ENTITLEMENT_PREFIX, :subscription_id
@@ -220,6 +221,23 @@ module KillBillClient
                        }.merge(options)
       end
 
+      #
+      # Update Subscription Quantity
+      #
+      def update_quantity(user = nil, reason = nil, comment = nil, effective_from_date = nil, force_new_quantity_with_past_effective_date = nil, options = {})
+        params                  = {}
+        params[:effectiveFromDate] = effective_from_date unless effective_from_date.nil?
+        params[:forceNewQuantityWithPastEffectiveDate] = force_new_quantity_with_past_effective_date unless force_new_quantity_with_past_effective_date.nil?
+
+        return self.class.put "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}/quantity",
+                              self.to_json,
+                              params,
+                              {
+                                  :user    => user,
+                                  :reason  => reason,
+                                  :comment => comment,
+                              }.merge(options)
+      end
     end
   end
 end
