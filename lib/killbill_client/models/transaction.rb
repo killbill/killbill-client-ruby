@@ -193,6 +193,17 @@ module KillBillClient
           end
       end
 
+      def update_transaction_state(status, control_plugin_name = nil, user, reason, comment, options)
+        self.class.post "KILLBILL_API_TRANSACTIONS_PREFIX/#{transaction_id}",
+                       {:paymentId => payment_id, :status => status}.to_json,
+                       {:controlPluginName => (control_plugin_name || [])},
+                       {
+                          :user => user,
+                          :reason => reason,
+                          :comment => comment
+                       }.merge(options)
+      end
+
       private
 
 
