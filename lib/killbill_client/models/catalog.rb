@@ -178,6 +178,22 @@ module KillBillClient
                      :comment => comment,
                  }.merge(options)
         end
+
+        def validate_catalog(catalog_xml, user = nil, reason = nil, comment = nil, options = {})
+
+          require_multi_tenant_options!(options, "Validating a catalog is only supported in multi-tenant mode")
+
+          errors = post "#{KILLBILL_API_CATALOG_PREFIX}/xml/validate",
+               catalog_xml,
+               {},
+               {
+                   :head => {'Accept' => 'application/json'},
+                   :content_type => 'text/xml',
+                   :user => user,
+                   :reason => reason,
+                   :comment => comment,
+               }.merge(options)
+        end
       end
     end
   end
