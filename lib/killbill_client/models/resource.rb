@@ -174,15 +174,16 @@ module KillBillClient
 
         def attribute(name)
           send('attr_accessor', name.to_sym)
-	  attributes = @json_attributes ||= []
-	  begin
-	    json_attributes.push(name.to_s)
-	  rescue NameError
-	    (class << self; self; end).
-	      send(:define_method, :json_attributes) { attributes }
-	    retry
-	  end
-	end
+          attributes = @json_attributes ||= []
+
+          if respond_to?(:json_attributes, true)
+            json_attributes.push(name.to_s)
+          else
+            (class << self; self; end).
+              send(:define_method, :json_attributes) { attributes }
+            json_attributes.push(name.to_s)
+          end
+        end
 
         def has_many(attr_name, type = nil)
           send("attr_accessor", attr_name.to_sym)
