@@ -106,6 +106,139 @@ describe KillBillClient::API do
     uri = http_adapter.send(:build_uri, KillBillClient::Model::Account::KILLBILL_API_ACCOUNTS_PREFIX, options)
     expect(uri).to eq(URI.parse("#{KillBillClient::API.base_uri.to_s}/1.0/kb/accounts"))
   end
+
+  describe '#build_uri' do
+    let(:http_adapter) { DummyForHTTPAdapter.new }
+
+    before do
+      KillBillClient.url = 'http://example.com:8080'
+    end
+
+    context 'with basic relative URI' do
+      it 'should combine base URI with relative URI' do
+        relative_uri = '/1.0/kb/accounts'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts')
+      end
+
+      it 'should handle relative URI without leading slash' do
+        relative_uri = '1.0/kb/accounts'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts')
+      end
+    end
+
+    context 'with custom base_uri in options' do
+      it 'should use custom base_uri from options' do
+        relative_uri = '/1.0/kb/accounts'
+        options = { base_uri: 'https://custom.example.com:9090' }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('https://custom.example.com:9090/1.0/kb/accounts')
+      end
+    end
+
+    context 'with absolute URI' do
+      it 'should use absolute URI as-is' do
+        relative_uri = 'https://absolute.example.com/api/test'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('https://absolute.example.com/api/test')
+      end
+    end
+
+    context 'with path encoding' do
+      it 'should handle properly encoded URIs (with double encoding)' do
+        relative_uri = '/1.0/kb/accounts/my%20account%20with%20spaces'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/%2F1.0%2Fkb%2Faccounts%2Fmy%2520account%2520with%2520spaces')
+      end
+
+      it 'should not encode safe characters in path' do
+        relative_uri = '/1.0/kb/accounts/abc-1234'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts/abc-1234')
+      end
+
+      it 'should handle properly encoded URI with query string (with double encoding)' do
+        relative_uri = '/1.0/kb/accounts/my%20account?search=test%20value'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/%2F1.0%2Fkb%2Faccounts%2Fmy%2520account?search=test%20value')
+      end
+    end
+
+    context 'with query parameters in options' do
+      it 'should add simple query parameters' do
+        relative_uri = '/1.0/kb/accounts'
+        options = { params: { accountId: '123', limit: 10 } }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('accountId=123')
+        expect(uri.query).to include('limit=10')
+      end
+
+      it 'should handle array parameters' do
+        relative_uri = '/1.0/kb/accounts'
+        options = { params: { tags: ['premium', 'business'] } }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('tags=premium')
+        expect(uri.query).to include('tags=business')
+      end
+
+      it 'should merge with existing query string in relative URI' do
+        relative_uri = '/1.0/kb/accounts?existing=value'
+        options = { params: { new: 'param' } }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('existing=value')
+        expect(uri.query).to include('new=param')
+      end
+
+      it 'should handle empty params hash' do
+        relative_uri = '/1.0/kb/accounts'
+        options = { params: {} }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to be_nil
+      end
+
+      it 'should encode special characters in query parameters' do
+        relative_uri = '/1.0/kb/accounts'
+        options = { params: { search: 'test & special chars' } }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('search=test+%26+special+chars')
+      end
+    end
+
+    context 'with plugin properties' do
+      it 'should handle pluginProperty option' do
+        contract_property = KillBillClient::Model::PluginPropertyAttributes.new
+        contract_property.key = :contractId
+        contract_property.value = 'test-123'
+        relative_uri = '/1.0/kb/accounts'
+        options = {
+          params: {},
+          pluginProperty: [contract_property]
+        }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('pluginProperty=contractId%3Dtest-123')
+      end
+    end
+
+    context 'with control plugin names' do
+      it 'should handle controlPluginNames option' do
+        relative_uri = '/1.0/kb/accounts'
+        options = {
+          params: {},
+          controlPluginNames: ['plugin1', 'plugin2']
+        }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to include('controlPluginName=plugin1')
+        expect(uri.query).to include('controlPluginName=plugin2')
+      end
+    end
+  end
 end
 
 class DummyForHTTPAdapter

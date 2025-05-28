@@ -36,8 +36,17 @@ module KillBillClient
         }
 
         def build_uri(relative_uri, options)
-          # Need to encode in case of spaces (e.g. /1.0/kb/security/users/Mad Max/roles)
-          encoded_relative_uri = URI::DEFAULT_PARSER.regexp[:UNSAFE].match?(relative_uri) ? relative_uri : URI::DEFAULT_PARSER.escape(relative_uri)
+          # Split the URI into path and query parts
+          uri_parts = relative_uri.split('?', 2)
+          path_part = uri_parts[0]
+          query_part = uri_parts[1]
+          unsafe_regex = /[^a-zA-Z0-9\-_.!~*'():\/]/
+          # Only encode the path part, not the query string
+          encoded_path = unsafe_regex.match?(path_part) ? CGI.escape(path_part) : path_part
+
+          # Reconstruct the relative_uri with encoded path
+          encoded_relative_uri = query_part ? "#{encoded_path}?#{query_part}" : encoded_path
+
           if URI(encoded_relative_uri).scheme.nil?
             uri = (options[:base_uri] || KillBillClient::API.base_uri)
             uri = URI.parse(uri) unless uri.is_a?(URI)
@@ -49,7 +58,19 @@ module KillBillClient
             uri = encoded_relative_uri
             uri = URI.parse(uri) unless uri.is_a?(URI)
           end
-          uri += encode_params(options).to_s
+
+          query_params = encode_params(options)
+          if query_params && !query_params.empty?
+            # encode_params returns "?param=value", so remove the leading "?"
+            params_without_question = query_params[1..-1]
+            if uri.query && !uri.query.empty?
+              # If there's already a query string, append with &
+              uri.query = uri.query + '&' + params_without_question
+            else
+              # If no existing query string, set it directly
+              uri.query = params_without_question
+            end
+          end
 
           uri
         end
