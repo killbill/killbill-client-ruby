@@ -40,14 +40,75 @@ module KillBillClient
           uri_parts = relative_uri.split('?', 2)
           path_part = uri_parts[0]
           query_part = uri_parts[1]
-          unsafe_regex = /[^a-zA-Z0-9\-_.!~*'():\/]/
-          # Only encode the path part, not the query string
-          encoded_path = unsafe_regex.match?(path_part) ? CGI.escape(path_part) : path_part
+          
+          # Check if this is an absolute URI (has scheme) by looking for protocol pattern
+          is_absolute_uri = path_part.match?(/\A[a-z][a-z0-9+.-]*:\/\//i)
+          
+          if is_absolute_uri
+            # This is an absolute URI, parse it carefully
+            begin
+              # Parse the URI components manually to handle spaces properly
+              if path_part.match(/\A([a-z][a-z0-9+.-]*):\/\/([^\/]+)(\/.*)?/i)
+                scheme = $1
+                authority = $2  # host:port
+                path = $3 || '/'
+                
+                # Encode only the path segments, not the scheme or authority
+                if path && path != '/'
+                  path_segments = path.split('/')
+                  encoded_segments = path_segments.map do |segment|
+                    # Skip encoding if the segment is already encoded (contains %XX patterns)
+                    if segment.match?(/%[0-9A-Fa-f]{2}/)
+                      segment
+                    else
+                      unsafe_regex = /[^a-zA-Z0-9\-_.!~*'()]/
+                      if unsafe_regex.match?(segment)
+                        CGI.escape(segment).gsub('+', '%20')
+                      else
+                        segment
+                      end
+                    end
+                  end
+                  encoded_path = encoded_segments.join('/')
+                else
+                  encoded_path = path
+                end
+                
+                encoded_relative_uri = "#{scheme}://#{authority}#{encoded_path}"
+                encoded_relative_uri += "?#{query_part}" if query_part
+              else
+                # Fallback: treat as relative if parsing fails
+                is_absolute_uri = false
+              end
+            rescue
+              # Fallback: treat as relative if any error occurs
+              is_absolute_uri = false
+            end
+          end
+          
+          unless is_absolute_uri
+            # This is a relative URI, encode path segments individually
+            path_segments = path_part.split('/')
+            encoded_segments = path_segments.map do |segment|
+              # Skip encoding if the segment is already encoded (contains %XX patterns)
+              if segment.match?(/%[0-9A-Fa-f]{2}/)
+                segment
+              else
+                # Only encode segments that contain unsafe characters
+                unsafe_regex = /[^a-zA-Z0-9\-_.!~*'()]/
+                if unsafe_regex.match?(segment)
+                  # Use CGI.escape and replace + with %20 for URL path encoding
+                  CGI.escape(segment).gsub('+', '%20')
+                else
+                  segment
+                end
+              end
+            end
+            encoded_path = encoded_segments.join('/')
+            encoded_relative_uri = query_part ? "#{encoded_path}?#{query_part}" : encoded_path
+          end
 
-          # Reconstruct the relative_uri with encoded path
-          encoded_relative_uri = query_part ? "#{encoded_path}?#{query_part}" : encoded_path
-
-          if URI(encoded_relative_uri).scheme.nil?
+          if !is_absolute_uri
             uri = (options[:base_uri] || KillBillClient::API.base_uri)
             uri = URI.parse(uri) unless uri.is_a?(URI)
             # Note: make sure to keep the full path (if any) from URI::HTTP, for non-ROOT deployments
@@ -80,17 +141,25 @@ module KillBillClient
           # so remove with from global hash and insert them under :params
           plugin_properties = options.delete :pluginProperty
           if plugin_properties && plugin_properties.size > 0
+            options[:params] ||= {}
             options[:params][:pluginProperty] = plugin_properties.map { |p| "#{CGI.escape p.key.to_s}=#{CGI.escape p.value.to_s}" }
           end
 
           control_plugin_names = options.delete(:controlPluginNames)
-          options[:params][:controlPluginName] = control_plugin_names if control_plugin_names
+          if control_plugin_names
+            options[:params] ||= {}
+            options[:params][:controlPluginName] = control_plugin_names
+          end
 
           return nil unless (options[:params] && !options[:params].empty?)
 
-          options[:params][:withStackTrace] = true if (options[:return_full_stacktraces] || KillBillClient.return_full_stacktraces)
+          if (options[:return_full_stacktraces] || KillBillClient.return_full_stacktraces)
+            options[:params][:withStackTrace] = true
+          end
 
-          pairs = options[:params].map { |key, value|
+          pairs = options[:params].filter_map { |key, value|
+            next if value.nil?
+
             # If the value is an array, we 'demultiplex' into several
             if value.is_a? Array
               internal_pairs = value.map do |simple_value|
@@ -102,6 +171,7 @@ module KillBillClient
             end
           }
           pairs.flatten!
+          return nil if pairs.empty?
           "?#{pairs.join '&'}"
         end
 

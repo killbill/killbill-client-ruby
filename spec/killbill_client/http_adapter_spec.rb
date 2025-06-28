@@ -149,11 +149,11 @@ describe KillBillClient::API do
     end
 
     context 'with path encoding' do
-      it 'should handle properly encoded URIs (with double encoding)' do
+      it 'should handle already encoded URIs without double encoding' do
         relative_uri = '/1.0/kb/accounts/my%20account%20with%20spaces'
         options = {}
         uri = http_adapter.send(:build_uri, relative_uri, options)
-        expect(uri.to_s).to eq('http://example.com:8080/%2F1.0%2Fkb%2Faccounts%2Fmy%2520account%2520with%2520spaces')
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts/my%20account%20with%20spaces')
       end
 
       it 'should not encode safe characters in path' do
@@ -163,11 +163,11 @@ describe KillBillClient::API do
         expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts/abc-1234')
       end
 
-      it 'should handle properly encoded URI with query string (with double encoding)' do
+      it 'should handle already encoded URI with query string without double encoding' do
         relative_uri = '/1.0/kb/accounts/my%20account?search=test%20value'
         options = {}
         uri = http_adapter.send(:build_uri, relative_uri, options)
-        expect(uri.to_s).to eq('http://example.com:8080/%2F1.0%2Fkb%2Faccounts%2Fmy%2520account?search=test%20value')
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts/my%20account?search=test%20value')
       end
     end
 
@@ -237,6 +237,123 @@ describe KillBillClient::API do
         expect(uri.query).to include('controlPluginName=plugin1')
         expect(uri.query).to include('controlPluginName=plugin2')
       end
+    end
+
+    context 'with spaces in path segments' do
+      it 'should encode spaces in relative URI path segments' do
+        relative_uri = '/1.0/kb/accounts/search/Kill Bill Client'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://example.com:8080/1.0/kb/accounts/search/Kill%20Bill%20Client')
+      end
+
+      it 'should handle absolute URI with spaces in path' do
+        relative_uri = 'http://127.0.0.1:8080/1.0/kb/accounts/search/Kill Bill Client'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('http://127.0.0.1:8080/1.0/kb/accounts/search/Kill%20Bill%20Client')
+      end
+
+      it 'should preserve scheme and host when encoding spaces in absolute URI' do
+        relative_uri = 'https://api.example.com:9090/search/My Test Account'
+        options = {}
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.to_s).to eq('https://api.example.com:9090/search/My%20Test%20Account')
+        expect(uri.scheme).to eq('https')
+        expect(uri.host).to eq('api.example.com')
+        expect(uri.port).to eq(9090)
+      end
+    end
+
+    context 'with nil values in query parameters' do
+      it 'should skip nil values in params' do
+        relative_uri = '/1.0/kb/accounts'
+        options = {
+          params: {
+            account: nil,
+            withStackTrace: true,
+            limit: 10
+          }
+        }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).not_to include('account=')
+        expect(uri.query).to include('withStackTrace=true')
+        expect(uri.query).to include('limit=10')
+      end
+
+      it 'should handle all nil values in params' do
+        relative_uri = '/1.0/kb/accounts'
+        options = {
+          params: {
+            account: nil,
+            tenant: nil
+          }
+        }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).to be_nil
+      end
+
+      it 'should handle mixed nil and valid values' do
+        relative_uri = '/1.0/kb/accounts'
+        options = {
+          params: {
+            account: nil,
+            withStackTrace: true,
+            offset: 0,
+            search: nil,
+            limit: 50
+          }
+        }
+        uri = http_adapter.send(:build_uri, relative_uri, options)
+        expect(uri.query).not_to include('account=')
+        expect(uri.query).not_to include('search=')
+        expect(uri.query).to include('withStackTrace=true')
+        expect(uri.query).to include('offset=0')
+        expect(uri.query).to include('limit=50')
+      end
+    end
+  end
+
+  describe '#encode_params' do
+    let(:http_adapter) { DummyForHTTPAdapter.new }
+
+    it 'should filter out nil values from params' do
+      options = {
+        params: {
+          account: nil,
+          withStackTrace: true,
+          limit: 10,
+          search: nil
+        }
+      }
+      query_string = http_adapter.send(:encode_params, options)
+      expect(query_string).to include('withStackTrace=true')
+      expect(query_string).to include('limit=10')
+      expect(query_string).not_to include('account=')
+      expect(query_string).not_to include('search=')
+    end
+
+    it 'should return nil when all params are nil' do
+      options = {
+        params: {
+          account: nil,
+          tenant: nil
+        }
+      }
+      query_string = http_adapter.send(:encode_params, options)
+      expect(query_string).to be_nil
+    end
+
+    it 'should return nil when params hash is empty' do
+      options = { params: {} }
+      query_string = http_adapter.send(:encode_params, options)
+      expect(query_string).to be_nil
+    end
+
+    it 'should handle options without params key' do
+      options = { account: nil, withStackTrace: true }
+      query_string = http_adapter.send(:encode_params, options)
+      expect(query_string).to be_nil
     end
   end
 end
