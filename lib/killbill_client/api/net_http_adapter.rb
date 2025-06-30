@@ -157,7 +157,7 @@ module KillBillClient
             options[:params][:withStackTrace] = true
           end
 
-          pairs = options[:params].filter_map { |key, value|
+          pairs = options[:params].map { |key, value|
             next if value.nil?
 
             # If the value is an array, we 'demultiplex' into several
@@ -169,7 +169,7 @@ module KillBillClient
             else
               "#{CGI.escape key.to_s}=#{CGI.escape value.to_s}"
             end
-          }
+          }.compact
           pairs.flatten!
           return nil if pairs.empty?
           "?#{pairs.join '&'}"
