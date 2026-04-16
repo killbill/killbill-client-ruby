@@ -1,6 +1,7 @@
 require 'cgi'
 require 'net/https'
 require 'json'
+require 'base64'
 
 module KillBillClient
   class API
@@ -236,14 +237,27 @@ module KillBillClient
           end
 
           # Add auditing headers, if needed
-          if options[:user]
-            request['X-Killbill-CreatedBy'] = options[:user]
+          encode_header = lambda do |value|
+            return nil if value.nil? || value.to_s.empty
+            Base64.strict_encode64(value.to_s.force_encoding('UTF-8'))
           end
-          if options[:reason]
-            request['X-Killbill-Reason'] = options[:reason]
+
+          encoded_user = encode_header.call(options[:user])
+          encoded_reason = encode_header.call(options[:reason])
+          encoded_comment = encode_header.call(options[:comment])
+
+          if encoded_user
+            request['X-Killbill-CreatedBy'] = encoded_user
           end
-          if options[:comment]
-            request['X-Killbill-Comment'] = options[:comment]
+          if encoded_reason
+            request['X-Killbill-Reason'] = encoded_reason
+          end
+          if encoded_comment
+            request['X-Killbill-Comment'] = encoded_comment
+          end
+          # Add encoding header to indicate Base64 encoding
+          if encoded_user || encoded_reason || encoded_comment
+            request['X-Killbill-Encoding'] = 'base64'
           end
 
           #
