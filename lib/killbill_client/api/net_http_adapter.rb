@@ -238,7 +238,7 @@ module KillBillClient
 
           # Add auditing headers, if needed
           encode_header = lambda do |value|
-            return nil if value.nil? || value.to_s.empty
+            return nil if value.nil? || value.to_s.empty?
             Base64.strict_encode64(value.to_s.force_encoding('UTF-8'))
           end
 
