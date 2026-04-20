@@ -238,8 +238,9 @@ module KillBillClient
 
           # Add auditing headers, if needed
           encode_header = lambda do |value|
-            return nil if value.nil? || value.to_s.empty?
-            Base64.strict_encode64(value.to_s.force_encoding('UTF-8'))
+            return nil if value.nil?
+            utf8_value = value.to_s.dup.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
+            Base64.strict_encode64(utf8_value)
           end
 
           encoded_user = encode_header.call(options[:user])
