@@ -44,6 +44,13 @@ module KillBillClient
           from_response clazz, response
         end
 
+        # Performs a GET request and returns the raw response body as received
+        # from Kill Bill, without any model parsing or re-serialization.
+        def raw_get(uri, params = {}, options = {})
+          response = KillBillClient::API.get uri, params, options
+          response.body
+        end
+
         def post(uri, body = nil, params = {}, options = {}, clazz = self)
           response = KillBillClient::API.post uri, body, params, options
           from_response clazz, response

@@ -26,6 +26,16 @@ module KillBillClient
               options
         end
 
+        # Returns the raw JSON response body from Kill Bill for the given
+        # subscription, without any model parsing or re-serialization.
+        def find_raw_by_id(subscription_id, audit = "NONE", options = {})
+          raw_get "#{KILLBILL_API_ENTITLEMENT_PREFIX}/#{subscription_id}",
+                  {
+                    :audit => audit
+                  },
+                  options
+        end
+
         def find_by_external_key(external_key, audit = "NONE", options = {})
           get "#{KILLBILL_API_ENTITLEMENT_PREFIX}",
               {
