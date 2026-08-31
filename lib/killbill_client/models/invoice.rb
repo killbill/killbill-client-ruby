@@ -212,9 +212,13 @@ module KillBillClient
         def get_invoice_template(is_manual_pay, locale = nil, options = {})
 
           require_multi_tenant_options!(options, "Retrieving an invoice template supported in multi-tenant mode")
-          locale ||= 'en'
 
-          get "#{KILLBILL_API_INVOICES_PREFIX}/#{is_manual_pay ? "manualPayTemplate/#{locale}" : "template"}",
+          # Manual-pay templates are tenant-scoped, not locale-scoped. Keep the
+          # locale argument for backwards compatibility with callers, but don't
+          # include it in the endpoint path.
+          template_path = is_manual_pay ? "manualPayTemplate" : "template"
+
+          get "#{KILLBILL_API_INVOICES_PREFIX}/#{template_path}",
               {},
               {
                   :head => {'Accept' => 'text/html'},
