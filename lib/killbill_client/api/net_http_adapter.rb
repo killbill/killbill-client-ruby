@@ -90,8 +90,10 @@ module KillBillClient
             # This is a relative URI, encode path segments individually
             path_segments = path_part.split('/')
             encoded_segments = path_segments.map do |segment|
-              # Skip encoding if the segment is already encoded (contains %XX patterns)
-              if segment.match?(/%[0-9A-Fa-f]{2}/)
+              # Skip encoding only if the segment is already fully encoded, i.e. it is made of safe characters
+              # and well-formed %XX escapes. A bare '%' followed by hex-looking letters (e.g. a LIKE search for
+              # '%account%', where '%ac' looks like an escape) must still be encoded.
+              if segment.match?(/\A(?:[a-zA-Z0-9\-_.!~*'()]|%[0-9A-Fa-f]{2})*\z/)
                 segment
               else
                 # Only encode segments that contain unsafe characters
