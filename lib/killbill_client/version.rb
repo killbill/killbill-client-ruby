@@ -1,3 +1,3 @@
 module KillBillClient
-  VERSION = '4.0.9'
+  VERSION = '4.0.10'
 end
