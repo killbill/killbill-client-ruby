@@ -3,6 +3,12 @@ module KillBillClient
     class RoleDefinition < RoleDefinitionAttributes
 
       class << self
+        def find_all(options = {})
+          get "#{Security::KILLBILL_API_SECURITY_PREFIX}/roles",
+              {},
+              options
+        end
+
         def find_by_name(role_name, options = {})
           role = get "#{Security::KILLBILL_API_SECURITY_PREFIX}/roles/#{role_name}",
                                         {},
