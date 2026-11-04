@@ -75,7 +75,9 @@ module KillBillClient
     def underscore_uncached(camel_cased_word)
       word = camel_cased_word.to_s.dup
       word.gsub!(/::/, '/')
-      word.gsub!(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      # Same result as /([A-Z]+)([A-Z][a-z])/ => '\1_\2' ("HTTPResponse" => "HTTP_Response"), but without the
+      # quantifier that backtracks polynomially on long runs of capitals (36s for 50,000 "A"s on JRuby).
+      word.gsub!(/([A-Z])(?=[A-Z][a-z])/, '\1_')
       word.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
       word.tr! '-', '_'
       word.downcase!

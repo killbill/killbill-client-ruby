@@ -39,6 +39,36 @@ describe KillBillClient::Utils do
       end
     end
 
+    # The implementation from before the caching change, which used /([A-Z]+)([A-Z][a-z])/
+    def original_underscore(camel_cased_word)
+      word = camel_cased_word.to_s.dup
+      word.gsub!(/::/, '/')
+      word.gsub!(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      word.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
+      word.tr! '-', '_'
+      word.downcase!
+      word
+    end
+
+    it 'matches the original implementation on tricky and random inputs' do
+      tricky = %w(HTTPResponse XMLHttpRequest ABCdEFg ABcDEf AbCDe AAAb aAAb A Aa AA AAa getHTTPStatusCode
+                  account2FA x-Killbill-ApiKey Foo::BARBaz)
+      tricky.each { |word| expect(described_class.underscore_uncached(word)).to eq(original_underscore(word)) }
+
+      alphabet = ('A'..'Z').to_a + ('a'..'z').to_a + %w(0 1 _ - :)
+      rng = Random.new(42)
+      2_000.times do
+        word = Array.new(rng.rand(1..14)) { alphabet[rng.rand(alphabet.size)] }.join
+        expect(described_class.underscore_uncached(word)).to eq(original_underscore(word))
+      end
+    end
+
+    it 'runs in linear time on long runs of capital letters' do
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      expect(described_class.underscore_uncached('A' * 50_000)).to eq('a' * 50_000)
+      expect(Process.clock_gettime(Process::CLOCK_MONOTONIC) - started).to be < 2
+    end
+
     it 'is idempotent, so underscoring an already underscored name is a no-op' do
       camel_cased.each do |word|
         once = described_class.underscore(word)
