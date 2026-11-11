@@ -84,13 +84,17 @@ module KillBillClient
                           Bundle
         end
 
-        def paginated_invoices(account_id, offset = 0, limit = 100, audit = "NONE", options = {})
+        # By default, invoices in a page are shallow (no items), i.e. amount, balance, etc. are 0.
+        # Set include_invoice_components to load the components of the invoices of the requested page only.
+        def paginated_invoices(account_id, offset = 0, limit = 100, audit = "NONE", options = {}, include_invoice_components = false)
+          params = {
+            :offset => offset,
+            :limit => limit,
+            :audit => audit
+          }
+          params[:includeInvoiceComponents] = true if include_invoice_components
           get "#{KILLBILL_API_ACCOUNTS_PREFIX}/#{account_id}/invoices/pagination",
-                   {
-                    :offset => offset,
-                    :limit => limit,
-                    :audit => audit
-                   },
+                   params,
                    options,
                    Invoice
         end
