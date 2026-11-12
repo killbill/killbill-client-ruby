@@ -19,7 +19,7 @@ module KillBillClient
         # Make sure we support ActiveSupport::HashWithIndifferentAccess for Kaui
         if hash.respond_to?(:each)
           hash.each do |key, value|
-            send("#{Utils.underscore key.to_s}=", value)
+            send(Utils.underscore_symbols(key).last, value)
           end
         end
       end
@@ -145,12 +145,12 @@ module KillBillClient
 
           kb_ancestors = resource_class.ancestors.select { |ancestor| !@@attribute_names[ancestor.name].nil? }
           data.each do |name, value|
-            name = Utils.underscore name
+            name, setter = Utils.underscore_symbols name
             attr_desc = nil
 
             # Allow for inheritance
             kb_ancestors.each do |ancestor|
-              attr_desc = @@attribute_names[ancestor.name][name.to_sym]
+              attr_desc = @@attribute_names[ancestor.name][name]
               break unless attr_desc.nil?
             end
 
@@ -172,7 +172,7 @@ module KillBillClient
             end #end unless attr_desc.nil? or data_elem.blank?
 
             # TODO Be lenient for now to support different API formats
-            record.send("#{Utils.underscore name}=", value) rescue nil
+            record.send(setter, value) rescue nil
 
           end #end data.each
 

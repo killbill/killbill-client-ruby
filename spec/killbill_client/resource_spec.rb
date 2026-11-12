@@ -77,4 +77,39 @@ describe KillBillClient::Model::Resource do
       end
     end
   end
+
+  describe '.from_json' do
+    let(:json) do
+      {
+        'accountId' => 'abcd',
+        'accountCBA' => 12.5,
+        'externalKey' => 'ext',
+        'unknownAttribute' => 'ignored',
+        'auditLogs' => [{ 'changeType' => 'INSERT', 'changeDate' => '2024-01-01' }]
+      }.to_json
+    end
+
+    it 'maps camelCased JSON keys onto attributes, including nested resources and acronyms' do
+      # Twice, to exercise both the cold and the cached paths
+      2.times do
+        account = described_class.from_json(KillBillClient::Model::Account, json)
+
+        expect(account.account_id).to eq('abcd')
+        expect(account.account_cba).to eq(12.5)
+        expect(account.external_key).to eq('ext')
+        expect(account.audit_logs.size).to eq(1)
+        expect(account.audit_logs.first).to be_a(KillBillClient::Model::AuditLog)
+        expect(account.audit_logs.first.change_type).to eq('INSERT')
+      end
+    end
+
+    it 'round-trips through to_hash' do
+      account = described_class.from_json(KillBillClient::Model::Account, json)
+      hash = account.to_hash
+
+      expect(hash['accountId']).to eq('abcd')
+      expect(hash['accountCBA']).to eq(12.5)
+      expect(KillBillClient::Model::Account.new(hash)).to eq(account)
+    end
+  end
 end
