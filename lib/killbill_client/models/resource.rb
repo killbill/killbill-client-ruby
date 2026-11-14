@@ -14,6 +14,11 @@ module KillBillClient
 
       @@attribute_names = {}
 
+      UNKNOWN_JSON_ATTRIBUTE = [].freeze
+      # class => { json key => [setter, cardinality, type] | UNKNOWN_JSON_ATTRIBUTE }
+      @@json_attribute_cache = {}
+      @@json_attribute_cache_lock = Mutex.new
+
       def initialize(hash = nil)
 	@uri = nil
         # Make sure we support ActiveSupport::HashWithIndifferentAccess for Kaui
@@ -143,44 +148,81 @@ module KillBillClient
         def instantiate_record_from_json(resource_class, data)
           record = resource_class.send :new
 
-          kb_ancestors = resource_class.ancestors.select { |ancestor| !@@attribute_names[ancestor.name].nil? }
+          # One hash lookup per JSON key (see json_attribute_for)
+          table = @@json_attribute_cache[resource_class] || {}
           data.each do |name, value|
-            name = Utils.underscore name
-            attr_desc = nil
-
-            # Allow for inheritance
-            kb_ancestors.each do |ancestor|
-              attr_desc = @@attribute_names[ancestor.name][name.to_sym]
-              break unless attr_desc.nil?
-            end
-
-            unless attr_desc.nil?
-              type = attr_desc[:type]
-              if attr_desc[:cardinality] == :many && !type.nil? && value.is_a?(Array)
-                newValue = []
-                value.each do |val|
-                  if val.is_a?(Hash)
-                    newValue << instantiate_record_from_json(type, val)
-                  else
-                    newValue << val
-                  end
-                end
-                value = newValue
-              elsif attr_desc[:cardinality] == :one && !type.nil? && value.is_a?(Hash)
-                value = instantiate_record_from_json(type, value)
-              end
-            end #end unless attr_desc.nil? or data_elem.blank?
-
-            # TODO Be lenient for now to support different API formats
-            record.send("#{Utils.underscore name}=", value) rescue nil
-
-          end #end data.each
+            entry = table[name] || json_attribute_for(resource_class, name)
+            assign_json_attribute(record, entry, value) unless entry.equal?(UNKNOWN_JSON_ATTRIBUTE)
+          end
 
           record
         end
 
+        def assign_json_attribute(record, entry, value)
+          type = entry[2]
+          unless type.nil?
+            if entry[1] == :many
+              value = build_many(type, value) if value.is_a?(Array)
+            elsif entry[1] == :one
+              value = instantiate_record_from_json(type, value) if value.is_a?(Hash)
+            end
+          end
+
+          # TODO Be lenient for now to support different API formats
+          begin
+            record.send(entry[0], value)
+          rescue StandardError
+            nil
+          end
+        end
+
+        def build_many(type, values)
+          records = []
+          values.each do |val|
+            records << (val.is_a?(Hash) ? instantiate_record_from_json(type, val) : val)
+          end
+          records
+        end
+
+        # Resolves (and caches) what to do with a JSON key for a given class:
+        # [setter, cardinality, type] or UNKNOWN_JSON_ATTRIBUTE if the class doesn't have a matching setter.
+        #
+        # The cache is copy-on-write: readers never lock (and never see a Hash being mutated), writers are serialized.
+        def json_attribute_for(resource_class, json_key)
+          @@json_attribute_cache_lock.synchronize do
+            table = @@json_attribute_cache[resource_class] || {}
+            return table[json_key] if table.key?(json_key)
+
+            entry = resolve_json_attribute(resource_class, json_key)
+            @@json_attribute_cache = @@json_attribute_cache.merge(resource_class => table.merge(json_key => entry))
+            entry
+          end
+        end
+
+        def resolve_json_attribute(resource_class, json_key)
+          name = Utils.underscore json_key
+          setter = "#{name}=".to_sym
+          return UNKNOWN_JSON_ATTRIBUTE unless resource_class.method_defined?(setter) || resource_class.private_method_defined?(setter)
+
+          # Allow for inheritance: the closest ancestor declaring the attribute wins
+          attr_desc = nil
+          resource_class.ancestors.each do |ancestor|
+            declared = @@attribute_names[ancestor.name]
+            next if declared.nil?
+            attr_desc = declared[name.to_sym]
+            break unless attr_desc.nil?
+          end
+
+          [setter, attr_desc && attr_desc[:cardinality], attr_desc && attr_desc[:type]].freeze
+        end
+
+        def clear_json_attribute_cache
+          @@json_attribute_cache_lock.synchronize { @@json_attribute_cache = {} }
+        end
+
         def attribute(name)
           send('attr_accessor', name.to_sym)
+          clear_json_attribute_cache
           attributes = @json_attributes ||= []
 
           if respond_to?(:json_attributes, true)
@@ -198,6 +240,7 @@ module KillBillClient
           #add it to attribute_names
           @@attribute_names[self.name] ||= {}
           @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :many}
+          clear_json_attribute_cache
         end
 
         def has_one(attr_name, type = nil)
@@ -206,6 +249,7 @@ module KillBillClient
           #add it to attribute_names
           @@attribute_names[self.name] ||= {}
           @@attribute_names[self.name][attr_name.to_sym] = {:type => type, :cardinality => :one}
+          clear_json_attribute_cache
         end
 
         #hack to cater the api return attributes and javax attributes without editing gen scripts
@@ -213,6 +257,7 @@ module KillBillClient
         def create_alias(new_name, old_name)
           alias_method new_name.to_sym, old_name.to_sym #getter
           alias_method "#{new_name}=".to_sym, "#{old_name}=".to_sym #setter
+          clear_json_attribute_cache
         end
 
         # Extract the session id from a response
