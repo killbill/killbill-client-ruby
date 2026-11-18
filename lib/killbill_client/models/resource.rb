@@ -172,7 +172,8 @@ module KillBillClient
             end #end unless attr_desc.nil? or data_elem.blank?
 
             # TODO Be lenient for now to support different API formats
-            record.send("#{Utils.underscore name}=", value) rescue nil
+            # name was already underscored at the top of the loop
+            record.send("#{name}=", value) rescue nil
 
           end #end data.each
 
