@@ -14,7 +14,15 @@ describe KillBillClient::Utils do
   describe '.underscore' do
     {
       'accountId' => 'account_id',
+      'AccountId' => 'account_id',
+      'invoiceID' => 'invoice_id',
       'accountCBA' => 'account_cba',
+      'accountCBAId' => 'account_cba_id',
+      'HTTPServer' => 'http_server',
+      'ABCde' => 'ab_cde',
+      'ABcDEf' => 'a_bc_d_ef',
+      'plan2Name' => 'plan2_name',
+      'some-dashed-key' => 'some_dashed_key',
       'CBA' => 'cba',
       'HTTPResponse' => 'http_response',
       'X-Killbill-ApiKey' => 'x_killbill_api_key',
@@ -31,6 +39,12 @@ describe KillBillClient::Utils do
     it 'accepts symbols and nil, like before' do
       expect(described_class.underscore(:accountId)).to eq('account_id')
       expect(described_class.underscore(nil)).to eq('')
+    end
+
+    it 'does not mutate its argument' do
+      input = +'accountId'
+      described_class.underscore(input)
+      expect(input).to eq('accountId')
     end
 
     it 'returns the same result as the uncached implementation' do
